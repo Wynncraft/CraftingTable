@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Minestack</title>
+    <link href="//cdnjs.cloudflare.com/ajax/libs/semantic-ui/0.19.3/css/semantic.min.css" rel="stylesheet">
+</head>
+<body>
+
+<script type="text/x-handlebars">
+<main class="ui one column grid">
+    <div class="ui secondary pointing menu">
+        {{#link-to 'index' classNames="item"}}
+            <i class="home icon"></i> Home
+        {{/link-to}}
+        {{#link-to 'gnodes' classNames="item"}}
+            Global Nodes
+        {{/link-to}}
+      <div class="right menu">
+        <a class="ui item">
+            Logout
+       </a>
+      </div>
+    </div>
+
+{{outlet}}
+
+</main>
+</script>
+
+<script type="text/x-handlebars" id="index">
+    <aside class="column">
+        <h2 class="ui header">
+           Live Networks
+           <div class="sub header">List of all the Networks that are being managed.</div>
+        </h2>
+        <table class="ui table segment">
+            <thread>
+                <tr>
+                    <th>Network Name</th>
+                    <th>Players</th>
+                    <th>Servers</th>
+                    <th>Bungees</th>
+                    <th>Nodes</th>
+                </tr>
+            </thread>
+            <tbody>
+                {{#each}}
+                        <tr>
+                            <td>
+                                <div class="ui hover icon button">
+                                    <i class="edit sign icon"></i>
+                                </div>
+                                {{name}}
+                            </td>
+                            <td>{{players}}</td>
+                            <td>{{servers.length}}</td>
+                            <td>{{bungees.length}}</td>
+                            <td>{{nodes.length}}</td>
+                        </tr>
+                {{/each}}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th colspan="5">
+                        <div class="ui blue labeled icon button"><i class="add icon"></i>Add Network</div>
+                    </th>
+                </tr>
+            </tfoot>
+        </table>
+    </aside>
+</script>
+
+<script src="js/libs/jquery-1.10.2.js"></script>
+<script src="js/libs/handlebars-v1.3.0.js"></script>
+<script src="js/libs/ember-1.8.0.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
