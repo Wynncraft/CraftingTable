@@ -2,18 +2,17 @@ App = Ember.Application.create();
 
 App.Router.map(function () {
     this.resource('gnodes');
-    this.resource('network', { path: ':network_id' });
+    this.resource('login');
+    this.resource('network', { path: '/network/:network_id' });
 });
 
-App.IndexRoute = Ember.Route.extend({
-
-        model: function() {
-            return network;
-        }
-
+App.NetworksController = Ember.ObjectController.extend({
+    networks: function() {
+        return networks;
+    }.property("[]")
 });
 
-var network = [
+var networks = [
     {
         id: 'fdgfd-gfdgfdgfd-fdgfd',
         name: 'Test Network',
@@ -23,7 +22,7 @@ var network = [
         nodes: []
     },
     {
-        id: 'xcvbcvxbcxvbcx',
+        id: 'xcvb-cvxbcxv-bcx',
         name: 'Test Network 2',
         players: 0,
         servers: [],
