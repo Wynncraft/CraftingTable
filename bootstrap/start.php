@@ -24,11 +24,17 @@ $app = new Illuminate\Foundation\Application;
 |
 */
 
-$env = $app->detectEnvironment(array(
+$env = $app->detectEnvironment(function () use($app) {
+    if($app->runningInConsole()) {
+        return "development";
+    }
 
-	'local' => array('homestead'),
-
-));
+    $validEnvironments = array("development", "staging", "production");
+    if (in_array($_SERVER('APP_ENV'), $validEnvironments)) {
+        return $_SERVER('APP_ENV');
+    }
+    throw new Exception("Environment variable not set or is not valid. See developer manual for further information.");
+});
 
 /*
 |--------------------------------------------------------------------------

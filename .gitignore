@@ -3,6 +3,7 @@
 *.iws
 /bootstrap/compiled.php
 /vendor
+_ide_helper.php
 composer.phar
 composer.lock
 .env.*.php
