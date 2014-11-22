@@ -30,8 +30,8 @@ $env = $app->detectEnvironment(function () use($app) {
     }
 
     $validEnvironments = array("development", "staging", "production");
-    if (in_array($_SERVER('APP_ENV'), $validEnvironments)) {
-        return $_SERVER('APP_ENV');
+    if (in_array($_SERVER['APP_ENV'], $validEnvironments)) {
+        return $_SERVER['APP_ENV'];
     }
     throw new Exception("Environment variable not set or is not valid. See developer manual for further information.");
 });

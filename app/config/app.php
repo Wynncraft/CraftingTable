@@ -26,7 +26,7 @@ return array(
 	|
 	*/
 
-	'url' => 'http://localhost',
+	'url' => $_ENV['url'],
 
 	/*
 	|--------------------------------------------------------------------------
@@ -78,7 +78,7 @@ return array(
 	|
 	*/
 
-	'key' => 'pLdVw6j1ue3EbtEf92K0xvLZFeJXPmoL',
+	'key' => $_ENV['secure_key'],
 
 	'cipher' => MCRYPT_RIJNDAEL_128,
 

@@ -11,9 +11,9 @@
     <div id="navbar" class="navbar-collapse collapse">
         <ul class="nav navbar-nav">
             @if($topNavPage == "home")
-                <li class="active"><a class="navbar-brand" href="{{ URL::to('/')  }}">Home</a></li>
+                <li class="active"><a href="{{ URL::to('/')  }}">Home</a></li>
             @else
-                <li><a class="navbar-brand" href="{{ URL::to('/')  }}">Home</a></li>
+                <li><a href="{{ URL::to('/')  }}">Home</a></li>
             @endif
 
             @if($topNavPage == "gnodes")
@@ -24,15 +24,15 @@
 
             @if(Auth::check())
                 @if($topNavPage == "logout")
-                    <li class="active"><a>Logout</a></li>
+                    <li class="active"><a href="{{ URL::to('/logout')  }}">Sign Out</a></li>
                 @else
-                    <li><a>Logout</a></li>
+                    <li><a href="{{ URL::to('/logout')  }}">Sign Out</a></li>
                 @endif
             @else
                 @if($topNavPage == "login")
-                    <li class="active"><a>Login</a></li>
+                    <li class="active"><a href="{{ URL::to('/login')  }}">Sign In</a></li>
                 @else
-                    <li><a>Login</a></li>
+                    <li><a href="{{ URL::to('/login')  }}">Sign In</a></li>
                 @endif
             @endif
 
