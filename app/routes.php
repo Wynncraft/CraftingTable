@@ -11,66 +11,71 @@
 |
 */
 
-Route::get('/', array('before'=>'auth', function()
-{
-	return View::make('index');
-}));
+Route::group(array('before' => 'auth'), function() {
+	Route::get('/', array('before'=>'auth', function()
+	{
+		return View::make('index');
+	}));
 
-Route::get('/register', array('before'=>'auth.guest', function()
-{
-	return View::make('register');
-}));
+	Route::get('/logout', function()
+	{
+		Auth::logout();
 
-Route::post('/register', array('before'=>'auth.guest', function()
-{
-	$user = new User;
-	$user->email = Input::get('email');
-	$user->username = Input::get('username');
-	$user->password = Hash::make(Input::get('password'));
+		return View::make('logout');
+	});
+});
 
-	$validator = Validator::make(
-		array('email'=>$user->email,
-			'username'=>$user->username,
-			'password'=>Input::get('password')),
-		array('email'=>'required|email|unique:users',
-			'username'=>'required|unique:users',
-			'password'=>'required')
-	);
+Route::group(array('before' => 'auth.guest'), function() {
+	Route::get('/register', function()
+	{
+		return View::make('register');
+	});
 
-	if (App::environment('demo')) {
-		return View::make('register')->with('success', 'Please login with the email demo@minestack.io and password demo');
-	}
+	Route::post('/register', function()
+	{
+		$user = new User;
+		$user->email = Input::get('email');
+		$user->username = Input::get('username');
+		$user->password = Hash::make(Input::get('password'));
 
-	if ($validator->fails()) {
-		return View::make('register')->with('error', $validator->messages());
-	} else {
-		$user->save();
-		$theEmail = Input::get('email');
-		return View::make('register')->with('success', 'Thank you '.$theEmail.' for registering.');
-	}
+		$validator = Validator::make(
+			array('email'=>$user->email,
+				'username'=>$user->username,
+				'password'=>Input::get('password')),
+			array('email'=>'required|email|unique:users',
+				'username'=>'required|unique:users',
+				'password'=>'required')
+		);
 
-}));
+		if (App::environment() =='demo') {
+			return View::make('register')->with('success', 'Please login with the email demo@minestack.io and password demo');
+		}
 
-Route::get('/login', array('before'=>'auth.guest', function()
-{
-	return View::make('login');
-}));
+		if ($validator->fails()) {
+			return View::make('register')->with('error', $validator->messages());
+		} else {
+			$user->save();
+			$theEmail = Input::get('email');
+			return View::make('register')->with('success', 'Thank you '.$theEmail.' for registering.');
+		}
 
-Route::post('/login', array('before'=>'auth.guest', function()
-{
-	$email = Input::get('email');
-	$password = Input::get('password');
+	});
 
-	if (Auth::attempt(array('email'=>$email, 'password'=>$password))) {
-		return Redirect::intended('/');
-	}
+	Route::get('/login', function()
+	{
+		return View::make('login');
+	});
 
-	return View::make('login')->with('error', 'Invalid Username or password');
-}));
+	Route::post('/login', function()
+	{
+		$email = Input::get('email');
+		$password = Input::get('password');
 
-Route::get('/logout', array('before'=>'auth', function()
-{
-	Auth::logout();
+		if (Auth::attempt(array('email'=>$email, 'password'=>$password))) {
+			return Redirect::intended('/');
+		}
 
-	return View::make('logout');
-}));
+		return View::make('login')->with('error', 'Invalid Username or password');
+	});
+});
+
