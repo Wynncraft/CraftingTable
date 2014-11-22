@@ -37,9 +37,7 @@ Route::post('/register', array('before'=>'auth.guest', function()
 			'password'=>'required')
 	);
 
-	$environment = App::environment();
-
-	if (strcmp($environment, 'demo')) {
+	if (App::environment('demo')) {
 		return View::make('register')->with('success', 'Please login with the email demo@minestack.io and password demo');
 	}
 
