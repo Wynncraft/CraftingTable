@@ -100,13 +100,13 @@ class UserController extends BaseController {
             );
         }
 
-        if (App::environment() =='demo') {
-            return View::make('user')->with('user', $user)->with('success', 'Cannot update user info while in demo mode.');
-        }
-
         if ($validator->fails()) {
             return View::make('user')->with('user', $user)->with('error', $validator->messages());
         } else {
+            if (App::environment() =='demo') {
+                return View::make('user')->with('user', $user)->with('success', 'Cannot update user info while in demo mode.');
+            }
+
             $user->email = Input::get('email');
             $password = Input::get('npassword');
             if (strlen($password) > 0) {
