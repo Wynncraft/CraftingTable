@@ -56,7 +56,7 @@ class UserController extends BaseController {
     }
 
     public function getUsers() {
-
+        return View::make('users');
     }
 
     public function getUser(User $user = null) {
@@ -68,19 +68,54 @@ class UserController extends BaseController {
             return Redirect::intended('/users/'.Auth::user()->id);
         }
 
-        return View::make('user');
+        return View::make('user')->with('user', $user);
     }
 
     public function putUser(User $user = null) {
         if ($user == null) {
-            return Redirect::intended('/users')->with(array('code' => '404', 'message' => 'Unknown user Id'));
+            return Redirect::intended('/users')->with('error', 'Unknown user Id');
         }
 
         if (Auth::user()->id != $user->id) {
             return Redirect::intended('/users/'.Auth::user()->id);
         }
 
-        return View::make('user');
+        Validator::extend('passcheck', function($attribute, $value, $params) {
+            return Hash::check($value, Auth::user()->getAuthPassword());
+        });
+
+        $validator = Validator::make(
+            array('email'=>Input::get('email'),
+                'password'=>Input::get('password')),
+            array('email'=>'required|email|unique:users',
+                'password'=>'required|passcheck'),
+            array('passcheck'=>'Your current password is invalid')
+        );
+
+        if (Auth::user()->email == Input::get('email')) {
+            $validator = Validator::make(
+                array('password'=>Input::get('password')),
+                array('password'=>'required|passcheck'),
+                array('passcheck'=>'Your current password is invalid')
+            );
+        }
+
+        if (App::environment() =='demo') {
+            return View::make('user')->with('user', $user)->with('error', 'Cannot update user info while in demo mode.');
+        }
+
+        if ($validator->fails()) {
+            return View::make('user')->with('user', $user)->with('error', $validator->messages());
+        } else {
+            $user->email = Input::get('email');
+            $password = Input::get('npassword');
+            if (strlen($password) > 0) {
+                $user->password = Hash::make(Input::get('npassword'));
+            }
+            $user->save();
+        }
+
+        return View::make('user')->with('user', $user)->with('success', 'Successfully updated your account info.');
     }
 
 }

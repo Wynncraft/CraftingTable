@@ -15,10 +15,10 @@ Route::group(array('before' => 'auth'), function() {
 	Route::model('user', 'User', function() {
 	});
 
-	Route::get('/', array('before'=>'auth', function()
+	Route::get('/', function()
 	{
 		return View::make('index');
-	}));
+	});
 
 	Route::get('/logout', 'UserController@getLogout');
 
