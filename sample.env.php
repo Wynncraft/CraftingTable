@@ -10,7 +10,7 @@ return array(
     'mysql_password' => 'root',
 
     //Secure 32 character key for encryption
-    'secure_key' => 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
+    'secure_key' => 'abcdefghijklmnopqrstuvwxyz012345',
 
     //URL that the application will be located at
     'url' => 'http://somewebsite.com',
