@@ -59,7 +59,7 @@
 
                             <div style="margin-top:10px" class="form-group">
                                 <div class="col-md-12">
-                                    {{ Form::submit('Sign Up', array('class'=>'btn btn-success')) }}
+                                    {{ Form::submit('Save', array('class'=>'btn btn-success')) }}
                                 </div>
                             </div>
                             {{ Form::close() }}
