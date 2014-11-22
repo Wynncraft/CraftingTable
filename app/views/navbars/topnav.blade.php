@@ -37,5 +37,19 @@
             @endif
 
         </ul>
+        @if(Auth::check())
+            <ul class="nav navbar-nav navbar-right">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Welcome back {{ Auth::user()->username }}<span class="caret"></span></a>
+                    <ul class="dropdown-menu" role="menu">
+                        @if($topNavPage == "user")
+                            <li class="active"><a href="{{ URL::to('/users/'.Auth::user()->id) }}">Edit Account</a></li>
+                        @else
+                            <li><a href="{{ URL::to('/users/'.Auth::user()->id) }}">Edit Account</a></li>
+                        @endif
+                    </ul>
+                </li>
+            </ul>
+        @endif
     </div>
 </nav>

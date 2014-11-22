@@ -12,70 +12,30 @@
 */
 
 Route::group(array('before' => 'auth'), function() {
+	Route::model('user', 'User', function() {
+	});
+
 	Route::get('/', array('before'=>'auth', function()
 	{
 		return View::make('index');
 	}));
 
-	Route::get('/logout', function()
-	{
-		Auth::logout();
+	Route::get('/logout', 'UserController@getLogout');
 
-		return View::make('logout');
-	});
+	Route::get('/users', 'UserController@getUsers');
+
+	Route::get('/users/{user}', 'UserController@getUser');
+
+	Route::put('/users/{user}', 'UserController@putUser');
 });
 
 Route::group(array('before' => 'auth.guest'), function() {
-	Route::get('/register', function()
-	{
-		return View::make('register');
-	});
+	Route::get('/register', 'UserController@getRegister');
 
-	Route::post('/register', function()
-	{
-		$user = new User;
-		$user->email = Input::get('email');
-		$user->username = Input::get('username');
-		$user->password = Hash::make(Input::get('password'));
+	Route::post('/register', 'UserController@postRegister');
 
-		$validator = Validator::make(
-			array('email'=>$user->email,
-				'username'=>$user->username,
-				'password'=>Input::get('password')),
-			array('email'=>'required|email|unique:users',
-				'username'=>'required|unique:users',
-				'password'=>'required')
-		);
+	Route::get('/login', 'UserController@getLogin');
 
-		if (App::environment() =='demo') {
-			return View::make('register')->with('success', 'Please login with the email demo@minestack.io and password demo');
-		}
-
-		if ($validator->fails()) {
-			return View::make('register')->with('error', $validator->messages());
-		} else {
-			$user->save();
-			$theEmail = Input::get('email');
-			return View::make('register')->with('success', 'Thank you '.$theEmail.' for registering.');
-		}
-
-	});
-
-	Route::get('/login', function()
-	{
-		return View::make('login');
-	});
-
-	Route::post('/login', function()
-	{
-		$email = Input::get('email');
-		$password = Input::get('password');
-
-		if (Auth::attempt(array('email'=>$email, 'password'=>$password))) {
-			return Redirect::intended('/');
-		}
-
-		return View::make('login')->with('error', 'Invalid Username or password');
-	});
+	Route::post('/login', 'UserController@postLogin');
 });
 
