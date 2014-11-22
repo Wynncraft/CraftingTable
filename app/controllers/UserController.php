@@ -101,7 +101,7 @@ class UserController extends BaseController {
         }
 
         if (App::environment() =='demo') {
-            return View::make('user')->with('user', $user)->with('error', 'Cannot update user info while in demo mode.');
+            return View::make('user')->with('user', $user)->with('success', 'Cannot update user info while in demo mode.');
         }
 
         if ($validator->fails()) {
