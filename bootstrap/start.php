@@ -29,7 +29,7 @@ $env = $app->detectEnvironment(function () use($app) {
         return "development";
     }
 
-    $validEnvironments = array("development", "staging", "production");
+    $validEnvironments = array("development", "demo", "staging", "production");
     if (in_array($_SERVER['APP_ENV'], $validEnvironments)) {
         return $_SERVER['APP_ENV'];
     }
