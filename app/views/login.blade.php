@@ -1,7 +1,7 @@
 @extends('layouts.master')
 
 @section('content')
-    @include('navbars.topnav', array('topNavPage'=>'login'))
+    @include('navbars.topnav', array('navBarPage'=>'login'))
     <div class="row-fluid">
             <div class="row">
                 <div style="margin-top:50px;" class="col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">

@@ -10,7 +10,7 @@
     </div>
     <div id="navbar" class="navbar-collapse collapse">
         <ul class="nav navbar-nav">
-            @if($topNavPage == "home")
+            @if($navBarPage == "home")
                 <li class="active"><a href="{{ URL::to('/')  }}">Home</a></li>
             @else
                 <li><a href="{{ URL::to('/')  }}">Home</a></li>
@@ -18,7 +18,7 @@
 
             @if(Auth::check())
                 @if(Auth::user()->can('see_gnodes'))
-                    @if($topNavPage == "gnodes")
+                    @if($navBarPage == "gnodes")
                         <li class="active"><a>Global Nodes</a></li>
                     @else
                         <li><a>Global Nodes</a></li>
@@ -26,20 +26,20 @@
                 @endif
 
                 @if(Auth::user()->can('see_users'))
-                    @if($topNavPage == "users")
+                    @if($navBarPage == "users")
                         <li class="active"><a>Users</a></li>
                     @else
                         <li><a>Users</a></li>
                     @endif
                 @endif
 
-                @if($topNavPage == "logout")
+                @if($navBarPage == "logout")
                     <li class="active"><a href="{{ URL::to('/logout')  }}">Sign Out</a></li>
                 @else
                     <li><a href="{{ URL::to('/logout')  }}">Sign Out</a></li>
                 @endif
             @else
-                @if($topNavPage == "login")
+                @if($navBarPage == "login")
                     <li class="active"><a href="{{ URL::to('/login')  }}">Sign In</a></li>
                 @else
                     <li><a href="{{ URL::to('/login')  }}">Sign In</a></li>
