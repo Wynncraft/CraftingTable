@@ -57,6 +57,8 @@ class UserController extends BaseController {
             return View::make('login')->with('error', 'Invalid Username or password');
         } catch (Toddish\Verify\UserNotFoundException  $e) {
             return View::make('login')->with('error', 'Invalid Username or password');
+        } catch (Toddish\Verify\UserDisabledException  $e) {
+            return View::make('login')->with('error', 'User is disabled');
         }
     }
 
