@@ -1,5 +1,6 @@
 <?php
 
+
 class UserController extends BaseController {
 
     public function getRegister() {
@@ -7,10 +8,11 @@ class UserController extends BaseController {
     }
 
     public function postRegister() {
-        $user = new User;
+        $user = new Toddish\Verify\Models\User;
         $user->email = Input::get('email');
         $user->username = Input::get('username');
-        $user->password = Hash::make(Input::get('password'));
+        $user->password = Input::get('password');
+        $user->verified = 1;
 
         Validator::extend('passmatches', function($attribute, $value, $params) {
             return $value[0] == $value[1] && strlen($value[0]) > 0;
@@ -48,11 +50,14 @@ class UserController extends BaseController {
         $email = Input::get('email');
         $password = Input::get('password');
 
-        if (Auth::attempt(array('email'=>$email, 'password'=>$password))) {
+        try {
+            Auth::attempt(array('identifier'=>$email, 'password'=>$password));
             return Redirect::intended('/');
+        } catch(Toddish\Verify\UserPasswordIncorrectException $e) {
+            return View::make('login')->with('error', 'Invalid Username or password');
+        } catch (Toddish\Verify\UserNotFoundException  $e) {
+            return View::make('login')->with('error', 'Invalid Username or password');
         }
-
-        return View::make('login')->with('error', 'Invalid Username or password');
     }
 
     public function getLogout() {
@@ -65,7 +70,7 @@ class UserController extends BaseController {
         return View::make('users');
     }
 
-    public function getUser(User $user = null) {
+    public function getUser(Toddish\Verify\Models\User $user = null) {
         if ($user == null) {
             return Redirect::intended('/users')->with(array('code' => '404', 'message' => 'Unknown user Id'));
         }
@@ -77,7 +82,7 @@ class UserController extends BaseController {
         return View::make('user')->with('user', $user);
     }
 
-    public function putUser(User $user = null) {
+    public function putUser(Toddish\Verify\Models\User $user = null) {
         if ($user == null) {
             return Redirect::intended('/users')->with('error', 'Unknown user Id');
         }
@@ -87,7 +92,7 @@ class UserController extends BaseController {
         }
 
         Validator::extend('passcheck', function($attribute, $value, $params) {
-            return Hash::check($value, Auth::user()->getAuthPassword());
+            return Hash::check(Auth::user()->salt.$value, Auth::user()->getAuthPassword());
         });
 
         $validator = Validator::make(
@@ -125,7 +130,7 @@ class UserController extends BaseController {
                 if ($validator->fails()) {
                     return View::make('user')->with('user', $user)->with('error', $validator->messages());
                 }
-                $user->password = Hash::make(Input::get('npassword'));
+                $user->password = Input::get('npassword');
             }
             $user->save();
         }

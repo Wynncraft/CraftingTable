@@ -12,7 +12,7 @@
 */
 
 Route::group(array('before' => 'auth'), function() {
-	Route::model('user', 'User', function() {
+	Route::model('user', 'Toddish\Verify\Models\User', function() {
 	});
 
 	Route::get('/', function()
