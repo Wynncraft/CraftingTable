@@ -86,12 +86,16 @@ class UserController extends BaseController {
     }
 
     public function getUsers() {
+        if (Auth::user()->can('see_users') == false) {
+            Redirect::intended('/')->with('error', 'You do not have permission to view the users page');
+        }
+
         return View::make('users');
     }
 
     public function getUser(Toddish\Verify\Models\User $user = null) {
         if ($user == null) {
-            return Redirect::intended('/users')->with(array('code' => '404', 'message' => 'Unknown user Id'));
+            return Redirect::intended('/users')->with('error', 'Unknown user Id');
         }
 
         if (Auth::user()->id != $user->id) {
