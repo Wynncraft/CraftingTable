@@ -61,9 +61,9 @@
                                     </select>
                                 </div>
 
-                                <div style="margin-bottom: 25px" class="input-group {{ isset($error) && $error->get('verified') != null ? 'has-error' : '' }}">
+                                <div style="margin-bottom: 25px" class="input-group {{ isset($error) && $error->get('disabled') != null ? 'has-error' : '' }}">
                                     <div class="checkbox">
-                                        <label>{{ Form::checkbox('verified', 1, $user->verified == true ? true : false, array('class'=>'', Auth::user()->id == $user->id ? 'disabled' : 'enabled')) }} Verified Account</label>
+                                        <label>{{ Form::checkbox('disabled', 1, $user->disabled == true ? true : false, array('class'=>'', Auth::user()->id == $user->id ? 'disabled' : 'enabled')) }} Disabled Account</label>
                                     </div>
                                 </div>
 
