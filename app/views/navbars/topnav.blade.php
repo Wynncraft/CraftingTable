@@ -41,6 +41,14 @@
                      @endif
                 @endif
 
+                @if(Auth::user()->can('see_options'))
+                    @if($navBarPage == "groups")
+                        <li class="active"><a href="{{ URL::to('/options') }}">Options</a></li>
+                    @else
+                        <li><a href="{{ URL::to('/options') }}">Options</a></li>
+                    @endif
+                @endif
+
                 @if($navBarPage == "logout")
                     <li class="active"><a href="{{ URL::to('/logout')  }}">Sign Out</a></li>
                 @else
