@@ -53,6 +53,11 @@
                                     {{ Form::password('password', array('class'=>'form-control', 'placeholder' => 'password')) }}
                                 </div>
 
+                                <div style="margin-bottom: 25px" class="input-group {{ isset($error) && $error->get('password') != null ? 'has-error' : '' }} {{ isset($error) && $error->get('password_confirmation') != null ? 'has-error' : '' }}">
+                                    <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+                                    {{ Form::password('password_confirmation', array('class'=>'form-control', 'placeholder' => 'confirm password')) }}
+                                </div>
+
                             <div style="margin-top:10px" class="form-group">
                                 <div class="col-md-12">
                                     {{ Form::submit('Sign Up', array('class'=>'btn btn-success')) }}

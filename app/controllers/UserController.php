@@ -12,13 +12,19 @@ class UserController extends BaseController {
         $user->username = Input::get('username');
         $user->password = Hash::make(Input::get('password'));
 
+        Validator::extend('passmatches', function($attribute, $value, $params) {
+            return $value[0] == $value[1] && strlen($value[0]) > 0;
+        });
+
         $validator = Validator::make(
             array('email'=>$user->email,
                 'username'=>$user->username,
-                'password'=>Input::get('password')),
+                'password'=>Input::get('password'),
+                'password_confirmation'=>Input::get('password_confirmation')),
             array('email'=>'required|email|unique:users',
                 'username'=>'required|unique:users',
-                'password'=>'required')
+                'password'=>'required|confirmed',
+                'password_confirmation'=>'required|same:password')
         );
 
         if (App::environment() =='demo') {
@@ -110,6 +116,15 @@ class UserController extends BaseController {
             $user->email = Input::get('email');
             $password = Input::get('npassword');
             if (strlen($password) > 0) {
+                $validator = Validator::make(
+                    array('npassword'=>Input::get('npassword'),
+                        'npassword_confirmation'=>Input::get('npassword_confirmation')),
+                    array('npassword'=>'required|confirmed',
+                        'npassword_confirmation'=>'required|same:npassword')
+                );
+                if ($validator->fails()) {
+                    return View::make('user')->with('user', $user)->with('error', $validator->messages());
+                }
                 $user->password = Hash::make(Input::get('npassword'));
             }
             $user->save();

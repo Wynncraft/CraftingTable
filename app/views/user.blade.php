@@ -35,7 +35,7 @@
                         </div>
                         @endif
 
-                        {{ Form::open(array('url '=> 'register', 'class' => 'form-horizontal', 'method' => 'put')) }}
+                        {{ Form::open(array('url '=> 'user/'.$user->id, 'class' => 'form-horizontal', 'method' => 'put')) }}
 
                                 <div style="margin-bottom: 25px" class="input-group {{ isset($error) && $error->get('email') != null ? 'has-error' : '' }}">
                                     <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span>
@@ -50,6 +50,11 @@
                                 <div style="margin-bottom: 25px" class="input-group {{ isset($error) && $error->get('npassword') != null ? 'has-error' : '' }}">
                                     <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
                                     {{ Form::password('npassword', array('class'=>'form-control', 'placeholder' => 'new password')) }}
+                                </div>
+
+                                <div style="margin-bottom: 25px" class="input-group {{ isset($error) && $error->get('npassword') != null ? 'has-error' : '' }} {{ isset($error) && $error->get('npassword_confirmation') != null ? 'has-error' : '' }}">
+                                    <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+                                    {{ Form::password('npassword_confirmation', array('class'=>'form-control', 'placeholder' => 'confirm new password')) }}
                                 </div>
 
                                 <div style="margin-bottom: 25px" class="input-group {{ isset($error) && $error->get('password') != null ? 'has-error' : '' }}">
