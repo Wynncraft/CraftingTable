@@ -112,6 +112,74 @@ class UserController extends BaseController {
         return View::make('user')->with('user', $user);
     }
 
+    private function putUserMain(Toddish\Verify\Models\User $user = null)
+    {
+        $group = Input::get('group');
+        $password = Input::get('password');
+
+        Validator::extend('validategroup', function ($attribute, $value, $parameters) {
+            try {
+                Toddish\Verify\Models\Role::findOrFail($value);
+                return true;
+            } catch (Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+                return false;
+            }
+        });
+
+        Validator::extend('passcheck', function($attribute, $value, $parameters) {
+            return Hash::check(Auth::user()->salt.$value, Auth::user()->getAuthPassword());
+        });
+
+        $input = array('email' => Input::get('email'),
+            'group' => $group);
+        $rules = array('email' => 'required|email|unique:users',
+            'group' => 'required|numeric|validategroup');
+        $messages = array('validategroup' => 'Please select a valid group');
+
+        if ($user->email == Input::get('email')) {
+            unset($input['email']);
+            unset($rules['email']);
+        }
+
+        if ($group == null) {
+            unset($input['group']);
+            unset($rules['group']);
+        }
+
+        $npassword = Input::get('npassword');
+        if (strlen($npassword) > 0) {
+            $input['new password'] = $npassword;
+            $input['new password_confirmation'] = Input::get('npassword_confirmation');
+            $rules['new password'] = 'required|confirmed';
+            $rules['new password_confirmation'] = 'required';
+        }
+
+        if (Auth::user()->id == $user->id) {
+            $input['password'] = $password;
+            $rules['password'] = 'required|passcheck';
+            $messages['passcheck'] = 'Your current password is invalid';
+        }
+
+        $validator = Validator::make($input, $rules, $messages);
+
+        if ($validator->fails()) {
+            return View::make('user')->with('user', $user)->with('error', $validator->messages());
+        } else {
+            $user->email = Input::get('email');
+            $user->disabled = Input::get('disabled');
+            if (strlen($npassword) > 0) {
+                $user->password = $npassword;
+            }
+
+            $user->save();
+
+            if ($group != null) {
+                $user->roles()->sync(array(Toddish\Verify\Models\Role::find($group)->first()->id));
+            }
+            return View::make('user')->with('user', $user)->with('success', 'Successfully updated ' . $user->username . '\'s account info.');
+        }
+    }
+
     public function putUser(Toddish\Verify\Models\User $user = null) {
         if ($user == null) {
             return Redirect::to('/users')->with('error', 'Unknown user Id');
@@ -119,97 +187,14 @@ class UserController extends BaseController {
 
         if (Auth::user()->id != $user->id) {
             if (Auth::user()->can('update_user')) {
-
-                $validator = Validator::make(
-                    array('email'=>Input::get('email'),
-                        'group'=>Input::get('group')),
-                    array('email'=>'required|email|unique:users',
-                        'group'=>'required|numeric')
-                );
-
-                if ($user->email == Input::get('email')) {
-                    $validator = Validator::make(
-                        array('group'=>Input::get('group')),
-                        array('group'=>'required|numeric')
-                    );
-                }
-
-                if ($validator->fails()) {
-                    return View::make('user')->with('user', $user)->with('error', $validator->messages());
-                } else {
-
-                    $user->email = Input::get('email');
-                    $user->disabled = Input::get('disabled');
-                    $password = Input::get('npassword');
-                    if (strlen($password) > 0) {
-                        $validator = Validator::make(
-                            array('npassword'=>Input::get('npassword'),
-                                'npassword_confirmation'=>Input::get('npassword_confirmation')),
-                            array('npassword'=>'required|confirmed',
-                                'npassword_confirmation'=>'required|same:npassword')
-                        );
-                        if ($validator->fails()) {
-                            return View::make('user')->with('user', $user)->with('error', $validator->messages());
-                        }
-                        $user->password = Input::get('npassword');
-                    }
-
-                    $user->save();
-
-                    $user->roles()->sync(array(Toddish\Verify\Models\Role::find(Input::get('group'))->first()->id));
-                    return View::make('user')->with('user', $user)->with('success', 'Successfully updated ' . $user->username . '\'s account info.');
-                }
+                return $this->putUserMain($user);
             } else {
                 return Redirect::to('/users')->with('error', 'You do not have permission to update users.');
             }
         }
 
-        Validator::extend('passcheck', function($attribute, $value, $params) {
-            return Hash::check(Auth::user()->salt.$value, Auth::user()->getAuthPassword());
-        });
+        return $this->putUserMain($user);
 
-        $validator = Validator::make(
-            array('email'=>Input::get('email'),
-                'password'=>Input::get('password')),
-            array('email'=>'required|email|unique:users',
-                'password'=>'required|passcheck'),
-            array('passcheck'=>'Your current password is invalid')
-        );
-
-
-        if (Auth::user()->email == Input::get('email')) {
-            $validator = Validator::make(
-                array('password'=>Input::get('password')),
-                array('password'=>'required|passcheck'),
-                array('passcheck'=>'Your current password is invalid')
-            );
-        }
-
-        if ($validator->fails()) {
-            return View::make('user')->with('user', $user)->with('error', $validator->messages());
-        } else {
-            if (App::environment() =='demo') {
-                return View::make('user')->with('user', $user)->with('success', 'Cannot update user info while in demo mode.');
-            }
-
-            $user->email = Input::get('email');
-            $password = Input::get('npassword');
-            if (strlen($password) > 0) {
-                $validator = Validator::make(
-                    array('npassword'=>Input::get('npassword'),
-                        'npassword_confirmation'=>Input::get('npassword_confirmation')),
-                    array('npassword'=>'required|confirmed',
-                        'npassword_confirmation'=>'required|same:npassword')
-                );
-                if ($validator->fails()) {
-                    return View::make('user')->with('user', $user)->with('error', $validator->messages());
-                }
-                $user->password = Input::get('npassword');
-            }
-            $user->save();
-        }
-
-        return View::make('user')->with('user', $user)->with('success', 'Successfully updated your account info.');
     }
 
 }

@@ -75,6 +75,21 @@ $(document).ready(function() {
                 {{ Form::hidden($perm->name, $role->has($perm) ? 'true' : 'false', array('id' => $perm->name)) }}
                 <td><button id="{{$perm->name}}" type="button" class="btn perm {{ $role->has($perm) ? 'btn-success' : 'btn-danger' }}">{{ $role->has($perm) ? 'Allow' : 'Deny' }}</button></td>
             </tr>
+            <tr>
+                <td>Group</td>
+                {{--*/ $perm = Toddish\Verify\Models\Permission::firstOrNew(array('name'=>'create_group')) /*--}}
+                {{ Form::hidden($perm->name, $role->has($perm) ? 'true' : 'false', array('id' => $perm->name)) }}
+                <td><button id="{{$perm->name}}" type="button" class="btn perm {{ $role->has($perm) ? 'btn-success' : 'btn-danger' }}">{{ $role->has($perm) ? 'Allow' : 'Deny' }}</button></td>
+                {{--*/ $perm = Toddish\Verify\Models\Permission::firstOrNew(array('name'=>'read_group')) /*--}}
+                {{ Form::hidden($perm->name, $role->has($perm) ? 'true' : 'false', array('id' => $perm->name)) }}
+                <td><button id="{{$perm->name}}" type="button" class="btn perm {{ $role->has($perm) ? 'btn-success' : 'btn-danger' }}">{{ $role->has($perm) ? 'Allow' : 'Deny' }}</button></td>
+                {{--*/ $perm = Toddish\Verify\Models\Permission::firstOrNew(array('name'=>'update_group')) /*--}}
+                {{ Form::hidden($perm->name, $role->has($perm) ? 'true' : 'false', array('id' => $perm->name)) }}
+                <td><button id="{{$perm->name}}" type="button" class="btn perm {{ $role->has($perm) ? 'btn-success' : 'btn-danger' }}">{{ $role->has($perm) ? 'Allow' : 'Deny' }}</button></td>
+                {{--*/ $perm = Toddish\Verify\Models\Permission::firstOrNew(array('name'=>'delete_group')) /*--}}
+                {{ Form::hidden($perm->name, $role->has($perm) ? 'true' : 'false', array('id' => $perm->name)) }}
+                <td><button id="{{$perm->name}}" type="button" class="btn perm {{ $role->has($perm) ? 'btn-success' : 'btn-danger' }}">{{ $role->has($perm) ? 'Allow' : 'Deny' }}</button></td>
+            </tr>
         </tbody>
     </table>
 {{ Form::close() }}

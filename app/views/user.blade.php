@@ -50,6 +50,7 @@
                                 <div style="margin-bottom: 25px" class="input-group {{ isset($error) && $error->get('group') != null ? 'has-error' : '' }}">
                                     <span class="input-group-addon"><i class="glyphicon glyphicon-heart"></i></span>
                                     <select name='group' class="form-control" {{ Auth::user()->id == $user->id ? 'disabled' : 'enabled' }}>
+                                        <option selected value="-1">Please select a group</option>
                                         @foreach(Toddish\Verify\Models\Role::all() as $role)
                                             @if(count(Toddish\Verify\Models\Role::find($user->roles()->getRelatedIds())->all()) > 0 &&
                                             $role->id == Toddish\Verify\Models\Role::find($user->roles()->getRelatedIds())->all()[0]->id)
@@ -67,12 +68,12 @@
                                     </div>
                                 </div>
 
-                                <div style="margin-bottom: 25px" class="input-group {{ isset($error) && $error->get('npassword') != null ? 'has-error' : '' }}">
+                                <div style="margin-bottom: 25px" class="input-group {{ isset($error) && $error->get('new password') != null ? 'has-error' : '' }}">
                                     <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
                                     {{ Form::password('npassword', array('class'=>'form-control', 'placeholder' => 'new password')) }}
                                 </div>
 
-                                <div style="margin-bottom: 25px" class="input-group {{ isset($error) && $error->get('npassword') != null ? 'has-error' : '' }} {{ isset($error) && $error->get('npassword_confirmation') != null ? 'has-error' : '' }}">
+                                <div style="margin-bottom: 25px" class="input-group {{ isset($error) && $error->get('new password') != null ? 'has-error' : '' }} {{ isset($error) && $error->get('new password_confirmation') != null ? 'has-error' : '' }}">
                                     <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
                                     {{ Form::password('npassword_confirmation', array('class'=>'form-control', 'placeholder' => 'confirm new password')) }}
                                 </div>
