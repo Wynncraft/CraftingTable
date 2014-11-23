@@ -89,8 +89,8 @@ class UserController extends BaseController {
     }
 
     public function getUsers() {
-        if (Auth::user()->can('see_users') == false) {
-            Redirect::intended('/')->with('error', 'You do not have permission to view the users page');
+        if (Auth::user()->can('read_user') == false) {
+            Redirect::to('/')->with('error', 'You do not have permission to view the users page');
         }
 
         return View::make('users');
@@ -98,11 +98,11 @@ class UserController extends BaseController {
 
     public function getUser(Toddish\Verify\Models\User $user = null) {
         if ($user == null) {
-            return Redirect::intended('/users')->with('error', 'Unknown user Id');
+            return Redirect::to('/users')->with('error', 'Unknown user Id');
         }
 
         if (Auth::user()->id != $user->id) {
-            if (Auth::user()->can('edit_user')) {
+            if (Auth::user()->can('read_user')) {
                 return View::make('user')->with('user', $user);
             } else {
                 return Redirect::intended('/users/' . Auth::user()->id);
@@ -114,11 +114,11 @@ class UserController extends BaseController {
 
     public function putUser(Toddish\Verify\Models\User $user = null) {
         if ($user == null) {
-            return Redirect::intended('/users')->with('error', 'Unknown user Id');
+            return Redirect::to('/users')->with('error', 'Unknown user Id');
         }
 
         if (Auth::user()->id != $user->id) {
-            if (Auth::user()->can('edit_user')) {
+            if (Auth::user()->can('update_user')) {
 
                 $validator = Validator::make(
                     array('email'=>Input::get('email'),
@@ -160,7 +160,7 @@ class UserController extends BaseController {
                     return View::make('user')->with('user', $user)->with('success', 'Successfully updated ' . $user->username . '\'s account info.');
                 }
             } else {
-                return Redirect::intended('/users/' . Auth::user()->id);
+                return Redirect::to('/users')->with('error', 'You do not have permission to update users.');
             }
         }
 

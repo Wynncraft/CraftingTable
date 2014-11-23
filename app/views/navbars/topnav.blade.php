@@ -41,8 +41,8 @@
                      @endif
                 @endif
 
-                @if(Auth::user()->can('see_options'))
-                    @if($navBarPage == "groups")
+                @if(Auth::user()->can('edit_options'))
+                    @if($navBarPage == "options")
                         <li class="active"><a href="{{ URL::to('/options') }}">Options</a></li>
                     @else
                         <li><a href="{{ URL::to('/options') }}">Options</a></li>

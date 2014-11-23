@@ -15,6 +15,9 @@ Route::group(array('before' => 'auth'), function() {
 	Route::model('user', 'Toddish\Verify\Models\User', function() {
 	});
 
+	Route::model('group', 'Toddish\Verify\Models\Role', function() {
+	});
+
 	Route::get('/', function()
 	{
 		return View::make('index');
@@ -27,6 +30,13 @@ Route::group(array('before' => 'auth'), function() {
 	Route::get('/users/{user}', 'UserController@getUser');
 
 	Route::put('/users/{user}', 'UserController@putUser');
+
+	Route::get('/groups', 'GroupController@getGroups');
+
+	Route::get('/groups/add', 'GroupController@getAddGroup');
+
+	Route::get('/groups/{group}', 'GroupController@getGroup');
+
 });
 
 Route::group(array('before' => 'auth.guest'), function() {
