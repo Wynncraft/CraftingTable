@@ -16,13 +16,23 @@
                 <li><a href="{{ URL::to('/')  }}">Home</a></li>
             @endif
 
-            @if($topNavPage == "gnodes")
-                <li class="active"><a>Global Nodes</a></li>
-            @else
-                <li><a>Global Nodes</a></li>
-            @endif
-
             @if(Auth::check())
+                @if(Auth::user()->can('see_gnodes'))
+                    @if($topNavPage == "gnodes")
+                        <li class="active"><a>Global Nodes</a></li>
+                    @else
+                        <li><a>Global Nodes</a></li>
+                    @endif
+                @endif
+
+                @if(Auth::user()->can('see_users'))
+                    @if($topNavPage == "users")
+                        <li class="active"><a>Users</a></li>
+                    @else
+                        <li><a>Users</a></li>
+                    @endif
+                @endif
+
                 @if($topNavPage == "logout")
                     <li class="active"><a href="{{ URL::to('/logout')  }}">Sign Out</a></li>
                 @else

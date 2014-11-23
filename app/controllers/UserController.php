@@ -12,7 +12,6 @@ class UserController extends BaseController {
         $user->email = Input::get('email');
         $user->username = Input::get('username');
         $user->password = Input::get('password');
-        $user->verified = 1;
 
         Validator::extend('passmatches', function($attribute, $value, $params) {
             return $value[0] == $value[1] && strlen($value[0]) > 0;
@@ -36,9 +35,25 @@ class UserController extends BaseController {
                 return View::make('register')->with('success', 'Please login with the email demo@minestack.io and password demo');
             }
 
+            $first = false;
+
+            if (Toddish\Verify\Models\User::enabled()->get()->count() == 0) {
+                $user->verified = 1;
+                $first = true;
+            }
+
             $user->save();
+
             $theEmail = Input::get('email');
-            return View::make('register')->with('success', 'Thank you '.$theEmail.' for registering.');
+            if ($first == true) {
+                $role = Toddish\Verify\Models\Role::where('name', '=', 'Super Admin')->firstOrFail();
+                $user->roles()->sync(array($role->id));
+
+                return View::make('register')->with('success', 'Thank you '.$theEmail.' for registering. This is the first user so it was granted the Super Admin Permission');
+            } else {
+                return View::make('register')->with('success', 'Thank you '.$theEmail.' for registering.');
+            }
+
         }
     }
 
@@ -54,11 +69,13 @@ class UserController extends BaseController {
             Auth::attempt(array('identifier'=>$email, 'password'=>$password));
             return Redirect::intended('/');
         } catch(Toddish\Verify\UserPasswordIncorrectException $e) {
-            return View::make('login')->with('error', 'Invalid Username or password');
+            return View::make('login')->with('error', 'Invalid Email/Username or password');
         } catch (Toddish\Verify\UserNotFoundException  $e) {
-            return View::make('login')->with('error', 'Invalid Username or password');
+            return View::make('login')->with('error', 'Invalid Email/Username or password');
         } catch (Toddish\Verify\UserDisabledException  $e) {
             return View::make('login')->with('error', 'User is disabled');
+        } catch (Toddish\Verify\UserUnverifiedException  $e) {
+            return View::make('login')->with('error', 'User is not verified');
         }
     }
 
