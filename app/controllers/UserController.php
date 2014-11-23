@@ -27,13 +27,13 @@ class UserController extends BaseController {
                 'password_confirmation'=>'required|same:password')
         );
 
-        if (App::environment() =='demo') {
-            return View::make('register')->with('success', 'Please login with the email demo@minestack.io and password demo');
-        }
-
         if ($validator->fails()) {
             return View::make('register')->with('error', $validator->messages());
         } else {
+            if (App::environment() =='demo') {
+                return View::make('register')->with('success', 'Please login with the email demo@minestack.io and password demo');
+            }
+
             $user->save();
             $theEmail = Input::get('email');
             return View::make('register')->with('success', 'Thank you '.$theEmail.' for registering.');
