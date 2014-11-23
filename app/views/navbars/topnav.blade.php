@@ -27,9 +27,9 @@
 
                 @if(Auth::user()->can('see_users'))
                     @if($navBarPage == "users")
-                        <li class="active"><a>Users</a></li>
+                        <li class="active"><a href="{{ URL::to('/users') }}">Users</a></li>
                     @else
-                        <li><a>Users</a></li>
+                        <li><a href="{{ URL::to('/users') }}">Users</a></li>
                     @endif
                 @endif
 
