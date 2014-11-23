@@ -44,7 +44,27 @@
 
                                 <div style="margin-bottom: 25px" class="input-group {{ isset($error) && $error->get('username') != null ? 'has-error' : '' }}">
                                     <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
-                                    {{ Form::text('username', $user->username, array('class'=>'form-control', 'placeholder' => 'username', 'disabled')) }}
+                                    {{ Form::text('username', $user->username, array('class'=>'form-control', 'placeholder' => 'username', Auth::user()->id == $user->id ? 'disabled' : 'enabled')) }}
+                                </div>
+
+                                <div style="margin-bottom: 25px" class="input-group {{ isset($error) && $error->get('group') != null ? 'has-error' : '' }}">
+                                    <span class="input-group-addon"><i class="glyphicon glyphicon-heart"></i></span>
+                                    <select name='group' class="form-control" {{ Auth::user()->id == $user->id ? 'disabled' : 'enabled' }}>
+                                        @foreach(Toddish\Verify\Models\Role::all() as $role)
+                                            @if(count(Toddish\Verify\Models\Role::find($user->roles()->getRelatedIds())->all()) > 0 &&
+                                            $role->id == Toddish\Verify\Models\Role::find($user->roles()->getRelatedIds())->all()[0]->id)
+                                                <option selected value="{{ $role->id }}">{{ $role->name }}</option>
+                                            @else
+                                                <option value="{{ $role->id }}">{{ $role->name }}</option>
+                                            @endif
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div style="margin-bottom: 25px" class="input-group {{ isset($error) && $error->get('verified') != null ? 'has-error' : '' }}">
+                                    <div class="checkbox">
+                                        <label>{{ Form::checkbox('verified', 1, $user->verified == true ? true : false, array('class'=>'', Auth::user()->id == $user->id ? 'disabled' : 'enabled')) }} Verified Account</label>
+                                    </div>
                                 </div>
 
                                 <div style="margin-bottom: 25px" class="input-group {{ isset($error) && $error->get('npassword') != null ? 'has-error' : '' }}">
@@ -57,10 +77,12 @@
                                     {{ Form::password('npassword_confirmation', array('class'=>'form-control', 'placeholder' => 'confirm new password')) }}
                                 </div>
 
-                                <div style="margin-bottom: 25px" class="input-group {{ isset($error) && $error->get('password') != null ? 'has-error' : '' }}">
-                                    <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
-                                    {{ Form::password('password', array('class'=>'form-control', 'placeholder' => 'current password')) }}
-                                </div>
+                                @if(Auth::user()->id == $user->id)
+                                    <div style="margin-bottom: 25px" class="input-group {{ isset($error) && $error->get('password') != null ? 'has-error' : '' }}">
+                                        <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+                                        {{ Form::password('password', array('class'=>'form-control', 'placeholder' => 'current password')) }}
+                                    </div>
+                                @endif
 
                             <div style="margin-top:10px" class="form-group">
                                 <div class="col-md-12">

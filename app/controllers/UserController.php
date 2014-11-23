@@ -99,7 +99,11 @@ class UserController extends BaseController {
         }
 
         if (Auth::user()->id != $user->id) {
-            return Redirect::intended('/users/'.Auth::user()->id);
+            if (Auth::user()->can('edit_user')) {
+                return View::make('user')->with('user', $user);
+            } else {
+                return Redirect::intended('/users/' . Auth::user()->id);
+            }
         }
 
         return View::make('user')->with('user', $user);
@@ -111,7 +115,50 @@ class UserController extends BaseController {
         }
 
         if (Auth::user()->id != $user->id) {
-            return Redirect::intended('/users/'.Auth::user()->id);
+            if (Auth::user()->can('edit_user')) {
+
+                $validator = Validator::make(
+                    array('email'=>Input::get('email'),
+                        'group'=>Input::get('group')),
+                    array('email'=>'required|email|unique:users',
+                        'group'=>'required|numeric')
+                );
+
+                if ($user->email == Input::get('email')) {
+                    $validator = Validator::make(
+                        array('group'=>Input::get('group')),
+                        array('group'=>'required|numeric')
+                    );
+                }
+
+                if ($validator->fails()) {
+                    return View::make('user')->with('user', $user)->with('error', $validator->messages());
+                } else {
+
+                    $user->email = Input::get('email');
+                    $user->verified = Input::get('verified');
+                    $password = Input::get('npassword');
+                    if (strlen($password) > 0) {
+                        $validator = Validator::make(
+                            array('npassword'=>Input::get('npassword'),
+                                'npassword_confirmation'=>Input::get('npassword_confirmation')),
+                            array('npassword'=>'required|confirmed',
+                                'npassword_confirmation'=>'required|same:npassword')
+                        );
+                        if ($validator->fails()) {
+                            return View::make('user')->with('user', $user)->with('error', $validator->messages());
+                        }
+                        $user->password = Input::get('npassword');
+                    }
+
+                    $user->save();
+
+                    $user->roles()->sync(array(Toddish\Verify\Models\Role::find(Input::get('group'))->first()->id));
+                    return View::make('user')->with('user', $user)->with('success', 'Successfully updated ' . $user->username . '\'s account info.');
+                }
+            } else {
+                return Redirect::intended('/users/' . Auth::user()->id);
+            }
         }
 
         Validator::extend('passcheck', function($attribute, $value, $params) {
@@ -125,6 +172,7 @@ class UserController extends BaseController {
                 'password'=>'required|passcheck'),
             array('passcheck'=>'Your current password is invalid')
         );
+
 
         if (Auth::user()->email == Input::get('email')) {
             $validator = Validator::make(
