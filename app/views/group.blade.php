@@ -37,7 +37,6 @@ $(document).ready(function() {
 @endif
 
 {{ Form::open(array('url '=> $role->exits == true ? 'group/'.$role->id : 'group/add', 'class' => 'form-horizontal', 'method' => $role->exits == true ? 'put' : 'post')) }}
-
     <div style="margin-bottom: 25px" class="input-group {{ isset($error) && $error->get('name') != null ? 'has-error' : '' }}">
             {{ Form::label('name', 'Group Name', array('class'=>'input-control','for'=>'name')) }}
             {{ Form::text('name', $role->name, array('class'=>'form-control', 'placeholder' => 'group name', 'id' => 'name')) }}
@@ -49,6 +48,7 @@ $(document).ready(function() {
     </div>
 
     {{ Form::label('permission_matrix', 'Permission Matrix', array('class'=>'input-control')) }}
+
     <table class="table table-striped table-bordered table-hover">
         <thread>
             <tr>
@@ -77,7 +77,6 @@ $(document).ready(function() {
             </tr>
         </tbody>
     </table>
-
 {{ Form::close() }}
 
 @stop
