@@ -34,7 +34,7 @@
                             </div>
                             @endif
 
-                            {{ Form::open(array('url '=> 'login', 'class' => 'form-horizontal')) }}
+                            {{ Form::open(array('class' => 'form-horizontal')) }}
 
                                     <div style="margin-bottom: 25px" class="input-group">
                                         <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span>

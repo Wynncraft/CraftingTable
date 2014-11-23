@@ -36,15 +36,25 @@ $(document).ready(function() {
     </div>
 @endif
 
-{{ Form::open(array('url '=> $role->exits == true ? 'group/'.$role->id : 'group/add', 'class' => 'form-horizontal', 'method' => $role->exits == true ? 'put' : 'post')) }}
+@if(isset($success))
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="alert alert-success">
+                <p>{{ $success }}</p>
+            </div>
+        </div>
+    </div>
+@endif
+
+{{ Form::open(array('class' => 'form-horizontal', 'method'=>$role->exists == true ? 'PUT' : 'POST')) }}
     <div style="margin-bottom: 25px" class="input-group {{ isset($error) && $error->get('name') != null ? 'has-error' : '' }}">
-            {{ Form::label('name', 'Group Name', array('class'=>'input-control','for'=>'name')) }}
-            {{ Form::text('name', $role->name, array('class'=>'form-control', 'placeholder' => 'group name', 'id' => 'name')) }}
+        {{ Form::label('name', 'Group Name', array('class'=>'input-control','for'=>'name')) }}
+        {{ Form::text('name', $role->name, array('class'=>'form-control', 'placeholder' => 'group name', 'id' => 'name')) }}
     </div>
 
     <div style="margin-bottom: 25px" class="input-group {{ isset($error) && $error->get('description') != null ? 'has-error' : '' }}">
-                {{ Form::label('description', 'Group Description', array('class'=>'input-control','for'=>'description')) }}
-                {{ Form::text('name', $role->description, array('class'=>'form-control', 'placeholder' => 'group name', 'id' => 'description', 'maxlength'=> '255')) }}
+        {{ Form::label('description', 'Group Description', array('class'=>'input-control','for'=>'description')) }}
+        {{ Form::text('description', $role->description, array('class'=>'form-control', 'placeholder' => 'group name', 'id' => 'description', 'maxlength'=> '255')) }}
     </div>
 
     {{ Form::label('permission_matrix', 'Permission Matrix', array('class'=>'input-control')) }}
@@ -63,35 +73,69 @@ $(document).ready(function() {
             <tr>
                 <td>User</td>
                 {{--*/ $perm = Toddish\Verify\Models\Permission::firstOrNew(array('name'=>'create_user')) /*--}}
-                {{ Form::hidden($perm->name, $role->has($perm) ? 'true' : 'false', array('id' => $perm->name)) }}
-                <td><button id="{{$perm->name}}" type="button" class="btn perm {{ $role->has($perm) ? 'btn-success' : 'btn-danger' }}">{{ $role->has($perm) ? 'Allow' : 'Deny' }}</button></td>
+                {{--*/ $hasPerm = ($role->permissions()->where('name', '=', $perm->name)->first() == null) ? false : true /*--}}
+                {{ Form::hidden($perm->name, $hasPerm ? 'true' : 'false', array('id' => $perm->name)) }}
+                <td><button id="{{$perm->name}}" type="button" class="btn perm {{ $hasPerm ? 'btn-success' : 'btn-danger' }}">{{ $hasPerm ? 'Allow' : 'Deny' }}</button></td>
                 {{--*/ $perm = Toddish\Verify\Models\Permission::firstOrNew(array('name'=>'read_user')) /*--}}
-                {{ Form::hidden($perm->name, $role->has($perm) ? 'true' : 'false', array('id' => $perm->name)) }}
-                <td><button id="{{$perm->name}}" type="button" class="btn perm {{ $role->has($perm) ? 'btn-success' : 'btn-danger' }}">{{ $role->has($perm) ? 'Allow' : 'Deny' }}</button></td>
+                {{--*/ $hasPerm = ($role->permissions()->where('name', '=', $perm->name)->first() == null) ? false : true /*--}}
+                {{ Form::hidden($perm->name, $hasPerm ? 'true' : 'false', array('id' => $perm->name)) }}
+                <td><button id="{{$perm->name}}" type="button" class="btn perm {{ $hasPerm ? 'btn-success' : 'btn-danger' }}">{{ $hasPerm ? 'Allow' : 'Deny' }}</button></td>
                 {{--*/ $perm = Toddish\Verify\Models\Permission::firstOrNew(array('name'=>'update_user')) /*--}}
-                {{ Form::hidden($perm->name, $role->has($perm) ? 'true' : 'false', array('id' => $perm->name)) }}
-                <td><button id="{{$perm->name}}" type="button" class="btn perm {{ $role->has($perm) ? 'btn-success' : 'btn-danger' }}">{{ $role->has($perm) ? 'Allow' : 'Deny' }}</button></td>
+                {{--*/ $hasPerm = ($role->permissions()->where('name', '=', $perm->name)->first() == null) ? false : true /*--}}
+                {{ Form::hidden($perm->name, $hasPerm ? 'true' : 'false', array('id' => $perm->name)) }}
+                <td><button id="{{$perm->name}}" type="button" class="btn perm {{ $hasPerm ? 'btn-success' : 'btn-danger' }}">{{ $hasPerm ? 'Allow' : 'Deny' }}</button></td>
                 {{--*/ $perm = Toddish\Verify\Models\Permission::firstOrNew(array('name'=>'delete_user')) /*--}}
-                {{ Form::hidden($perm->name, $role->has($perm) ? 'true' : 'false', array('id' => $perm->name)) }}
-                <td><button id="{{$perm->name}}" type="button" class="btn perm {{ $role->has($perm) ? 'btn-success' : 'btn-danger' }}">{{ $role->has($perm) ? 'Allow' : 'Deny' }}</button></td>
+                {{--*/ $hasPerm = ($role->permissions()->where('name', '=', $perm->name)->first() == null) ? false : true /*--}}
+                {{ Form::hidden($perm->name, $hasPerm ? 'true' : 'false', array('id' => $perm->name)) }}
+                <td><button id="{{$perm->name}}" type="button" class="btn perm {{ $hasPerm ? 'btn-success' : 'btn-danger' }}">{{ $hasPerm ? 'Allow' : 'Deny' }}</button></td>
             </tr>
             <tr>
                 <td>Group</td>
                 {{--*/ $perm = Toddish\Verify\Models\Permission::firstOrNew(array('name'=>'create_group')) /*--}}
-                {{ Form::hidden($perm->name, $role->has($perm) ? 'true' : 'false', array('id' => $perm->name)) }}
-                <td><button id="{{$perm->name}}" type="button" class="btn perm {{ $role->has($perm) ? 'btn-success' : 'btn-danger' }}">{{ $role->has($perm) ? 'Allow' : 'Deny' }}</button></td>
+                {{--*/ $hasPerm = ($role->permissions()->where('name', '=', $perm->name)->first() == null) ? false : true /*--}}
+                {{ Form::hidden($perm->name, $hasPerm ? 'true' : 'false', array('id' => $perm->name)) }}
+                <td><button id="{{$perm->name}}" type="button" class="btn perm {{$hasPerm ? 'btn-success' : 'btn-danger' }}">{{ $hasPerm ? 'Allow' : 'Deny' }}</button></td>
                 {{--*/ $perm = Toddish\Verify\Models\Permission::firstOrNew(array('name'=>'read_group')) /*--}}
-                {{ Form::hidden($perm->name, $role->has($perm) ? 'true' : 'false', array('id' => $perm->name)) }}
-                <td><button id="{{$perm->name}}" type="button" class="btn perm {{ $role->has($perm) ? 'btn-success' : 'btn-danger' }}">{{ $role->has($perm) ? 'Allow' : 'Deny' }}</button></td>
+                {{--*/ $hasPerm = ($role->permissions()->where('name', '=', $perm->name)->first() == null) ? false : true /*--}}
+                {{ Form::hidden($perm->name, $hasPerm ? 'true' : 'false', array('id' => $perm->name)) }}
+                <td><button id="{{$perm->name}}" type="button" class="btn perm {{ $hasPerm ? 'btn-success' : 'btn-danger' }}">{{ $hasPerm ? 'Allow' : 'Deny' }}</button></td>
                 {{--*/ $perm = Toddish\Verify\Models\Permission::firstOrNew(array('name'=>'update_group')) /*--}}
-                {{ Form::hidden($perm->name, $role->has($perm) ? 'true' : 'false', array('id' => $perm->name)) }}
-                <td><button id="{{$perm->name}}" type="button" class="btn perm {{ $role->has($perm) ? 'btn-success' : 'btn-danger' }}">{{ $role->has($perm) ? 'Allow' : 'Deny' }}</button></td>
+                {{--*/ $hasPerm = ($role->permissions()->where('name', '=', $perm->name)->first() == null) ? false : true /*--}}
+                {{ Form::hidden($perm->name, $hasPerm ? 'true' : 'false', array('id' => $perm->name)) }}
+                <td><button id="{{$perm->name}}" type="button" class="btn perm {{ $hasPerm ? 'btn-success' : 'btn-danger' }}">{{ $hasPerm ? 'Allow' : 'Deny' }}</button></td>
                 {{--*/ $perm = Toddish\Verify\Models\Permission::firstOrNew(array('name'=>'delete_group')) /*--}}
-                {{ Form::hidden($perm->name, $role->has($perm) ? 'true' : 'false', array('id' => $perm->name)) }}
-                <td><button id="{{$perm->name}}" type="button" class="btn perm {{ $role->has($perm) ? 'btn-success' : 'btn-danger' }}">{{ $role->has($perm) ? 'Allow' : 'Deny' }}</button></td>
+                {{--*/ $hasPerm = ($role->permissions()->where('name', '=', $perm->name)->first() == null) ? false : true /*--}}
+                {{ Form::hidden($perm->name, $hasPerm ? 'true' : 'false', array('id' => $perm->name)) }}
+                <td><button id="{{$perm->name}}" type="button" class="btn perm {{ $hasPerm ? 'btn-success' : 'btn-danger' }}">{{ $hasPerm ? 'Allow' : 'Deny' }}</button></td>
+            </tr>
+            <tr>
+                <td>Network</td>
+                {{--*/ $perm = Toddish\Verify\Models\Permission::firstOrNew(array('name'=>'create_network')) /*--}}
+                {{--*/ $hasPerm = ($role->permissions()->where('name', '=', $perm->name)->first() == null) ? false : true /*--}}
+                {{ Form::hidden($perm->name, $hasPerm ? 'true' : 'false', array('id' => $perm->name)) }}
+                <td><button id="{{$perm->name}}" type="button" class="btn perm {{ $hasPerm ? 'btn-success' : 'btn-danger' }}">{{ $hasPerm ? 'Allow' : 'Deny' }}</button></td>
+                {{--*/ $perm = Toddish\Verify\Models\Permission::firstOrNew(array('name'=>'read_network')) /*--}}
+                {{--*/ $hasPerm = ($role->permissions()->where('name', '=', $perm->name)->first() == null) ? false : true /*--}}
+                {{ Form::hidden($perm->name, $hasPerm ? 'true' : 'false', array('id' => $perm->name)) }}
+                <td><button id="{{$perm->name}}" type="button" class="btn perm {{ $hasPerm ? 'btn-success' : 'btn-danger' }}">{{ $hasPerm ? 'Allow' : 'Deny' }}</button></td>
+                {{--*/ $perm = Toddish\Verify\Models\Permission::firstOrNew(array('name'=>'update_network')) /*--}}
+                {{--*/ $hasPerm = ($role->permissions()->where('name', '=', $perm->name)->first() == null) ? false : true /*--}}
+                {{ Form::hidden($perm->name, $hasPerm ? 'true' : 'false', array('id' => $perm->name)) }}
+                <td><button id="{{$perm->name}}" type="button" class="btn perm {{ $hasPerm ? 'btn-success' : 'btn-danger' }}">{{ $hasPerm ? 'Allow' : 'Deny' }}</button></td>
+                {{--*/ $perm = Toddish\Verify\Models\Permission::firstOrNew(array('name'=>'delete_network')) /*--}}
+                {{--*/ $hasPerm = ($role->permissions()->where('name', '=', $perm->name)->first() == null) ? false : true /*--}}
+                {{ Form::hidden($perm->name, $hasPerm ? 'true' : 'false', array('id' => $perm->name)) }}
+                <td><button id="{{$perm->name}}" type="button" class="btn perm {{ $hasPerm ? 'btn-success' : 'btn-danger' }}">{{ $hasPerm ? 'Allow' : 'Deny' }}</button></td>
             </tr>
         </tbody>
     </table>
+
+    <div style="margin-top:10px" class="form-group">
+        <div class="col-md-12">
+            {{ Form::submit('Save', array('class'=>'btn btn-primary')) }}
+        </div>
+    </div>
+
 {{ Form::close() }}
 
 @stop

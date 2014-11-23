@@ -35,7 +35,7 @@
                         </div>
                         @endif
 
-                        {{ Form::open(array('url '=> 'user/'.$user->id, 'class' => 'form-horizontal', 'method' => 'put')) }}
+                        {{ Form::open(array('class' => 'form-horizontal', 'method' => 'put')) }}
 
                                 <div style="margin-bottom: 25px" class="input-group {{ isset($error) && $error->get('email') != null ? 'has-error' : '' }}">
                                     <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span>
@@ -87,7 +87,7 @@
 
                             <div style="margin-top:10px" class="form-group">
                                 <div class="col-md-12">
-                                    {{ Form::submit('Save', array('class'=>'btn btn-success')) }}
+                                    {{ Form::submit('Save', array('class'=>'btn btn-primary')) }}
                                 </div>
                             </div>
                             {{ Form::close() }}
