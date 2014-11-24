@@ -38,6 +38,13 @@ class GroupController extends BaseController {
     }
 
     public function putGroup(Toddish\Verify\Models\Role $role = null) {
+        if ($role == null) {
+            return Redirect::to('/groups')->with('error', 'Unknown group Id');
+        }
+
+        if ($role->name == Config::get('verify::super_admin')) {
+            return Redirect::to('/groups')->with('error', 'Cannot modify Super Admin group.');
+        }
 
         $validator = Validator::make(
             array('name'=>$role->name),
@@ -56,7 +63,7 @@ class GroupController extends BaseController {
 
             $role->permissions()->sync($perms);
 
-            return View::make('group')->with('success', 'Successfully saved the group')->with('role', $role);
+            return View::make('group')->with('success', 'Successfully updated the group '.$role->name)->with('role', $role);
         }
     }
 
