@@ -41,6 +41,8 @@ Route::group(array('before' => 'auth'), function() {
 
 	Route::put('/groups/{group}', 'GroupController@putGroup');
 
+	Route::delete('/groups/{group}', 'GroupController@deleteGroup');
+
 });
 
 Route::group(array('before' => 'auth.guest'), function() {

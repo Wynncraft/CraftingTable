@@ -37,6 +37,20 @@ class GroupController extends BaseController {
         return $perms;
     }
 
+    public function deleteGroup(Toddish\Verify\Models\Role $role = null) {
+        if ($role == null) {
+            return Redirect::to('/groups')->with('error', 'Unknown group Id');
+        }
+
+        if ($role->name == Config::get('verify::super_admin')) {
+            return Redirect::to('/groups')->with('error', 'Cannot delete Super Admin group.');
+        }
+
+        $role->delete();
+
+        return Redirect::to('/groups')->with('success', 'Deleted group '.$role->name);
+    }
+
     public function putGroup(Toddish\Verify\Models\Role $role = null) {
         if ($role == null) {
             return Redirect::to('/groups')->with('error', 'Unknown group Id');

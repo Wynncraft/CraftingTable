@@ -133,6 +133,11 @@ $(document).ready(function() {
     <div style="margin-top:10px" class="form-group">
         <div class="col-md-12">
             {{ Form::submit('Save', array('class'=>'btn btn-primary')) }}
+            @if($role->exists == true)
+                {{ Form::open(array('class' => 'form-horizontal', 'method'=>'DELETE')) }}
+                    {{ Form::submit('Delete', array('class'=>'btn btn-danger')) }}
+                {{ Form::close() }}
+            @endif
         </div>
     </div>
 
