@@ -13,7 +13,7 @@ class Demo extends Migration
     public function up()
     {
         $role = new Toddish\Verify\Models\Role;
-        $role->name = 'Super Admin';
+        $role->name = Config::get('verify::super_admin');
         $role->description = 'Master Administrator Group';
         $role->save();
 

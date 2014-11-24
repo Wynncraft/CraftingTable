@@ -11,6 +11,10 @@ class GroupController extends BaseController {
             return Redirect::to('/groups')->with('error', 'Unknown group Id');
         }
 
+        if ($role->name == Config::get('verify::super_admin')) {
+            return Redirect::to('/groups')->with('error', 'Cannot edit Super Admin group.');
+        }
+
         return View::make('group')->with('role', $role);
     }
 

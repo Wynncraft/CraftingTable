@@ -49,7 +49,7 @@ class UserController extends BaseController {
 
             $theEmail = Input::get('email');
             if ($first == true) {
-                $role = Toddish\Verify\Models\Role::where('name', '=', 'Super Admin')->firstOrFail();
+                $role = Toddish\Verify\Models\Role::where('name', '=', Config::get('verify::super_admin'))->firstOrFail();
                 $user->roles()->sync(array($role->id));
 
                 return View::make('register')->with('success', 'Thank you '.$theEmail.' for registering. This is the first user so it was granted the Super Admin Permission');
