@@ -16,13 +16,15 @@ $(document).ready(function() {
 
 
 @if(Session::has('error'))
-    <div class="alert alert-danger">
+    <div class="alert alert-danger alert-dismissible">
+        <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
         <p>{{ Session::get('error') }}</p>
     </div>
 @endif
 
 @if(Session::has('success'))
-    <div class="alert alert-success">
+    <div class="alert alert-success alert-dismissible">
+        <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
         <p>{{ Session::get('success') }}</p>
     </div>
 @endif

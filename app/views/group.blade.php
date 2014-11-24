@@ -25,7 +25,8 @@ $(document).ready(function() {
 @if(isset($error))
     <div class="row">
         <div class="col-sm-12">
-            <div class="alert alert-danger">
+            <div class="alert alert-danger alert-dismissible">
+                <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
                 <ul>
                     @foreach($error->all() as $errorMessage)
                         <li>{{ $errorMessage  }}</li>
@@ -39,7 +40,8 @@ $(document).ready(function() {
 @if(isset($success))
     <div class="row">
         <div class="col-sm-12">
-            <div class="alert alert-success">
+            <div class="alert alert-success alert-dismissible">
+                <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
                 <p>{{ $success }}</p>
             </div>
         </div>
@@ -133,14 +135,21 @@ $(document).ready(function() {
     <div style="margin-top:10px" class="form-group">
         <div class="col-md-12">
             {{ Form::submit('Save', array('class'=>'btn btn-primary')) }}
-            @if($role->exists == true)
-                {{ Form::open(array('class' => 'form-horizontal', 'method'=>'DELETE')) }}
-                    {{ Form::submit('Delete', array('class'=>'btn btn-danger')) }}
-                {{ Form::close() }}
-            @endif
         </div>
     </div>
 
 {{ Form::close() }}
+
+
+@if($role->exists == true)
+    {{ Form::open(array('class' => 'form-horizontal', 'method'=>'DELETE')) }}
+        <div style="margin-top:10px" class="form-group">
+            <div class="col-md-12">
+                {{ Form::submit('Delete', array('class'=>'btn btn-danger')) }}
+            </div>
+        </div>
+    {{ Form::close() }}
+@endif
+
 
 @stop

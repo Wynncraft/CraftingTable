@@ -14,7 +14,8 @@
                         @if(isset($error))
                             <div class="row">
                                 <div class="col-sm-12">
-                                    <div class="alert alert-danger">
+                                    <div class="alert alert-danger alert-dismissible">
+                                        <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
                                         <ul>
                                             @foreach($error->all() as $errorMessage)
                                                 <li>{{ $errorMessage  }}</li>
@@ -28,7 +29,8 @@
                         @if(isset($success))
                         <div class="row">
                             <div class="col-sm-12">
-                                <div class="alert alert-success">
+                                <div class="alert alert-success alert-dismissible">
+                                    <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
                                     <p>{{ $success  }}</p>
                                     <p>Please <a href="{{ URL::to('login') }}">click here</a> to login</p>
                                 </div>
