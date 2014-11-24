@@ -19,82 +19,19 @@ class GroupController extends BaseController {
         return View::make('group')->with('role', $role);
     }
 
-    private function groupPermissions($role) {
+    private function groupPermissions() {
         $perms = array();
 
-        $perm = 'create_user';
-        if (Input::get($perm) == "true") {
-            $permission = Toddish\Verify\Models\Permission::firstOrNew(array('name' => $perm));
-            $permission->save();
-            $perms[] = $permission->id;
-        }
-        $perm = 'read_user';
-        if (Input::get($perm) == "true") {
-            $permission = Toddish\Verify\Models\Permission::firstOrNew(array('name' => $perm));
-            $permission->save();
-            $perms[] = $permission->id;
-        }
-        $perm = 'update_user';
-        if (Input::get($perm) == "true") {
-            $permission = Toddish\Verify\Models\Permission::firstOrNew(array('name' => $perm));
-            $permission->save();
-            $perms[] = $permission->id;
-        }
-        $perm = 'delete_user';
-        if (Input::get($perm) == "true") {
-            $permission = Toddish\Verify\Models\Permission::firstOrNew(array('name' => $perm));
-            $permission->save();
-            $perms[] = $permission->id;
-        }
+        $permInput = Input::all();
 
-        $perm = 'create_group';
-        if (Input::get($perm) == "true") {
-            $permission = Toddish\Verify\Models\Permission::firstOrNew(array('name' => $perm));
-            $permission->save();
-            $perms[] = $permission->id;
-        }
-        $perm = 'read_group';
-        if (Input::get($perm) == "true") {
-            $permission = Toddish\Verify\Models\Permission::firstOrNew(array('name' => $perm));
-            $permission->save();
-            $perms[] = $permission->id;
-        }
-        $perm = 'update_group';
-        if (Input::get($perm) == "true") {
-            $permission = Toddish\Verify\Models\Permission::firstOrNew(array('name' => $perm));
-            $permission->save();
-            $perms[] = $permission->id;
-        }
-        $perm = 'delete_group';
-        if (Input::get($perm) == "true") {
-            $permission = Toddish\Verify\Models\Permission::firstOrNew(array('name' => $perm));
-            $permission->save();
-            $perms[] = $permission->id;
-        }
-
-        $perm = 'create_network';
-        if (Input::get($perm) == "true") {
-            $permission = Toddish\Verify\Models\Permission::firstOrNew(array('name' => $perm));
-            $permission->save();
-            $perms[] = $permission->id;
-        }
-        $perm = 'read_network';
-        if (Input::get($perm) == "true") {
-            $permission = Toddish\Verify\Models\Permission::firstOrNew(array('name' => $perm));
-            $permission->save();
-            $perms[] = $permission->id;
-        }
-        $perm = 'update_network';
-        if (Input::get($perm) == "true") {
-            $permission = Toddish\Verify\Models\Permission::firstOrNew(array('name' => $perm));
-            $permission->save();
-            $perms[] = $permission->id;
-        }
-        $perm = 'delete_network';
-        if (Input::get($perm) == "true") {
-            $permission = Toddish\Verify\Models\Permission::firstOrNew(array('name' => $perm));
-            $permission->save();
-            $perms[] = $permission->id;
+        foreach ($permInput as $perm => $value) {
+            if (substr($perm, 0, 5) == 'PERM:') {
+                if ($value == 'true') {
+                    $permission = Toddish\Verify\Models\Permission::firstOrNew(array('name' => substr($perm, 5, strlen($perm))));
+                    $permission->save();
+                    $perms[] = $permission->id;
+                }
+            }
         }
 
         return $perms;
@@ -115,7 +52,7 @@ class GroupController extends BaseController {
 
             $role->save();
 
-            $perms = $this->groupPermissions($role);
+            $perms = $this->groupPermissions();
 
             $role->permissions()->sync($perms);
 
@@ -137,7 +74,7 @@ class GroupController extends BaseController {
             $role->description = Input::get('description');
             $role->save();
 
-            $perms = $this->groupPermissions($role);
+            $perms = $this->groupPermissions();
 
             $role->permissions()->sync($perms);
 
