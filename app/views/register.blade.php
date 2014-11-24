@@ -32,7 +32,7 @@
                                 <div class="alert alert-success alert-dismissible">
                                     <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
                                     <p>{{ $success  }}</p>
-                                    <p>Please <a href="{{ URL::to('login') }}">click here</a> to login</p>
+                                    <p>Please <a class="alert-link" href="{{ URL::to('login') }}">click here</a> to login</p>
                                 </div>
                             </div>
                         </div>
