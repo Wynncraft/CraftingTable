@@ -21,7 +21,7 @@
 @if(Auth::user()->can('read_network'))
     <div class="panel-group" id="accordion">
         @if(Auth::user()->can('create_network'))
-            <div class="panel panel-default">
+            <div class="panel panel-info">
                 <div class="panel-heading">
                     <h4 class="panel-title">
                         <a data-toggle="collapse" data-parent="#accordion" href="#collapseAdd">
