@@ -10,18 +10,18 @@
     </div>
     <div id="navbar" class="navbar-collapse collapse">
         <ul class="nav navbar-nav">
-            @if($navBarPage == "home")
-                <li class="active"><a href="{{ URL::to('/')  }}">Home</a></li>
+            @if($navBarPage == "networks")
+                <li class="active"><a href="{{ URL::to('/')  }}">Networks</a></li>
             @else
-                <li><a href="{{ URL::to('/')  }}">Home</a></li>
+                <li><a href="{{ URL::to('/')  }}">Networks</a></li>
             @endif
 
             @if(Auth::check())
-                @if(Auth::user()->can('see_gnodes'))
-                    @if($navBarPage == "gnodes")
-                        <li class="active"><a>Global Nodes</a></li>
+                @if(Auth::user()->can('see_nodes'))
+                    @if($navBarPage == "nodes")
+                        <li class="active"><a>Nodes</a></li>
                     @else
-                        <li><a>Global Nodes</a></li>
+                        <li><a>Nodes</a></li>
                     @endif
                 @endif
 

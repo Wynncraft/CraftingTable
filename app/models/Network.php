@@ -10,6 +10,13 @@ class Network extends Eloquent {
     protected $table = 'networks';
 
     /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = ['name', 'description'];
+
+    /**
      * Users
      *
      * @return object

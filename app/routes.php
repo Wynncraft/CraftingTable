@@ -49,15 +49,9 @@ Route::group(array('before' => 'auth'), function() {
 
 	Route::delete('/groups/{group}', 'GroupController@deleteGroup');
 
-	Route::get('/network/add', 'NetworkController@getAddNetwork');
+	Route::post('/network/add', array('uses' => 'NetworkController@postNetwork'));
 
-	Route::post('/network/add', 'NetworkController@postNetwork');
-
-	Route::get('/network/{network}', 'NetworkController@getNetwork');
-
-	Route::put('/network/{network}', 'NetworkController@putNetwork');
-
-	Route::delete('/network/{network}', 'NetworkController@deleteNetwork');
+	Route::put('/network/{network}', array('uses' => 'NetworkController@putNetwork'));
 
 });
 
