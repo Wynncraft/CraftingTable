@@ -53,6 +53,8 @@ Route::group(array('before' => 'auth'), function() {
 
 	Route::put('/network/{network}', array('uses' => 'NetworkController@putNetwork'));
 
+	Route::delete('/network/{network}', array('uses' => 'NetworkController@deleteNetwork'));
+
 });
 
 Route::group(array('before' => 'auth.guest'), function() {

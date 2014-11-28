@@ -63,6 +63,8 @@ class NetworkController extends BaseController {
             return Redirect::to('/')->with('error', 'Unknown network Id');
         }
 
+        $network->delete();
+
         return Redirect::to('/')->with('success', 'Deleted network '.$network->name);
     }
 

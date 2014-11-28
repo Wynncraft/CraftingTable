@@ -123,6 +123,14 @@
                                     </div>
 
                                 {{ Form::close() }}
+
+                                {{ Form::open(array('action' => array('NetworkController@deleteNetwork', $network->id), 'class' => 'form-horizontal', 'method'=>'DELETE')) }}
+                                    <div style="margin-top:10px" class="form-group">
+                                        <div class="col-md-12">
+                                            {{ Form::submit('Delete', array('class'=>'btn btn-danger')) }}
+                                        </div>
+                                    </div>
+                                {{ Form::close() }}
                             </div>
                         </div>
                     </div>
