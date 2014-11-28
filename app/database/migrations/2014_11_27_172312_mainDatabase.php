@@ -19,6 +19,7 @@ class MainDatabase extends Migration {
 
 			$table->increments('id');
 			$table->string('name', 100)->index();
+			$table->string('description', 255)->nullable();
 			$table->timestamps();
 		});
 
@@ -54,9 +55,9 @@ class MainDatabase extends Migration {
 	 */
 	public function down()
 	{
+		Schema::drop('network_node');
 		Schema::drop('networks');
 		Schema::drop('nodes');
-		Schema::drop('network_node');
 	}
 
 }

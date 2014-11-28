@@ -18,6 +18,12 @@ Route::group(array('before' => 'auth'), function() {
 	Route::model('group', 'Toddish\Verify\Models\Role', function() {
 	});
 
+	Route::model('network', 'Network', function() {
+	});
+
+	Route::model('node', 'Node', function() {
+	});
+
 	Route::get('/', function()
 	{
 		return View::make('index');
@@ -42,6 +48,16 @@ Route::group(array('before' => 'auth'), function() {
 	Route::put('/groups/{group}', 'GroupController@putGroup');
 
 	Route::delete('/groups/{group}', 'GroupController@deleteGroup');
+
+	Route::get('/network/add', 'NetworkController@getAddNetwork');
+
+	Route::post('/network/add', 'NetworkController@postNetwork');
+
+	Route::get('/network/{network}', 'NetworkController@getNetwork');
+
+	Route::put('/network/{network}', 'NetworkController@putNetwork');
+
+	Route::delete('/network/{network}', 'NetworkController@deleteNetwork');
 
 });
 
