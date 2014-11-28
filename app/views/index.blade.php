@@ -25,7 +25,7 @@
                 <div class="panel-heading">
                     <h4 class="panel-title">
                         <a data-toggle="collapse" data-parent="#accordion" href="#collapseAdd">
-                            Add Network
+                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add Network
                             <small>Click to add a new network</small>
                         </a>
                     </h4>
