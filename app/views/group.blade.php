@@ -142,7 +142,14 @@ $(document).ready(function() {
 
 
 @if($role->exists == true)
-    {{ Form::open(array('class' => 'form-horizontal', 'method'=>'DELETE')) }}
+    <script>
+
+    function ConfirmDelete(){
+        return confirm("Are you sure you want to delete the group {{ $role->name }}?");
+    }
+
+    </script>
+    {{ Form::open(array('class' => 'form-horizontal', 'method'=>'DELETE', 'onsubmit' => 'return ConfirmDelete()')) }}
         <div style="margin-top:10px" class="form-group">
             <div class="col-md-12">
                 {{ Form::submit('Delete', array('class'=>'btn btn-danger')) }}
