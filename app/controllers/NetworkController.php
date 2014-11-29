@@ -13,6 +13,10 @@ class NetworkController extends BaseController {
                 'description'=>'max:255')
         );
 
+        if (Auth::user()->can('create_network') == false) {
+            return Redirect::to('/')->with('error', 'You do not have permissions to create networks');
+        }
+
         if ($validator->fails()) {
             return Redirect::to('/')->with('errorAdd', $validator->messages());
         } else {
@@ -23,19 +27,14 @@ class NetworkController extends BaseController {
 
     }
 
-    public function getNetwork(Network $network = null) {
+    public function putNetwork(Network $network = null) {
 
         if ($network == null) {
             return Redirect::to('/')->with('error', 'Unknown network Id');
         }
 
-        View::make('network')->with('network', $network);
-    }
-
-    public function putNetwork(Network $network = null) {
-
-        if ($network == null) {
-            return Redirect::to('/')->with('error', 'Unknown network Id');
+        if (Auth::user()->can('update_network') == false) {
+            return Redirect::to('/')->with('error', 'You do not have permissions to edit networks');
         }
 
         $validator = Validator::make(
@@ -61,6 +60,10 @@ class NetworkController extends BaseController {
 
         if ($network == null) {
             return Redirect::to('/')->with('error', 'Unknown network Id');
+        }
+
+        if (Auth::user()->can('delete_network') == false) {
+            return Redirect::to('/')->with('error', 'You do not have permissions to delete networks');
         }
 
         $network->delete();

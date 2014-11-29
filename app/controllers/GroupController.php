@@ -6,23 +6,6 @@ class GroupController extends BaseController {
         return View::make('groups');
     }
 
-    public function getGroup(Toddish\Verify\Models\Role $role = null) {
-        if ($role == null) {
-            return Redirect::to('/groups')->with('error', 'Unknown group Id');
-        }
-
-        if ($role->name == Config::get('verify::super_admin')) {
-            return Redirect::to('/groups')->with('error', 'Cannot edit Super Admin group.');
-        }
-
-        return View::make('group')->with('role', $role);
-    }
-
-    public function getAddGroup() {
-        $role = new Toddish\Verify\Models\Role;
-        return View::make('group')->with('role', $role);
-    }
-
     private function groupPermissions() {
         $perms = array();
 
@@ -81,7 +64,7 @@ class GroupController extends BaseController {
 
             $role->permissions()->sync($perms);
 
-            return View::make('group')->with('success', 'Successfully updated the group '.$role->name)->with('role', $role);
+            return Redirect::to('/groups')->with('success', 'Successfully updated the group '.$role->name)->with('role', $role);
         }
     }
 
@@ -98,10 +81,6 @@ class GroupController extends BaseController {
         } else {
             $role->description = Input::get('description');
             $role->save();
-
-            $perms = $this->groupPermissions();
-
-            $role->permissions()->sync($perms);
 
             return Redirect::to('/groups')->with('success', 'Created group '.$role->name);
         }

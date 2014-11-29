@@ -124,11 +124,9 @@
 
                                 {{ Form::close() }}
                                 <script>
-
-                                  function ConfirmDelete(){
-                                      return confirm("Are you sure you want to delete the network {{ $network->name }}?");
-                                  }
-
+                                    function ConfirmDelete(){
+                                        return confirm("Are you sure you want to delete the network {{ $network->name }}?");
+                                    }
                                 </script>
                                 {{ Form::open(array('action' => array('NetworkController@deleteNetwork', $network->id), 'class' => 'form-horizontal', 'method'=>'DELETE', 'onsubmit' => 'return ConfirmDelete()')) }}
                                     <div style="margin-top:10px" class="form-group">

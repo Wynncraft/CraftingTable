@@ -39,11 +39,7 @@ Route::group(array('before' => 'auth'), function() {
 
 	Route::get('/groups', 'GroupController@getGroups');
 
-	Route::get('/groups/add', 'GroupController@getAddGroup');
-
 	Route::post('/groups/add', 'GroupController@postGroup');
-
-	Route::get('/groups/{group}', 'GroupController@getGroup');
 
 	Route::put('/groups/{group}', 'GroupController@putGroup');
 

@@ -5,15 +5,22 @@
 
 <script>
 $(document).ready(function() {
-    $('.edit').click(function(event) {
-        window.location.href = '{{ URL::to('/groups') }}/'+event.target.id;
-    });
-    $('.add').click(function() {
-            window.location.href = '{{ URL::to('/groups/add') }}';
+    $('.perm').click(function(event) {
+        var hidden = $('#'+event.target.id);
+        if (hidden.val() == "false") {
+            $(this).text('Allow');
+            $(this).removeClass('btn-danger');
+            $(this).addClass('btn-success');
+            hidden.val("true");
+        } else {
+            $(this).text('Deny');
+            $(this).removeClass('btn-success');
+            $(this).addClass('btn-danger');
+            hidden.val("false");
+        }
     });
 });
 </script>
-
 
 @if(Session::has('error'))
     <div class="alert alert-danger alert-dismissible">
@@ -29,31 +36,171 @@ $(document).ready(function() {
     </div>
 @endif
 
-<div style="margin-bottom: 25px">
-<button type="button" class="add btn btn-default btn-primary" aria-label="Plus">
-<span class="glyphicon glyphicon-plus" aria-hidden="true"></span> New Group
-</button>
-</div>
-
-<table class="table table-striped table-bordered table-hover">
-    <thread>
-        <tr>
-            <th>Group Name</th>
-            <th>Description</th>
-            <th>Edit</th>
-        </tr>
-    </thread>
-    <tbody>
+@if(Auth::user()->can('read_groups'))
+    <div class="panel-group" id="accordion">
+        @if(Auth::user()->can('create_groups'))
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseAdd">
+                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add Group
+                            <small>Click to add a new group</small>
+                        </a>
+                    </h4>
+                </div>
+                <div id="collapseAdd" class="panel-collapse collapse {{ Session::has('errorAdd') ? 'in' : '' }}">
+                    <div class="panel-body">
+                        @if(Session::has('errorAdd'))
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="alert alert-danger alert-dismissible">
+                                        <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                            <ul>
+                                                @foreach(Session::get('errorAdd')->all() as $errorMessage)
+                                                    <li>{{ $errorMessage  }}</li>
+                                                @endforeach
+                                            </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+                        {{ Form::open(array('action' => 'GroupController@postGroup', 'class' => 'form-horizontal')) }}
+                            <div style="margin-bottom: 25px" class="input-group {{ Session::has('errorAdd') && Session::get('errorAdd')->get('name') != null ? 'has-error' : '' }}">
+                                {{ Form::text('name', '', array('class'=>'form-control', 'placeholder' => 'group name', 'maxlength' => '100')) }}
+                            </div>
+                            <div style="margin-bottom: 25px" class="input-group {{ Session::has('errorAdd') && Session::get('errorAdd')->get('description') != null ? 'has-error' : '' }}">
+                                {{ Form::text('description', '', array('class'=>'form-control', 'placeholder' => 'group description', 'maxlength' => '255')) }}
+                            </div>
+                            <div style="margin-top:10px" class="form-group">
+                                <div class="col-md-12">
+                                    {{ Form::submit('Add Group', array('class'=>'btn btn-success')) }}
+                                </div>
+                            </div>
+                        {{ Form::close() }}
+                    </div>
+                </div>
+            </div>
+        @endif
         @foreach(Toddish\Verify\Models\Role::all() as $role)
-            <tr>
-                <td>{{ $role->name }}</td>
-                <td>{{ $role->description }}</td>
-                <td><button id="{{ $role->id }}" type="button" class="edit btn btn-default btn-xs" aria-label="Pencil">
-                    <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
-                </button></td>
-            </tr>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse{{ $role->id }}">
+                            {{ $role->name }}
+                            <small>{{ $role->description }}</small>
+                        </a>
+                    </h4>
+                </div>
+                <div id="collapse{{ $role->id }}" class="panel-collapse collapse {{ Session::has('error'.$role->id) ? 'in' : '' }}">
+                    <div class="panel-body">
+                        {{ Form::open(array('action' => array('GroupController@putGroup', $role->id), 'class' => 'form-horizontal', 'method'=>$role->exists == true ? 'PUT' : 'POST')) }}
+                            <div style="margin-bottom: 25px" class="input-group {{ isset($error) && $error->get('name') != null ? 'has-error' : '' }}">
+                                {{ Form::label('name', 'Group Name', array('class'=>'input-control','for'=>'name')) }}
+                                {{ Form::text('name', $role->name, array('class'=>'form-control', 'placeholder' => 'group name', 'id' => 'name')) }}
+                            </div>
+
+                            <div style="margin-bottom: 25px" class="input-group {{ isset($error) && $error->get('description') != null ? 'has-error' : '' }}">
+                                {{ Form::label('description', 'Group Description', array('class'=>'input-control','for'=>'description')) }}
+                                {{ Form::text('description', $role->description, array('class'=>'form-control', 'placeholder' => 'group name', 'id' => 'description', 'maxlength'=> '255')) }}
+                            </div>
+
+                            {{ Form::label('permission_matrix', 'Permission Matrix', array('class'=>'input-control')) }}
+
+                            <table class="table table-striped table-bordered table-hover">
+                                <thread>
+                                    <tr>
+                                        <th>Permissions</th>
+                                        <th>Create</th>
+                                        <th>Read</th>
+                                        <th>Update</th>
+                                        <th>Delete</th>
+                                    </tr>
+                                </thread>
+                                <tbody>
+                                    <tr>
+                                        <td>User</td>
+                                        {{--*/ $perm = Toddish\Verify\Models\Permission::firstOrNew(array('name'=>'create_user')) /*--}}
+                                        {{--*/ $hasPerm = ($role->permissions()->where('name', '=', $perm->name)->first() == null) ? false : true /*--}}
+                                        {{ Form::hidden('PERM:'.$perm->name, $hasPerm ? 'true' : 'false', array('id' => $role->id.$perm->name)) }}
+                                        <td><button id="{{$role->id.$perm->name}}" type="button" class="btn perm {{ $hasPerm ? 'btn-success' : 'btn-danger' }}">{{ $hasPerm ? 'Allow' : 'Deny' }}</button></td>
+                                        {{--*/ $perm = Toddish\Verify\Models\Permission::firstOrNew(array('name'=>'read_user')) /*--}}
+                                        {{--*/ $hasPerm = ($role->permissions()->where('name', '=', $perm->name)->first() == null) ? false : true /*--}}
+                                        {{ Form::hidden('PERM:'.$perm->name, $hasPerm ? 'true' : 'false', array('id' => $role->id.$perm->name)) }}
+                                        <td><button id="{{$role->id.$perm->name}}" type="button" class="btn perm {{ $hasPerm ? 'btn-success' : 'btn-danger' }}">{{ $hasPerm ? 'Allow' : 'Deny' }}</button></td>
+                                        {{--*/ $perm = Toddish\Verify\Models\Permission::firstOrNew(array('name'=>'update_user')) /*--}}
+                                        {{--*/ $hasPerm = ($role->permissions()->where('name', '=', $perm->name)->first() == null) ? false : true /*--}}
+                                        {{ Form::hidden('PERM:'.$perm->name, $hasPerm ? 'true' : 'false', array('id' => $role->id.$perm->name)) }}
+                                        <td><button id="{{$role->id.$perm->name}}" type="button" class="btn perm {{ $hasPerm ? 'btn-success' : 'btn-danger' }}">{{ $hasPerm ? 'Allow' : 'Deny' }}</button></td>
+                                        {{--*/ $perm = Toddish\Verify\Models\Permission::firstOrNew(array('name'=>'delete_user')) /*--}}
+                                        {{--*/ $hasPerm = ($role->permissions()->where('name', '=', $perm->name)->first() == null) ? false : true /*--}}
+                                        {{ Form::hidden('PERM:'.$perm->name, $hasPerm ? 'true' : 'false', array('id' => $role->id.$perm->name)) }}
+                                        <td><button id="{{$role->id.$perm->name}}" type="button" class="btn perm {{ $hasPerm ? 'btn-success' : 'btn-danger' }}">{{ $hasPerm ? 'Allow' : 'Deny' }}</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Group</td>
+                                        {{--*/ $perm = Toddish\Verify\Models\Permission::firstOrNew(array('name'=>'create_group')) /*--}}
+                                        {{--*/ $hasPerm = ($role->permissions()->where('name', '=', $perm->name)->first() == null) ? false : true /*--}}
+                                        {{ Form::hidden('PERM:'.$perm->name, $hasPerm ? 'true' : 'false', array('id' => $role->id.$perm->name)) }}
+                                        <td><button id="{{$role->id.$perm->name}}" type="button" class="btn perm {{$hasPerm ? 'btn-success' : 'btn-danger' }}">{{ $hasPerm ? 'Allow' : 'Deny' }}</button></td>
+                                        {{--*/ $perm = Toddish\Verify\Models\Permission::firstOrNew(array('name'=>'read_group')) /*--}}
+                                        {{--*/ $hasPerm = ($role->permissions()->where('name', '=', $perm->name)->first() == null) ? false : true /*--}}
+                                        {{ Form::hidden('PERM:'.$perm->name, $hasPerm ? 'true' : 'false', array('id' => $role->id.$perm->name)) }}
+                                        <td><button id="{{$role->id.$perm->name}}" type="button" class="btn perm {{ $hasPerm ? 'btn-success' : 'btn-danger' }}">{{ $hasPerm ? 'Allow' : 'Deny' }}</button></td>
+                                        {{--*/ $perm = Toddish\Verify\Models\Permission::firstOrNew(array('name'=>'update_group')) /*--}}
+                                        {{--*/ $hasPerm = ($role->permissions()->where('name', '=', $perm->name)->first() == null) ? false : true /*--}}
+                                        {{ Form::hidden('PERM:'.$perm->name, $hasPerm ? 'true' : 'false', array('id' => $role->id.$perm->name)) }}
+                                        <td><button id="{{$role->id.$perm->name}}" type="button" class="btn perm {{ $hasPerm ? 'btn-success' : 'btn-danger' }}">{{ $hasPerm ? 'Allow' : 'Deny' }}</button></td>
+                                        {{--*/ $perm = Toddish\Verify\Models\Permission::firstOrNew(array('name'=>'delete_group')) /*--}}
+                                        {{--*/ $hasPerm = ($role->permissions()->where('name', '=', $perm->name)->first() == null) ? false : true /*--}}
+                                        {{ Form::hidden('PERM:'.$perm->name, $hasPerm ? 'true' : 'false', array('id' => $role->id.$perm->name)) }}
+                                        <td><button id="{{$role->id.$perm->name}}" type="button" class="btn perm {{ $hasPerm ? 'btn-success' : 'btn-danger' }}">{{ $hasPerm ? 'Allow' : 'Deny' }}</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Network</td>
+                                        {{--*/ $perm = Toddish\Verify\Models\Permission::firstOrNew(array('name'=>'create_network')) /*--}}
+                                        {{--*/ $hasPerm = ($role->permissions()->where('name', '=', $perm->name)->first() == null) ? false : true /*--}}
+                                        {{ Form::hidden('PERM:'.$perm->name, $hasPerm ? 'true' : 'false', array('id' => $role->id.$perm->name)) }}
+                                        <td><button id="{{$role->id.$perm->name}}" type="button" class="btn perm {{ $hasPerm ? 'btn-success' : 'btn-danger' }}">{{ $hasPerm ? 'Allow' : 'Deny' }}</button></td>
+                                        {{--*/ $perm = Toddish\Verify\Models\Permission::firstOrNew(array('name'=>'read_network')) /*--}}
+                                        {{--*/ $hasPerm = ($role->permissions()->where('name', '=', $perm->name)->first() == null) ? false : true /*--}}
+                                        {{ Form::hidden('PERM:'.$perm->name, $hasPerm ? 'true' : 'false', array('id' => $role->id.$perm->name)) }}
+                                        <td><button id="{{$role->id.$perm->name}}" type="button" class="btn perm {{ $hasPerm ? 'btn-success' : 'btn-danger' }}">{{ $hasPerm ? 'Allow' : 'Deny' }}</button></td>
+                                        {{--*/ $perm = Toddish\Verify\Models\Permission::firstOrNew(array('name'=>'update_network')) /*--}}
+                                        {{--*/ $hasPerm = ($role->permissions()->where('name', '=', $perm->name)->first() == null) ? false : true /*--}}
+                                        {{ Form::hidden('PERM:'.$perm->name, $hasPerm ? 'true' : 'false', array('id' => $role->id.$perm->name)) }}
+                                        <td><button id="{{$role->id.$perm->name}}" type="button" class="btn perm {{ $hasPerm ? 'btn-success' : 'btn-danger' }}">{{ $hasPerm ? 'Allow' : 'Deny' }}</button></td>
+                                        {{--*/ $perm = Toddish\Verify\Models\Permission::firstOrNew(array('name'=>'delete_network')) /*--}}
+                                        {{--*/ $hasPerm = ($role->permissions()->where('name', '=', $perm->name)->first() == null) ? false : true /*--}}
+                                        {{ Form::hidden('PERM:'.$perm->name, $hasPerm ? 'true' : 'false', array('id' => $role->id.$perm->name)) }}
+                                        <td><button id="{{$role->id.$perm->name}}" type="button" class="btn perm {{ $hasPerm ? 'btn-success' : 'btn-danger' }}">{{ $hasPerm ? 'Allow' : 'Deny' }}</button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <div style="margin-top:10px" class="form-group">
+                                <div class="col-md-12">
+                                    {{ Form::submit('Save', array('class'=>'btn btn-primary')) }}
+                                </div>
+                            </div>
+
+                        {{ Form::close() }}
+                        <script>
+                            function ConfirmDelete(){
+                                return confirm("Are you sure you want to delete the group {{ $role->name }}?");
+                            }
+                        </script>
+                        {{ Form::open(array('action' => array('GroupController@deleteGroup', $role->id), 'class' => 'form-horizontal', 'method'=>'DELETE', 'onsubmit' => 'return ConfirmDelete()')) }}
+                            <div style="margin-top:10px" class="form-group">
+                                <div class="col-md-12">
+                                    {{ Form::submit('Delete', array('class'=>'btn btn-danger')) }}
+                                </div>
+                            </div>
+                        {{ Form::close() }}
+                    </div>
+                </div>
+            </div>
         @endforeach
-    </tbody>
-</table>
+    </div>
+@endif
 
 @stop
