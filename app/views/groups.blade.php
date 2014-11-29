@@ -93,6 +93,20 @@ $(document).ready(function() {
                 </div>
                 <div id="collapse{{ $role->id }}" class="panel-collapse collapse {{ Session::has('error'.$role->id) ? 'in' : '' }}">
                     <div class="panel-body">
+                        @if(Session::has('error'.$role->id))
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="alert alert-danger alert-dismissible">
+                                        <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                            <ul>
+                                                @foreach(Session::get('error'.$role->id)->all() as $errorMessage)
+                                                    <li>{{ $errorMessage  }}</li>
+                                                @endforeach
+                                            </ul>
+                                        </div>
+                                </div>
+                            </div>
+                        @endif
                         {{ Form::open(array('action' => array('GroupController@putGroup', $role->id), 'class' => 'form-horizontal', 'method'=>$role->exists == true ? 'PUT' : 'POST')) }}
                             <div style="margin-bottom: 25px" class="input-group {{ isset($error) && $error->get('name') != null ? 'has-error' : '' }}">
                                 {{ Form::label('name', 'Group Name', array('class'=>'input-control','for'=>'name')) }}

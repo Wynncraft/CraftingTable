@@ -48,12 +48,12 @@ class GroupController extends BaseController {
         }
 
         $validator = Validator::make(
-            array('name'=>$role->name),
+            array('name'=>Input::get('name')),
             array('name'=>'required|unique:roles')
         );
 
         if ($role->name != Input::get('name') && $validator->fails()) {
-            return View::make('group')->with('error', $validator->messages())->with('role', $role);
+            return Redirect::to('/groups')->with('error'.$role->id, $validator->messages());
         } else {
             $role->name = Input::get('name');
             $role->description = Input::get('description');
@@ -77,7 +77,7 @@ class GroupController extends BaseController {
         );
 
         if ($validator->fails()) {
-            return View::make('group')->with('error', $validator->messages())->with('role', $role);
+            return Redirect::to('/groups')->with('errorAdd', $validator->messages());
         } else {
             $role->description = Input::get('description');
             $role->save();
