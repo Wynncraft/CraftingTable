@@ -203,13 +203,15 @@ $(document).ready(function() {
                                 return confirm("Are you sure you want to delete the group {{ $role->name }}?");
                             }
                         </script>
-                        {{ Form::open(array('action' => array('GroupController@deleteGroup', $role->id), 'class' => 'form-horizontal', 'method'=>'DELETE', 'onsubmit' => 'return ConfirmDelete()')) }}
-                            <div style="margin-top:10px" class="form-group">
-                                <div class="col-md-12">
-                                    {{ Form::submit('Delete', array('class'=>'btn btn-danger')) }}
+                        @if(Auth::user()->can('delete_group'))
+                            {{ Form::open(array('action' => array('GroupController@deleteGroup', $role->id), 'class' => 'form-horizontal', 'method'=>'DELETE', 'onsubmit' => 'return ConfirmDelete()')) }}
+                                <div style="margin-top:10px" class="form-group">
+                                    <div class="col-md-12">
+                                        {{ Form::submit('Delete', array('class'=>'btn btn-danger')) }}
+                                    </div>
                                 </div>
-                            </div>
-                        {{ Form::close() }}
+                            {{ Form::close() }}
+                        @endif
                     </div>
                 </div>
             </div>

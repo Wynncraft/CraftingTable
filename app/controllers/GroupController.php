@@ -29,6 +29,10 @@ class GroupController extends BaseController {
             return Redirect::to('/groups')->with('error', 'Unknown group Id');
         }
 
+        if (Auth::user()->can('delete_group') == false) {
+            return Redirect::to('/groups')->with('error', 'You do not have permissions to delete groups');
+        }
+
         if ($role->name == Config::get('verify::super_admin')) {
             return Redirect::to('/groups')->with('error', 'Cannot delete Super Admin group.');
         }
@@ -41,6 +45,10 @@ class GroupController extends BaseController {
     public function putGroup(Toddish\Verify\Models\Role $role = null) {
         if ($role == null) {
             return Redirect::to('/groups')->with('error', 'Unknown group Id');
+        }
+
+        if (Auth::user()->can('update_group') == false) {
+            return Redirect::to('/groups')->with('error', 'You do not have permissions to update groups');
         }
 
         if ($role->name == Config::get('verify::super_admin')) {
@@ -69,6 +77,11 @@ class GroupController extends BaseController {
     }
 
     public function postGroup() {
+
+        if (Auth::user()->can('create_group') == false) {
+            return Redirect::to('/groups')->with('error', 'You do not have permissions to create groups');
+        }
+
         $role = Toddish\Verify\Models\Role::firstOrNew(array('name'=> Input::get('name')));
 
         $validator = Validator::make(

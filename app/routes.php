@@ -33,9 +33,13 @@ Route::group(array('before' => 'auth'), function() {
 
 	Route::get('/users', 'UserController@getUsers');
 
-	Route::get('/users/{user}', 'UserController@getUser');
+	Route::post('/users/add', 'UserController@postUser');
 
-	Route::put('/users/{user}', 'UserController@putUser');
+	Route::get('/users/{user}/{edit?}', 'UserController@getUser');
+
+	Route::put('/users/{user}/{edit?}', 'UserController@putUser');
+
+	Route::delete('/users/{user}', 'UserController@deleteUser');
 
 	Route::get('/groups', 'GroupController@getGroups');
 

@@ -7,6 +7,49 @@ class UserController extends BaseController {
         return View::make('register');
     }
 
+    public function postUser() {
+        if (Auth::user()->can('create_user') == false) {
+            return Redirect::to('/users')->with('errorAdd', 'You do not have permissions to add users.');
+        }
+
+        $user = new Toddish\Verify\Models\User;
+        $user->email = Input::get('email');
+        $user->username = Input::get('username');
+        $user->password = Input::get('password');
+        $user->verified = 1;
+        $user->disabled = 1;
+
+        Validator::extend('passmatches', function($attribute, $value, $params) {
+            return $value[0] == $value[1] && strlen($value[0]) > 0;
+        });
+
+        $validator = Validator::make(
+            array('email'=>$user->email,
+                'username'=>$user->username,
+                'password'=>Input::get('password'),
+                'password_confirmation'=>Input::get('password_confirmation')),
+            array('email'=>'required|email|unique:users',
+                'username'=>'required|unique:users',
+                'password'=>'required|confirmed',
+                'password_confirmation'=>'required|same:password')
+        );
+
+        if ($validator->fails()) {
+            return Redirect::to('/users')->with('errorAdd', $validator->messages());
+        } else {
+
+            if (Toddish\Verify\Models\User::enabled()->get()->count() == 0) {
+                $user->verified = 1;
+                $user->disabled = 0;
+            }
+
+            $user->save();
+
+            return Redirect::to('/users')->with('success', 'Created the user '.$user->username.' ('.$user->email.')');
+
+        }
+    }
+
     public function postRegister() {
         $user = new Toddish\Verify\Models\User;
         $user->email = Input::get('email');
@@ -102,18 +145,27 @@ class UserController extends BaseController {
         }
 
         if (Auth::user()->id != $user->id) {
-            if (Auth::user()->can('read_user')) {
-                return View::make('user')->with('user', $user);
-            } else {
-                return Redirect::intended('/users/' . Auth::user()->id);
-            }
+            return Redirect::intended('/users/' . Auth::user()->id);
         }
 
         return View::make('user')->with('user', $user);
     }
 
-    private function putUserMain(Toddish\Verify\Models\User $user = null)
-    {
+    public function putUser(Toddish\Verify\Models\User $user = null, $userEdit = false) {
+        if ($user == null) {
+            return Redirect::to('/users')->with('error', 'Unknown user Id');
+        }
+
+        if ($userEdit == false) {
+            if (Auth::user()->can('update_user') == false) {
+                return Redirect::to('/users')->with('errorAdd', 'You do not have permissions to edit users.');
+            }
+        }
+
+        if ($user->username == 'demo' && App::environment() =='demo') {
+            return Redirect::to('/users')->with('error', 'Cannot modify demo user while in demo mode.');
+        }
+
         $group = Input::get('group');
         $password = Input::get('password');
 
@@ -136,6 +188,11 @@ class UserController extends BaseController {
             'group' => 'required|numeric|validategroup');
         $messages = array('validategroup' => 'Please select a valid group');
 
+        if ($user->username != Input::get('username') && $userEdit == false) {
+            $input['username'] = Input::get('username');
+            $rules['username'] = 'required|unique:users';
+        }
+
         if ($user->email == Input::get('email')) {
             unset($input['email']);
             unset($rules['email']);
@@ -154,7 +211,7 @@ class UserController extends BaseController {
             $rules['new password_confirmation'] = 'required';
         }
 
-        if (Auth::user()->id == $user->id) {
+        if (Auth::user()->id == $user->id && $userEdit == true) {
             $input['password'] = $password;
             $rules['password'] = 'required|passcheck';
             $messages['passcheck'] = 'Your current password is invalid';
@@ -163,9 +220,16 @@ class UserController extends BaseController {
         $validator = Validator::make($input, $rules, $messages);
 
         if ($validator->fails()) {
-            return View::make('user')->with('user', $user)->with('error', $validator->messages());
+            if ($userEdit == true) {
+                return View::make('user')->with('error', $validator->messages())->with('user', $user);
+            } else {
+                return Redirect::to('/users')->with('error' . $user->id, $validator->messages());
+            }
         } else {
             $user->email = Input::get('email');
+            if ($userEdit == false) {
+                $user->username = Input::get('username');
+            }
             $user->disabled = Input::get('disabled');
             if (strlen($npassword) > 0) {
                 $user->password = $npassword;
@@ -176,29 +240,30 @@ class UserController extends BaseController {
             if ($group != null) {
                 $user->roles()->sync(array(Toddish\Verify\Models\Role::find($group)->first()->id));
             }
-            return View::make('user')->with('user', $user)->with('success', 'Successfully updated ' . $user->username . '\'s account info.');
+            if ($userEdit == true) {
+                return View::make('user')->with('success', 'Successfully updated your account.')->with('user', $user);
+            } else {
+                return Redirect::to('users')->with('success', 'Successfully updated ' . $user->username . '\'s account info.');
+            }
         }
     }
 
-    public function putUser(Toddish\Verify\Models\User $user = null) {
+    public function deleteUser(Toddish\Verify\Models\User $user = null) {
         if ($user == null) {
             return Redirect::to('/users')->with('error', 'Unknown user Id');
         }
 
-        if ($user->username == "demo") {
-            return Redirect::to('/users')->with('error', 'Cannot modify the demo user\'s account.');
+        if (Auth::user()->can('delete_user') == false) {
+            return Redirect::to('/users')->with('error', 'You do not have permissions to delete users');
         }
 
-        if (Auth::user()->id != $user->id) {
-            if (Auth::user()->can('update_user')) {
-                return $this->putUserMain($user);
-            } else {
-                return Redirect::to('/users')->with('error', 'You do not have permission to update users.');
-            }
+        if ($user->username == 'demo') {
+            return Redirect::to('/users')->with('error', 'Cannot delete Demo user.');
         }
 
-        return $this->putUserMain($user);
+        $user->delete();
 
+        return Redirect::to('/users')->with('success', 'Deleted user '.$user->username);
     }
 
 }

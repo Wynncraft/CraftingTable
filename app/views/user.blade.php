@@ -37,7 +37,7 @@
                         </div>
                         @endif
 
-                        {{ Form::open(array('class' => 'form-horizontal', 'method' => 'PUT')) }}
+                        {{ Form::open(array('action' => array('UserController@putUser', $user->id, true), 'class' => 'form-horizontal', 'method' => 'PUT')) }}
 
                                 <div style="margin-bottom: 25px" class="input-group {{ isset($error) && $error->get('email') != null ? 'has-error' : '' }}">
                                     <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span>
@@ -46,12 +46,12 @@
 
                                 <div style="margin-bottom: 25px" class="input-group {{ isset($error) && $error->get('username') != null ? 'has-error' : '' }}">
                                     <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
-                                    {{ Form::text('username', $user->username, array('class'=>'form-control', 'placeholder' => 'username', Auth::user()->id == $user->id ? 'disabled' : 'enabled')) }}
+                                    {{ Form::text('username', $user->username, array('class'=>'form-control', 'placeholder' => 'username', 'disabled')) }}
                                 </div>
 
                                 <div style="margin-bottom: 25px" class="input-group {{ isset($error) && $error->get('group') != null ? 'has-error' : '' }}">
                                     <span class="input-group-addon"><i class="glyphicon glyphicon-heart"></i></span>
-                                    <select name='group' class="form-control" {{ Auth::user()->id == $user->id ? 'disabled' : 'enabled' }}>
+                                    <select name='group' class="form-control" disabled>
                                         <option selected value="-1">Please select a group</option>
                                         @foreach(Toddish\Verify\Models\Role::all() as $role)
                                             @if(count(Toddish\Verify\Models\Role::find($user->roles()->getRelatedIds())->all()) > 0 &&
@@ -66,7 +66,7 @@
 
                                 <div style="margin-bottom: 25px" class="input-group {{ isset($error) && $error->get('disabled') != null ? 'has-error' : '' }}">
                                     <div class="checkbox">
-                                        <label>{{ Form::checkbox('disabled', 1, $user->disabled == true ? true : false, array('class'=>'', Auth::user()->id == $user->id ? 'disabled' : 'enabled')) }} Disabled Account</label>
+                                        <label>{{ Form::checkbox('disabled', 1, $user->disabled == true ? true : false, array('class'=>'', 'disabled')) }} Disabled Account</label>
                                     </div>
                                 </div>
 

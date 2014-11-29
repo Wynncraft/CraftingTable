@@ -4,6 +4,10 @@ class NetworkController extends BaseController {
 
     public function postNetwork() {
 
+        if (Auth::user()->can('create_network') == false) {
+            return Redirect::to('/')->with('error', 'You do not have permissions to create networks');
+        }
+
         $network = Network::firstOrNew(array('name'=> Input::get('name')));
 
         $validator = Validator::make(
@@ -12,10 +16,6 @@ class NetworkController extends BaseController {
             array('name'=>'required|max:100|unique:networks',
                 'description'=>'max:255')
         );
-
-        if (Auth::user()->can('create_network') == false) {
-            return Redirect::to('/')->with('error', 'You do not have permissions to create networks');
-        }
 
         if ($validator->fails()) {
             return Redirect::to('/')->with('errorAdd', $validator->messages());

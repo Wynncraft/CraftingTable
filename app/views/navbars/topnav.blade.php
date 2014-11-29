@@ -10,13 +10,16 @@
     </div>
     <div id="navbar" class="navbar-collapse collapse">
         <ul class="nav navbar-nav">
-            @if($navBarPage == "networks")
-                <li class="active"><a href="{{ URL::to('/')  }}">Networks</a></li>
-            @else
-                <li><a href="{{ URL::to('/')  }}">Networks</a></li>
-            @endif
 
             @if(Auth::check())
+                @if(Auth::user()->can('see_nodes'))
+                    @if($navBarPage == "networks")
+                        <li class="active"><a href="{{ URL::to('/')  }}">Networks</a></li>
+                    @else
+                        <li><a href="{{ URL::to('/')  }}">Networks</a></li>
+                    @endif
+                @endif
+
                 @if(Auth::user()->can('see_nodes'))
                     @if($navBarPage == "nodes")
                         <li class="active"><a>Nodes</a></li>
@@ -48,12 +51,6 @@
                         <li><a href="{{ URL::to('/options') }}">Options</a></li>
                     @endif
                 @endif
-
-                @if($navBarPage == "logout")
-                    <li class="active"><a href="{{ URL::to('/logout')  }}">Sign Out</a></li>
-                @else
-                    <li><a href="{{ URL::to('/logout')  }}">Sign Out</a></li>
-                @endif
             @else
                 @if($navBarPage == "login")
                     <li class="active"><a href="{{ URL::to('/login')  }}">Sign In</a></li>
@@ -72,6 +69,11 @@
                             <li class="active"><a href="{{ URL::to('/users/'.Auth::user()->id) }}">Edit Account</a></li>
                         @else
                             <li><a href="{{ URL::to('/users/'.Auth::user()->id) }}">Edit Account</a></li>
+                        @endif
+                        @if($navBarPage == "logout")
+                            <li class="active"><a href="{{ URL::to('/logout')  }}">Sign Out</a></li>
+                        @else
+                            <li><a href="{{ URL::to('/logout')  }}">Sign Out</a></li>
                         @endif
                     </ul>
                 </li>
