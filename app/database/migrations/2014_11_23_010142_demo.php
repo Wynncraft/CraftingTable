@@ -36,7 +36,7 @@ class Demo extends Migration
      */
     public function down()
     {
-        $user = User::find(1);
+        $user = Toddish\Verify\Models\User::find(1);
         $user->delete();
 
         $role = Toddish\Verify\Models\Role::find(1);
