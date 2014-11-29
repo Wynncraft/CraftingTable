@@ -11,59 +11,59 @@
 |
 */
 
+//auth index
+Route::group(array('before' => 'auth'), function() {
+	Route::get('/', function() {
+		return View::make('index');
+	});
+});
+
+//auth nodes
+Route::group(array('before' => 'auth'), function() {
+	Route::model('node', 'Node', function() {
+	});
+	Route::get('/nodes', 'NodeController@getNodes');
+	Route::post('/nodes/add', 'NodeController@postNode');
+	Route::put('/nodes/{node}', 'NodeController@putNode');
+	Route::delete('/nodes/{node}', 'NodeController@deleteNode');
+});
+
+//auth users
 Route::group(array('before' => 'auth'), function() {
 	Route::model('user', 'Toddish\Verify\Models\User', function() {
 	});
-
-	Route::model('group', 'Toddish\Verify\Models\Role', function() {
-	});
-
-	Route::model('network', 'Network', function() {
-	});
-
-	Route::model('node', 'Node', function() {
-	});
-
-	Route::get('/', function()
-	{
-		return View::make('index');
-	});
-
 	Route::get('/logout', 'UserController@getLogout');
-
 	Route::get('/users', 'UserController@getUsers');
-
 	Route::post('/users/add', 'UserController@postUser');
-
 	Route::get('/users/{user}/{edit?}', 'UserController@getUser');
-
 	Route::put('/users/{user}/{edit?}', 'UserController@putUser');
-
 	Route::delete('/users/{user}', 'UserController@deleteUser');
-
-	Route::get('/groups', 'GroupController@getGroups');
-
-	Route::post('/groups/add', 'GroupController@postGroup');
-
-	Route::put('/groups/{group}', 'GroupController@putGroup');
-
-	Route::delete('/groups/{group}', 'GroupController@deleteGroup');
-
-	Route::post('/network/add', array('uses' => 'NetworkController@postNetwork'));
-
-	Route::put('/network/{network}', array('uses' => 'NetworkController@putNetwork'));
-
-	Route::delete('/network/{network}', array('uses' => 'NetworkController@deleteNetwork'));
-
 });
 
+//auth groups
+Route::group(array('before' => 'auth'), function() {
+	Route::model('group', 'Toddish\Verify\Models\Role', function() {
+	});
+	Route::get('/groups', 'GroupController@getGroups');
+	Route::post('/groups/add', 'GroupController@postGroup');
+	Route::put('/groups/{group}', 'GroupController@putGroup');
+	Route::delete('/groups/{group}', 'GroupController@deleteGroup');
+});
+
+//auth networks
+Route::group(array('before' => 'auth'), function() {
+	Route::model('network', 'Network', function() {
+	});
+	Route::post('/network/add', array('uses' => 'NetworkController@postNetwork'));
+	Route::put('/network/{network}', array('uses' => 'NetworkController@putNetwork'));
+	Route::delete('/network/{network}', array('uses' => 'NetworkController@deleteNetwork'));
+});
+
+//no auth
 Route::group(array('before' => 'auth.guest'), function() {
 	Route::get('/register', 'UserController@getRegister');
-
 	Route::post('/register', 'UserController@postRegister');
-
 	Route::get('/login', 'UserController@getLogin');
-
 	Route::post('/login', 'UserController@postLogin');
 });
 

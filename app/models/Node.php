@@ -8,4 +8,11 @@ class Node extends Eloquent {
      * @var string
      */
     protected $table = 'nodes';
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = ['name', 'description'];
 }

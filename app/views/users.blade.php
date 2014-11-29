@@ -17,9 +17,9 @@
     </div>
 @endif
 
-@if(Auth::user()->can('read_users'))
+@if(Auth::user()->can('read_user'))
     <div class="panel-group" id="accordion">
-        @if(Auth::user()->can('create_groups'))
+        @if(Auth::user()->can('create_user'))
             <div class="panel panel-info">
                 <div class="panel-heading">
                     <h4 class="panel-title">
@@ -77,8 +77,14 @@
                 <div class="panel-heading">
                     <h4 class="panel-title">
                         <a data-toggle="collapse" data-parent="#accordion" href="#collapse{{ $user->id }}">
+                            @if($user->disabled)
+                                <strike>
+                            @endif
                             {{ $user->username }}
                             <small>{{ $user->email }}</small>
+                            @if($user->disabled)
+                                </strike>
+                            @endif
                         </a>
                     </h4>
                 </div>

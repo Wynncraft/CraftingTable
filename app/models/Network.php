@@ -17,7 +17,7 @@ class Network extends Eloquent {
     protected $fillable = ['name', 'description'];
 
     /**
-     * Users
+     * Nodes
      *
      * @return object
      */

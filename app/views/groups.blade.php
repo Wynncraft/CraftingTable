@@ -36,7 +36,7 @@ $(document).ready(function() {
     </div>
 @endif
 
-@if(Auth::user()->can('read_groups'))
+@if(Auth::user()->can('read_group'))
     <div class="panel-group" id="accordion">
         @if(Auth::user()->can('create_groups'))
             <div class="panel panel-info">
