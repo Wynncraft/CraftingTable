@@ -37,7 +37,7 @@
                         </div>
                         @endif
 
-                        {{ Form::open(array('class' => 'form-horizontal', 'method' => 'put')) }}
+                        {{ Form::open(array('class' => 'form-horizontal', 'method' => 'PUT')) }}
 
                                 <div style="margin-bottom: 25px" class="input-group {{ isset($error) && $error->get('email') != null ? 'has-error' : '' }}">
                                     <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span>

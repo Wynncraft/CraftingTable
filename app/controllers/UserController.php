@@ -185,6 +185,10 @@ class UserController extends BaseController {
             return Redirect::to('/users')->with('error', 'Unknown user Id');
         }
 
+        if ($user->username == "demo") {
+            return Redirect::to('/users')->with('error', 'Cannot modify the demo user\'s account.');
+        }
+
         if (Auth::user()->id != $user->id) {
             if (Auth::user()->can('update_user')) {
                 return $this->putUserMain($user);
