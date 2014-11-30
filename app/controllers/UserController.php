@@ -19,10 +19,6 @@ class UserController extends BaseController {
         $user->verified = 1;
         $user->disabled = 1;
 
-        Validator::extend('passmatches', function($attribute, $value, $params) {
-            return $value[0] == $value[1] && strlen($value[0]) > 0;
-        });
-
         $validator = Validator::make(
             array('email'=>$user->email,
                 'username'=>$user->username,
@@ -57,10 +53,6 @@ class UserController extends BaseController {
         $user->password = Input::get('password');
         $user->verified = 1;
         $user->disabled = 1;
-
-        Validator::extend('passmatches', function($attribute, $value, $params) {
-            return $value[0] == $value[1] && strlen($value[0]) > 0;
-        });
 
         $validator = Validator::make(
             array('email'=>$user->email,

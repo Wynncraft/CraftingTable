@@ -37,10 +37,14 @@ class Demo extends Migration
     public function down()
     {
         $user = Toddish\Verify\Models\User::find(1);
-        $user->delete();
+        if ($user != null) {
+            $user->delete();
+        }
 
         $role = Toddish\Verify\Models\Role::find(1);
-        $role->delete();
+        if ($role != null) {
+            $role->delete();
+        }
     }
 
 }

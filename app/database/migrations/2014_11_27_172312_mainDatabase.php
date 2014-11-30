@@ -31,6 +31,7 @@ class MainDatabase extends Migration {
 			$table->increments('id');
 			$table->string('name', 100)->index();
 			$table->string('address', 15)->index();
+			$table->integer('ram');
 			$table->timestamps();
 		});
 

@@ -14,5 +14,5 @@ class Node extends Eloquent {
      *
      * @var array
      */
-    protected $fillable = ['name', 'description'];
+    protected $fillable = ['name', 'address', 'ram'];
 }

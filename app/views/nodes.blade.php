@@ -24,7 +24,7 @@
                 <div class="panel-heading">
                     <h4 class="panel-title">
                         <a data-toggle="collapse" data-parent="#accordion" href="#collapseAdd">
-                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add User
+                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add Node
                             <small>Click to add a new node</small>
                         </a>
                     </h4>
@@ -53,7 +53,7 @@
                                 {{ Form::text('address', '', array('class'=>'form-control', 'placeholder' => '172.16.0.1')) }}
                             </div>
                             <div style="margin-bottom: 25px" class="input-group {{ Session::has('errorAdd') && Session::get('errorAdd')->get('ram') != null ? 'has-error' : '' }}">
-                                {{ Form::password('ram', array('class'=>'form-control', 'placeholder' => '8192')) }}
+                                {{ Form::text('ram', '', array('class'=>'form-control', 'placeholder' => '8192')) }}
                             </div>
                             <div style="margin-top:10px" class="form-group">
                                 <div class="col-md-12">
@@ -93,13 +93,13 @@
                         @endif
                         {{ Form::open(array('action' => array('NodeController@putNode', $node->id), 'class' => 'form-horizontal', 'method' => 'PUT')) }}
                             <div style="margin-bottom: 25px" class="input-group {{ Session::has('error'.$node->id) && Session::get('error'.$node->id)->get('name') != null ? 'has-error' : '' }}">
-                                {{ Form::text('name', $user->name, array('class'=>'form-control', 'placeholder' => 'name')) }}
+                                {{ Form::text('name', $node->name, array('class'=>'form-control', 'placeholder' => 'name')) }}
                             </div>
                             <div style="margin-bottom: 25px" class="input-group {{ Session::has('error'.$node->id) && Session::get('error'.$node->id)->get('address') != null ? 'has-error' : '' }}">
-                                {{ Form::text('address', $user->address, array('class'=>'form-control', 'placeholder' => 'address', 'disabled')) }}
+                                {{ Form::text('address', $node->address, array('class'=>'form-control', 'placeholder' => 'address', 'disabled')) }}
                             </div>
                             <div style="margin-bottom: 25px" class="input-group {{ Session::has('error'.$node->id) && Session::get('error'.$node->id)->get('ram') != null ? 'has-error' : '' }}">
-                                {{ Form::text('ram', $user->ram, array('class'=>'form-control', 'placeholder' => 'ram')) }}
+                                {{ Form::text('ram', $node->ram, array('class'=>'form-control', 'placeholder' => 'ram')) }}
                             </div>
                             <div style="margin-top:10px" class="form-group">
                                 <div class="col-md-12">
