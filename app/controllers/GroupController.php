@@ -57,10 +57,10 @@ class GroupController extends BaseController {
 
         $validator = Validator::make(
             array('name'=>Input::get('name')),
-            array('name'=>'required|unique:roles')
+            array('name'=>'required|unique:roles,id,'.$role->id)
         );
 
-        if ($role->name != Input::get('name') && $validator->fails()) {
+        if ($validator->fails()) {
             return Redirect::to('/groups')->with('error'.$role->id, $validator->messages());
         } else {
             $role->name = Input::get('name');

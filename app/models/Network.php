@@ -28,5 +28,40 @@ class Network extends Eloquent {
         )->withTimestamps();
     }
 
+    /**
+     * Server Types
+     *
+     * @return object
+     */
+    public function servertypes()
+    {
+        return $this->belongsToMany('ServerType',
+            'network_servertype'
+        )->withTimestamps();
+    }
+
+    public function overProvisioned() {
+        $overProvisioned = false;
+
+        $usableRam = 0;
+        $provisionedRam = 0;
+
+        $nodes = $this->nodes()->get()->all();
+        foreach ($nodes as $node) {
+            $usableRam += $node->ram;
+        }
+
+        $servertypes = $this->servertypes()->get()->all();
+        foreach ($servertypes as $servertype) {
+            $provisionedRam += $servertype->pivot->amount * $servertype->ram;
+        }
+
+        if ($provisionedRam > $usableRam) {
+            $overProvisioned = true;
+        }
+
+        return $overProvisioned;
+    }
+
 
 }

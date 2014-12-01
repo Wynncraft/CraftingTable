@@ -40,13 +40,13 @@ class NetworkController extends BaseController {
         $validator = Validator::make(
             array('name'=>Input::get('name'),
                 'description'=>Input::get('description')),
-            array('name'=>'required|max:100|unique:networks',
+            array('name'=>'required|max:100|unique:networks,id,'.$network->id,
                 'description'=>'max:255')
         );
 
         $messages = $validator->messages();
 
-        if ($network->name != Input::get('name') && $validator->fails()) {
+        if ($validator->fails()) {
             return Redirect::to('/')->with('error'.$network->id, $messages);
         } else {
             $network->name = Input::get('name');

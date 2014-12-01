@@ -79,30 +79,38 @@
                 </div>
                 <div id="collapse{{ $network->id }}" class="panel-collapse collapse {{ Session::has('error'.$network->id) ? 'in' : '' }}">
                     <div class="panel-body">
-                         @if(Session::has('error'.$network->id))
+                        @if(Session::has('error'.$network->id))
                             <div class="row">
                                 <div class="col-sm-12">
                                     <div class="alert alert-danger alert-dismissible">
                                         <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                                            <ul>
-                                                @foreach(Session::get('error'.$network->id)->all() as $errorMessage)
-                                                    <li>{{ $errorMessage  }}</li>
-                                                @endforeach
-                                            </ul>
+                                        <ul>
+                                            @foreach(Session::get('error'.$network->id)->all() as $errorMessage)
+                                                <li>{{ $errorMessage  }}</li>
+                                            @endforeach
+                                        </ul>
                                     </div>
                                 </div>
                             </div>
-                         @endif
+                        @endif
+                        @if($network->overProvisioned() == true)
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="alert alert-danger alert-dismissible">
+                                    <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                    <p>This network is currently over provisioned. Please consider adding more nodes or decrease the amount of servers for optimal performance.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
                         <ul class="nav nav-tabs">
                             <li role="presentation" class="active"><a href="#stats{{ $network->id }}" data-toggle="tab">Stats</a></li>
-                            <li role="presentation"><a href="#plugins{{ $network->id }}" data-toggle="tab">Plugins</a></li>
                             <li role="presentation"><a href="#servertypes{{ $network->id }}" data-toggle="tab">Server Types</a></li>
                             <li role="presentation"><a href="#nodes{{ $network->id }}" data-toggle="tab">Nodes</a></li>
                             <li role="presentation"><a href="#edit{{ $network->id }}" data-toggle="tab">Edit</a></li>
                         </ul>
                         <div class="tab-content">
                             <div class="tab-pane active" id="stats{{ $network->id }}">stats</div>
-                            <div class="tab-pane" id="plugins{{ $network->id }}">plugins</div>
                             <div class="tab-pane" id="servertypes{{ $network->id }}">server types</div>
                             <div class="tab-pane" id="nodes{{ $network->id }}">nodes</div>
                             <div class="tab-pane" id="edit{{ $network->id }}">

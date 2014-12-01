@@ -176,18 +176,13 @@ class UserController extends BaseController {
 
         $input = array('email' => Input::get('email'),
             'group' => $group);
-        $rules = array('email' => 'required|email|unique:users',
+        $rules = array('email' => 'required|email|unique:users,id,'.$user->id,
             'group' => 'required|numeric|validategroup');
         $messages = array('validategroup' => 'Please select a valid group');
 
-        if ($user->username != Input::get('username') && $userEdit == false) {
+        if ($userEdit == false) {
             $input['username'] = Input::get('username');
-            $rules['username'] = 'required|unique:users';
-        }
-
-        if ($user->email == Input::get('email')) {
-            unset($input['email']);
-            unset($rules['email']);
+            $rules['username'] = 'required|unique:users,id,'.$user->id;
         }
 
         if ($group == null) {

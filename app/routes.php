@@ -59,6 +59,15 @@ Route::group(array('before' => 'auth'), function() {
 	Route::delete('/network/{network}', array('uses' => 'NetworkController@deleteNetwork'));
 });
 
+//auth plugins
+Route::group(array('before' => 'auth'), function() {
+	Route::model('plugin', 'Plugin', function() {
+	});
+	Route::post('/plugin/add', array('uses' => 'PluginController@postPlugin'));
+	Route::put('/plugin/{plugin}', array('uses' => 'PluginController@putPlugin'));
+	Route::delete('/plugin/{plugin}', array('uses' => 'PluginController@deletePlugin'));
+});
+
 //no auth
 Route::group(array('before' => 'auth.guest'), function() {
 	Route::get('/register', 'UserController@getRegister');
