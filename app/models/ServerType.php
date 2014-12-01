@@ -23,9 +23,7 @@ class ServerType extends Eloquent {
      */
     public function plugins()
     {
-        return $this->belongsToMany('Plugin',
-            'servertype_plugin'
-        )->withTimestamps();
+        return $this->hasManyThrough('Plugin', 'PluginVersion', 'servertype_id', 'pluginversion_id');
     }
 
 

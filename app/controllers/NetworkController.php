@@ -47,7 +47,7 @@ class NetworkController extends BaseController {
         $messages = $validator->messages();
 
         if ($validator->fails()) {
-            return Redirect::to('/')->with('error'.$network->id, $messages);
+            return Redirect::to('/')->with('error'.$network->id, 'errorEdit')->with('errorEdit'.$network->id, $messages);
         } else {
             $network->name = Input::get('name');
             $network->description = Input::get('description');

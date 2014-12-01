@@ -55,7 +55,22 @@ class MainDatabase extends Migration {
 			$table->increments('id');
 			$table->string('name', 100)->index();
 			$table->string('description', 255)->nullable();
+			$table->string('directory', 255);
 			$table->timestamps();
+		});
+
+		// Create the plugin versions table
+		Schema::create('plugin_versions', function($table)
+		{
+			$table->engine = 'InnoDB';
+
+			$table->increments('id');
+			$table->integer('plugin_id')->unsigned()->index();
+			$table->string('version', 100)->index();
+			$table->string('description', 255)->nullable();
+			$table->timestamps();
+
+			$table->foreign('plugin_id')->references('id')->on('plugins')->onDelete('cascade');
 		});
 
 		// Create the servertypes table
@@ -76,11 +91,11 @@ class MainDatabase extends Migration {
 			$table->engine = 'InnoDB';
 
 			$table->integer('servertype_id')->unsigned()->index();
-			$table->integer('plugin_id')->unsigned()->index();
+			$table->integer('pluginversion_id')->unsigned()->index();
 			$table->timestamps();
 
 			$table->foreign('servertype_id')->references('id')->on('servertypes')->onDelete('cascade');
-			$table->foreign('plugin_id')->references('id')->on('plugins')->onDelete('cascade');
+			$table->foreign('pluginversion_id')->references('id')->on('plugin_versions')->onDelete('cascade');
 		});
 
 		// Create the network/servertype relationship table
@@ -89,12 +104,12 @@ class MainDatabase extends Migration {
 			$table->engine = 'InnoDB';
 
 			$table->integer('network_id')->unsigned()->index();
-			$table->integer('servertype_id')->unsigned()->index();
+			$table->integer('server_type_id')->unsigned()->index();
 			$table->integer('amount');
 			$table->timestamps();
 
 			$table->foreign('network_id')->references('id')->on('networks')->onDelete('cascade');
-			$table->foreign('servertype_id')->references('id')->on('servertypes')->onDelete('cascade');
+			$table->foreign('server_type_id')->references('id')->on('servertypes')->onDelete('cascade');
 		});
 	}
 
@@ -110,6 +125,7 @@ class MainDatabase extends Migration {
 		Schema::drop('networks');
 		Schema::drop('nodes');
 		Schema::drop('servertype_plugin');
+		Schema::drop('plugin_versions');
 		Schema::drop('plugins');
 		Schema::drop('servertypes');
 	}

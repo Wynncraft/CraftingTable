@@ -41,7 +41,7 @@
 
                                 <div style="margin-bottom: 25px" class="input-group {{ isset($error) && $error->get('email') != null ? 'has-error' : '' }}">
                                     <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span>
-                                    {{ Form::text('email', $user->email, array('class'=>'form-control', 'placeholder' => 'email')) }}
+                                    {{ Form::text('email', $user->email, array('class'=>'form-control', 'placeholder' => 'example@example.com')) }}
                                 </div>
 
                                 <div style="margin-bottom: 25px" class="input-group {{ isset($error) && $error->get('username') != null ? 'has-error' : '' }}">

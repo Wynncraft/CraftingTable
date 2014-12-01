@@ -101,11 +101,13 @@
                             <div style="margin-bottom: 25px" class="input-group {{ Session::has('error'.$node->id) && Session::get('error'.$node->id)->get('ram') != null ? 'has-error' : '' }}">
                                 {{ Form::text('ram', $node->ram, array('class'=>'form-control', 'placeholder' => 'ram')) }}
                             </div>
-                            <div style="margin-top:10px" class="form-group">
-                                <div class="col-md-12">
-                                    {{ Form::submit('Save', array('class'=>'btn btn-primary')) }}
+                            @if(Auth::user()->can('update_node'))
+                                <div style="margin-top:10px" class="form-group">
+                                    <div class="col-md-12">
+                                        {{ Form::submit('Save', array('class'=>'btn btn-primary')) }}
+                                    </div>
                                 </div>
-                            </div>
+                            @endif
                         {{ Form::close() }}
                         <script>
                             function ConfirmDelete(){

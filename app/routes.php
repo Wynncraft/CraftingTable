@@ -54,18 +54,23 @@ Route::group(array('before' => 'auth'), function() {
 Route::group(array('before' => 'auth'), function() {
 	Route::model('network', 'Network', function() {
 	});
-	Route::post('/network/add', array('uses' => 'NetworkController@postNetwork'));
-	Route::put('/network/{network}', array('uses' => 'NetworkController@putNetwork'));
-	Route::delete('/network/{network}', array('uses' => 'NetworkController@deleteNetwork'));
+	Route::post('/networks/add', array('uses' => 'NetworkController@postNetwork'));
+	Route::put('/networks/{network}', array('uses' => 'NetworkController@putNetwork'));
+	Route::delete('/networks/{network}', array('uses' => 'NetworkController@deleteNetwork'));
 });
 
 //auth plugins
 Route::group(array('before' => 'auth'), function() {
 	Route::model('plugin', 'Plugin', function() {
 	});
-	Route::post('/plugin/add', array('uses' => 'PluginController@postPlugin'));
-	Route::put('/plugin/{plugin}', array('uses' => 'PluginController@putPlugin'));
-	Route::delete('/plugin/{plugin}', array('uses' => 'PluginController@deletePlugin'));
+	Route::model('version', 'PluginVersion', function() {
+	});
+	Route::get('/plugins', 'PluginController@getPlugins');
+	Route::post('/plugins/add', array('uses' => 'PluginController@postPlugin'));
+	Route::put('/plugins/{plugin}', array('uses' => 'PluginController@putPlugin'));
+	Route::delete('/plugins/{plugin}', array('uses' => 'PluginController@deletePlugin'));
+	Route::post('/plugins/{plugin}/versions/add', array('uses' => 'PluginController@postVersion'));
+	Route::delete('/plugins/{plugin}/versions/{version}', array('uses' => 'PluginController@deleteVersion'));
 });
 
 //no auth

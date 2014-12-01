@@ -140,11 +140,13 @@
                                 <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
                                     {{ Form::password('npassword_confirmation', array('class'=>'form-control', 'placeholder' => 'confirm new password')) }}
                             </div>
-                            <div style="margin-top:10px" class="form-group">
-                                <div class="col-md-12">
-                                    {{ Form::submit('Save', array('class'=>'btn btn-primary')) }}
+                            @if(Auth::user()->can('update_users'))
+                                <div style="margin-top:10px" class="form-group">
+                                    <div class="col-md-12">
+                                        {{ Form::submit('Save User', array('class'=>'btn btn-primary')) }}
+                                    </div>
                                 </div>
-                            </div>
+                            @endif
                         {{ Form::close() }}
                         <script>
                             function ConfirmDelete(){

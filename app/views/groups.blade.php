@@ -66,10 +66,12 @@ $(document).ready(function() {
                         @endif
                         {{ Form::open(array('action' => 'GroupController@postGroup', 'class' => 'form-horizontal')) }}
                             <div style="margin-bottom: 25px" class="input-group {{ Session::has('errorAdd') && Session::get('errorAdd')->get('name') != null ? 'has-error' : '' }}">
-                                {{ Form::text('name', '', array('class'=>'form-control', 'placeholder' => 'group name', 'maxlength' => '100')) }}
+                                {{ Form::label('name-label', 'Group Name') }}
+                                {{ Form::text('name', '', array('class'=>'form-control', 'placeholder' => 'i.e My Group', 'maxlength' => '100')) }}
                             </div>
                             <div style="margin-bottom: 25px" class="input-group {{ Session::has('errorAdd') && Session::get('errorAdd')->get('description') != null ? 'has-error' : '' }}">
-                                {{ Form::text('description', '', array('class'=>'form-control', 'placeholder' => 'group description', 'maxlength' => '255')) }}
+                                {{ Form::label('description-label', 'Group Description') }}
+                                {{ Form::text('description', '', array('class'=>'form-control', 'placeholder' => 'i.e This is my group', 'maxlength' => '255')) }}
                             </div>
                             <div style="margin-top:10px" class="form-group">
                                 <div class="col-md-12">
@@ -109,13 +111,13 @@ $(document).ready(function() {
                         @endif
                         {{ Form::open(array('action' => array('GroupController@putGroup', $role->id), 'class' => 'form-horizontal', 'method'=>$role->exists == true ? 'PUT' : 'POST')) }}
                             <div style="margin-bottom: 25px" class="input-group {{ isset($error) && $error->get('name') != null ? 'has-error' : '' }}">
-                                {{ Form::label('name', 'Group Name', array('class'=>'input-control','for'=>'name')) }}
-                                {{ Form::text('name', $role->name, array('class'=>'form-control', 'placeholder' => 'group name', 'id' => 'name')) }}
+                                {{ Form::label('name-label', 'Group Name', array('class'=>'input-control','for'=>'name')) }}
+                                {{ Form::text('name', $role->name, array('class'=>'form-control', 'placeholder' => 'i.e My Group', 'id' => 'name')) }}
                             </div>
 
                             <div style="margin-bottom: 25px" class="input-group {{ isset($error) && $error->get('description') != null ? 'has-error' : '' }}">
-                                {{ Form::label('description', 'Group Description', array('class'=>'input-control','for'=>'description')) }}
-                                {{ Form::text('description', $role->description, array('class'=>'form-control', 'placeholder' => 'group name', 'id' => 'description', 'maxlength'=> '255')) }}
+                                {{ Form::label('description-label', 'Group Description', array('class'=>'input-control','for'=>'description')) }}
+                                {{ Form::text('description', $role->description, array('class'=>'form-control', 'placeholder' => 'i.e This is my group', 'id' => 'description', 'maxlength'=> '255')) }}
                             </div>
 
                             {{ Form::label('permission_matrix', 'Permission Matrix', array('class'=>'input-control')) }}
@@ -191,11 +193,13 @@ $(document).ready(function() {
                                 </tbody>
                             </table>
 
-                            <div style="margin-top:10px" class="form-group">
-                                <div class="col-md-12">
-                                    {{ Form::submit('Save', array('class'=>'btn btn-primary')) }}
+                            @if(Auth::user()->can('update_group'))
+                                <div style="margin-top:10px" class="form-group">
+                                    <div class="col-md-12">
+                                        {{ Form::submit('Save Group', array('class'=>'btn btn-primary')) }}
+                                    </div>
                                 </div>
-                            </div>
+                            @endif
 
                         {{ Form::close() }}
                         <script>

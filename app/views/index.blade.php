@@ -49,11 +49,13 @@
                         {{ Form::open(array('action' => 'NetworkController@postNetwork', 'class' => 'form-horizontal')) }}
 
                             <div style="margin-bottom: 25px" class="input-group {{ Session::has('errorAdd') && Session::get('errorAdd')->get('name') != null ? 'has-error' : '' }}">
-                                {{ Form::text('name', '', array('class'=>'form-control', 'placeholder' => 'network name', 'maxlength' => '100')) }}
+                                {{ Form::label('name-label', 'Network Name') }}
+                                {{ Form::text('name', '', array('class'=>'form-control', 'placeholder' => 'i.e My Network', 'maxlength' => '100')) }}
                             </div>
 
                             <div style="margin-bottom: 25px" class="input-group {{ Session::has('errorAdd') && Session::get('errorAdd')->get('description') != null ? 'has-error' : '' }}">
-                                {{ Form::text('description', '', array('class'=>'form-control', 'placeholder' => 'network description', 'maxlength' => '255')) }}
+                                {{ Form::label('description-label', 'Network Description') }}
+                                {{ Form::text('description', '', array('class'=>'form-control', 'placeholder' => 'i.e This is my network', 'maxlength' => '255')) }}
                             </div>
 
                             <div style="margin-top:10px" class="form-group">
@@ -79,20 +81,6 @@
                 </div>
                 <div id="collapse{{ $network->id }}" class="panel-collapse collapse {{ Session::has('error'.$network->id) ? 'in' : '' }}">
                     <div class="panel-body">
-                        @if(Session::has('error'.$network->id))
-                            <div class="row">
-                                <div class="col-sm-12">
-                                    <div class="alert alert-danger alert-dismissible">
-                                        <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                                        <ul>
-                                            @foreach(Session::get('error'.$network->id)->all() as $errorMessage)
-                                                <li>{{ $errorMessage  }}</li>
-                                            @endforeach
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        @endif
                         @if($network->overProvisioned() == true)
                             <div class="row">
                                 <div class="col-sm-12">
@@ -107,28 +95,46 @@
                             <li role="presentation" class="active"><a href="#stats{{ $network->id }}" data-toggle="tab">Stats</a></li>
                             <li role="presentation"><a href="#servertypes{{ $network->id }}" data-toggle="tab">Server Types</a></li>
                             <li role="presentation"><a href="#nodes{{ $network->id }}" data-toggle="tab">Nodes</a></li>
-                            <li role="presentation"><a href="#edit{{ $network->id }}" data-toggle="tab">Edit</a></li>
+                            <li role="presentation"><a href="#edit{{ $network->id }}" data-toggle="tab" style="{{ Session::has('errorEdit'.$network->id) == true ? 'color:red; font-weight:bold;' : ''}}">Edit</a></li>
                         </ul>
                         <div class="tab-content">
                             <div class="tab-pane active" id="stats{{ $network->id }}">stats</div>
                             <div class="tab-pane" id="servertypes{{ $network->id }}">server types</div>
                             <div class="tab-pane" id="nodes{{ $network->id }}">nodes</div>
                             <div class="tab-pane" id="edit{{ $network->id }}">
-                                {{ Form::open(array('action' => array('NetworkController@putNetwork', $network->id), 'class' => 'form-horizontal', 'method' => 'PUT')) }}
-
-                                    <div style="margin-top: 15px; margin-bottom: 25px" class="input-group {{ Session::has('error'.$network->id) && Session::get('error'.$network->id)->get('name') != null ? 'has-error' : '' }}">
-                                        {{ Form::text('name', $network->name, array('class'=>'form-control', 'placeholder' => 'network name', 'maxlength' => '100')) }}
-                                    </div>
-
-                                    <div style="margin-bottom: 25px" class="input-group {{ Session::has('error'.$network->id) && Session::get('error'.$network->id)->get('description') != null ? 'has-error' : '' }}">
-                                        {{ Form::text('description', $network->description, array('class'=>'form-control', 'placeholder' => 'network description', 'maxlength' => '255')) }}
-                                    </div>
-
-                                    <div style="margin-top:10px" class="form-group">
-                                        <div class="col-md-12">
-                                            {{ Form::submit('Save Network', array('class'=>'btn btn-success')) }}
+                                @if(Session::has('errorEdit'.$network->id))
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <div class="alert alert-danger alert-dismissible">
+                                                <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                                <ul>
+                                                    @foreach(Session::get('errorEdit'.$network->id)->all() as $errorMessage)
+                                                        <li>{{ $errorMessage  }}</li>
+                                                    @endforeach
+                                                </ul>
+                                            </div>
                                         </div>
                                     </div>
+                                @endif
+                                {{ Form::open(array('action' => array('NetworkController@putNetwork', $network->id), 'class' => 'form-horizontal', 'method' => 'PUT')) }}
+
+                                    <div style="margin-top: 15px; margin-bottom: 25px" class="input-group {{ Session::has('errorEdit'.$network->id) && Session::get('errorEdit'.$network->id)->get('name') != null ? 'has-error' : '' }}">
+                                        {{ Form::label('name-label', 'Network Name') }}
+                                        {{ Form::text('name', $network->name, array('class'=>'form-control', 'placeholder' => 'i.e My Network', 'maxlength' => '100')) }}
+                                    </div>
+
+                                    <div style="margin-bottom: 25px" class="input-group {{ Session::has('errorEdit'.$network->id) && Session::get('errorEdit'.$network->id)->get('description') != null ? 'has-error' : '' }}">
+                                        {{ Form::label('description-label', 'Network Description') }}
+                                        {{ Form::text('description', $network->description, array('class'=>'form-control', 'placeholder' => 'i.e This is my network', 'maxlength' => '255')) }}
+                                    </div>
+
+                                    @if(Auth::user()->can('update_network'))
+                                        <div style="margin-top:10px" class="form-group">
+                                            <div class="col-md-12">
+                                                {{ Form::submit('Save Network', array('class'=>'btn btn-primary')) }}
+                                            </div>
+                                        </div>
+                                    @endif
 
                                 {{ Form::close() }}
                                 <script>

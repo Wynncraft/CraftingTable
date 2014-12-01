@@ -16,5 +16,9 @@ class Plugin extends Eloquent {
      */
     protected $fillable = ['name', 'description'];
 
+    public function versions() {
+        return $this->hasMany('PluginVersion', 'plugin_id');
+    }
+
 
 }
