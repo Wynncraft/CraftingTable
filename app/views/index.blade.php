@@ -79,7 +79,7 @@
                         </a>
                     </h4>
                 </div>
-                <div id="collapse{{ $network->id }}" class="panel-collapse collapse {{ Session::has('error'.$network->id) ? 'in' : '' }}">
+                <div id="collapse{{ $network->id }}" class="panel-collapse collapse {{ Session::has('open'.$network->id) ? 'in' : '' }}">
                     <div class="panel-body">
                         @if($network->overProvisioned() == true)
                             <div class="row">

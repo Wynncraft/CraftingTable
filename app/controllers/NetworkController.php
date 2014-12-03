@@ -22,7 +22,7 @@ class NetworkController extends BaseController {
         } else {
             $network->description = Input::get('description');
             $network->save();
-            return Redirect::to('/')->with('success', 'Created network '.$network->name);
+            return Redirect::to('/')->with('open'.$network->id, 'successAdd')->with('success', 'Created network '.$network->name);
         }
 
     }
@@ -47,12 +47,12 @@ class NetworkController extends BaseController {
         $messages = $validator->messages();
 
         if ($validator->fails()) {
-            return Redirect::to('/')->with('error'.$network->id, 'errorEdit')->with('errorEdit'.$network->id, $messages);
+            return Redirect::to('/')->with('open'.$network->id, 'errorEdit')->with('errorEdit'.$network->id, $messages);
         } else {
             $network->name = Input::get('name');
             $network->description = Input::get('description');
             $network->save();
-            return Redirect::to('/')->with('success', 'Saved network '.$network->name);
+            return Redirect::to('/')->with('open'.$network->id, 'successEdit')->with('success', 'Saved network '.$network->name);
         }
     }
 

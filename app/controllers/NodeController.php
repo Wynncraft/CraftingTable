@@ -61,7 +61,7 @@ class NodeController extends BaseController {
 
             $node->save();
 
-            return Redirect::to('/nodes')->with('success', 'Created the node '.$node->name.' ('.$node->address.')');
+            return Redirect::to('/nodes')->with('open'.$node->id, 'successAdd')->with('success', 'Created the node '.$node->name.' ('.$node->address.')');
 
         }
     }
@@ -83,13 +83,13 @@ class NodeController extends BaseController {
         );
 
         if ($validator->fails()) {
-            return Redirect::to('/nodes')->with('error'.$node->id, $validator->messages());
+            return Redirect::to('/nodes')->with('open'.$node->id, 'errorEdit')->with('error'.$node->id, $validator->messages());
         } else {
             $node->name = Input::get('name');
             $node->ram = Input::get('ram');
 
             $node->save();
-            return Redirect::to('/nodes')->with('success', 'Updated the node '.$node->name.' ('.$node->address.')');
+            return Redirect::to('/nodes')->with('open'.$node->id, 'successEdit')->with('success', 'Updated the node '.$node->name.' ('.$node->address.')');
 
         }
 

@@ -70,7 +70,7 @@ class PluginController extends BaseController {
             $plugin->description = Input::get('description');
             $plugin->directory = Input::get('directory');
             $plugin->save();
-            return Redirect::to('/plugins')->with('success', 'Created plugin '.$plugin->name);
+            return Redirect::to('/plugins')->with('open'.$plugin->id, 'successAdd')->with('success', 'Created plugin '.$plugin->name);
         }
     }
 
@@ -94,13 +94,13 @@ class PluginController extends BaseController {
         $messages = $validator->messages();
 
         if ($validator->fails()) {
-            return Redirect::to('/plugins')->with('error' . $plugin->id, 'errorVersion')->with('errorVersion' . $plugin->id, $messages);
+            return Redirect::to('/plugins')->with('open'.$plugin->id, 'errorVersion')->with('errorVersion' . $plugin->id, $messages);
         } else {
             $pluginVersion->description = Input::get('description');
             $pluginVersion->plugin_id = $plugin->id;
             $pluginVersion->save();
 
-            return Redirect::to('/plugins')->with('success', 'Added version '.$pluginVersion->version.' to plugin '.$plugin->name);
+            return Redirect::to('/plugins')->with('open'.$plugin->id, 'successVersionAdd')->with('success', 'Added version '.$pluginVersion->version.' to plugin '.$plugin->name);
         }
     }
 
@@ -117,7 +117,7 @@ class PluginController extends BaseController {
 
         $pluginVersion->delete();
 
-        return Redirect::to('/plugins')->with('success', 'Deleted plugin version '.$pluginVersion->version.' for plugin '.$plugin->name);
+        return Redirect::to('/plugins')->with('open'.$plugin->id, 'successVersionDelete')->with('success', 'Deleted plugin version '.$pluginVersion->version.' for plugin '.$plugin->name);
 
     }
 
@@ -147,7 +147,7 @@ class PluginController extends BaseController {
             $plugin->description = Input::get('description');
             $plugin->directory = Input::get('directory');
             $plugin->save();
-            return Redirect::to('/plugins')->with('success', 'Saved plugin '.$plugin->name);
+            return Redirect::to('/plugins')->with('open'.$plugin->id, 'successEdit')->with('success', 'Saved plugin '.$plugin->name);
         }
     }
 

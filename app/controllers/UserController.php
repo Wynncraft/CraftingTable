@@ -41,7 +41,7 @@ class UserController extends BaseController {
 
             $user->save();
 
-            return Redirect::to('/users')->with('success', 'Created the user '.$user->username.' ('.$user->email.')');
+            return Redirect::to('/users')->with('open'.$user->id, 'successAdd')->with('success', 'Created the user '.$user->username.' ('.$user->email.')');
 
         }
     }
@@ -210,7 +210,7 @@ class UserController extends BaseController {
             if ($userEdit == true) {
                 return View::make('user')->with('error', $validator->messages())->with('user', $user);
             } else {
-                return Redirect::to('/users')->with('open' . $user->id, $validator->messages());
+                return Redirect::to('/users')->with('open'.$user->id, 'errorEdit')->with('error'.$user->id, $validator->messages());
             }
         } else {
             $user->email = Input::get('email');
@@ -230,7 +230,7 @@ class UserController extends BaseController {
             if ($userEdit == true) {
                 return View::make('user')->with('success', 'Successfully updated your account.')->with('user', $user);
             } else {
-                return Redirect::to('users')->with('success', 'Successfully updated ' . $user->username . '\'s account info.');
+                return Redirect::to('users')->with('open'.$user->id, 'successEdit')->with('success', 'Successfully updated ' . $user->username . '\'s account info.');
             }
         }
     }

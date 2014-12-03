@@ -61,7 +61,7 @@ class GroupController extends BaseController {
         );
 
         if ($validator->fails()) {
-            return Redirect::to('/groups')->with('open'.$role->id, $validator->messages());
+            return Redirect::to('/groups')->with('open'.$role->id, 'errorEdit')->with('error'.$role->id, $validator->messages());
         } else {
             $role->name = Input::get('name');
             $role->description = Input::get('description');
@@ -72,7 +72,7 @@ class GroupController extends BaseController {
 
             $role->permissions()->sync($perms);
 
-            return Redirect::to('/groups')->with('success', 'Successfully updated the group '.$role->name)->with('role', $role);
+            return Redirect::to('/groups')->with('open'.$role->id, 'successEdit')->with('success', 'Successfully updated the group '.$role->name)->with('role', $role);
         }
     }
 
@@ -95,7 +95,7 @@ class GroupController extends BaseController {
             $role->description = Input::get('description');
             $role->save();
 
-            return Redirect::to('/groups')->with('success', 'Created group '.$role->name);
+            return Redirect::to('/groups')->with('open'.$role->id, 'successAdd')->with('success', 'Created group '.$role->name);
         }
     }
 
