@@ -47,12 +47,15 @@
                         @endif
                         {{ Form::open(array('action' => array('NodeController@postNode', true), 'class' => 'form-horizontal')) }}
                             <div style="margin-bottom: 25px" class="input-group {{ Session::has('errorAdd') && Session::get('errorAdd')->get('name') != null ? 'has-error' : '' }}">
+                                {{ Form::label('name-label', 'Name') }}
                                 {{ Form::text('name', '', array('class'=>'form-control', 'placeholder' => 'name')) }}
                             </div>
                             <div style="margin-bottom: 25px" class="input-group {{ Session::has('errorAdd') && Session::get('errorAdd')->get('address') != null ? 'has-error' : '' }}">
+                                {{ Form::label('address-label', 'IP Address') }}
                                 {{ Form::text('address', '', array('class'=>'form-control', 'placeholder' => '172.16.0.1')) }}
                             </div>
                             <div style="margin-bottom: 25px" class="input-group {{ Session::has('errorAdd') && Session::get('errorAdd')->get('ram') != null ? 'has-error' : '' }}">
+                                {{ Form::label('ram-label', 'Memory (MB)') }}
                                 {{ Form::text('ram', '', array('class'=>'form-control', 'placeholder' => '8192')) }}
                             </div>
                             <div style="margin-top:10px" class="form-group">
@@ -93,12 +96,15 @@
                         @endif
                         {{ Form::open(array('action' => array('NodeController@putNode', $node->id), 'class' => 'form-horizontal', 'method' => 'PUT')) }}
                             <div style="margin-bottom: 25px" class="input-group {{ Session::has('error'.$node->id) && Session::get('error'.$node->id)->get('name') != null ? 'has-error' : '' }}">
+                                {{ Form::label('name-label', 'Name') }}
                                 {{ Form::text('name', $node->name, array('class'=>'form-control', 'placeholder' => 'name')) }}
                             </div>
                             <div style="margin-bottom: 25px" class="input-group {{ Session::has('error'.$node->id) && Session::get('error'.$node->id)->get('address') != null ? 'has-error' : '' }}">
+                                {{ Form::label('address-label', 'IP Address') }}
                                 {{ Form::text('address', $node->address, array('class'=>'form-control', 'placeholder' => 'address', 'disabled')) }}
                             </div>
                             <div style="margin-bottom: 25px" class="input-group {{ Session::has('error'.$node->id) && Session::get('error'.$node->id)->get('ram') != null ? 'has-error' : '' }}">
+                                {{ Form::label('ram-label', 'Memory (MB)') }}
                                 {{ Form::text('ram', $node->ram, array('class'=>'form-control', 'placeholder' => 'ram')) }}
                             </div>
                             @if(Auth::user()->can('update_node'))
