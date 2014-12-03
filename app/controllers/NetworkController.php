@@ -40,7 +40,7 @@ class NetworkController extends BaseController {
         $validator = Validator::make(
             array('name'=>Input::get('name'),
                 'description'=>Input::get('description')),
-            array('name'=>'required|max:100|unique:networks,id,'.$network->id,
+            array('name'=>'required|max:100|unique:networks,name,'.$network->id,
                 'description'=>'max:255')
         );
 

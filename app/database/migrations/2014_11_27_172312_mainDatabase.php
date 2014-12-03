@@ -86,15 +86,18 @@ class MainDatabase extends Migration {
 		});
 
 		// Create the servertype/plugin relationship table
-		Schema::create('servertype_plugin', function($table)
+		Schema::create('servertype_plugins', function($table)
 		{
 			$table->engine = 'InnoDB';
 
+			$table->increments('id');
 			$table->integer('servertype_id')->unsigned()->index();
+			$table->integer('plugin_id')->unsigned()->unique()->index();
 			$table->integer('pluginversion_id')->unsigned()->index();
 			$table->timestamps();
 
 			$table->foreign('servertype_id')->references('id')->on('servertypes')->onDelete('cascade');
+			$table->foreign('plugin_id')->references('id')->on('plugins')->onDelete('cascade');
 			$table->foreign('pluginversion_id')->references('id')->on('plugin_versions')->onDelete('cascade');
 		});
 
@@ -124,7 +127,7 @@ class MainDatabase extends Migration {
 		Schema::drop('network_node');
 		Schema::drop('networks');
 		Schema::drop('nodes');
-		Schema::drop('servertype_plugin');
+		Schema::drop('servertype_plugins');
 		Schema::drop('plugin_versions');
 		Schema::drop('plugins');
 		Schema::drop('servertypes');

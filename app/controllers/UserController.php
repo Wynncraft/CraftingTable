@@ -176,13 +176,13 @@ class UserController extends BaseController {
 
         $input = array('email' => Input::get('email'),
             'group' => $group);
-        $rules = array('email' => 'required|email|unique:users,id,'.$user->id,
+        $rules = array('email' => 'required|email|unique:users,email,'.$user->id,
             'group' => 'required|numeric|validategroup');
         $messages = array('validategroup' => 'Please select a valid group');
 
         if ($userEdit == false) {
             $input['username'] = Input::get('username');
-            $rules['username'] = 'required|unique:users,id,'.$user->id;
+            $rules['username'] = 'required|unique:users,username,'.$user->id;
         }
 
         if ($group == null) {
@@ -210,7 +210,7 @@ class UserController extends BaseController {
             if ($userEdit == true) {
                 return View::make('user')->with('error', $validator->messages())->with('user', $user);
             } else {
-                return Redirect::to('/users')->with('error' . $user->id, $validator->messages());
+                return Redirect::to('/users')->with('open' . $user->id, $validator->messages());
             }
         } else {
             $user->email = Input::get('email');

@@ -59,12 +59,33 @@ Route::group(array('before' => 'auth'), function() {
 	Route::delete('/networks/{network}', array('uses' => 'NetworkController@deleteNetwork'));
 });
 
+//auth servertypes
+Route::group(array('before' => 'auth'), function() {
+	Route::model('servertype', 'ServerType', function() {
+	});
+	Route::model('servertypeplugin', 'ServerTypePlugin', function() {
+	});
+	Route::get('/servertypes', 'ServerTypeController@getServerTypes');
+	Route::post('/servertypes/add', array('uses' => 'ServerTypeController@postServerType'));
+	Route::put('/servertypes/{servertype}', array('uses' => 'ServerTypeController@putServerType'));
+	Route::delete('/servertypes/{servertype}', array('uses' => 'ServerTypeController@deleteServerType'));
+	Route::post('/servertypes/{servertype}/plugin', array('uses' => 'ServerTypeController@postServerTypePlugin'));
+	Route::delete('/servertypes/{servertype}/plugin/{servertypeplugin}', array('uses' => 'ServerTypeController@deleteServerTypePlugin'));
+});
+
+
 //auth plugins
 Route::group(array('before' => 'auth'), function() {
 	Route::model('plugin', 'Plugin', function() {
 	});
 	Route::model('version', 'PluginVersion', function() {
 	});
+
+	Route::get('/plugins/json', 'PluginController@getPluginsJson');
+	Route::get('/plugins/{plugin}/json', 'PluginController@getPluginJson');
+	Route::get('/plugins/{plugin}/versions/json', 'PluginController@getPluginVersionsJson');
+	Route::get('/plugins/{plugin}/configs/json', 'PluginController@getPluginConfigsJson');
+
 	Route::get('/plugins', 'PluginController@getPlugins');
 	Route::post('/plugins/add', array('uses' => 'PluginController@postPlugin'));
 	Route::put('/plugins/{plugin}', array('uses' => 'PluginController@putPlugin'));

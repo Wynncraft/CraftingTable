@@ -78,7 +78,7 @@
                         </a>
                     </h4>
                 </div>
-                <div id="collapse{{ $plugin->id }}" class="panel-collapse collapse {{ Session::has('error'.$plugin->id) ? 'in' : '' }}">
+                <div id="collapse{{ $plugin->id }}" class="panel-collapse collapse {{ Session::has('open'.$plugin->id) ? 'in' : '' }}">
                     <div class="panel-body">
                         <ul class="nav nav-tabs">
                             <li role="presentation" class="active"><a href="#versions{{ $plugin->id }}" data-toggle="tab" style="{{ Session::has('errorVersion'.$plugin->id) == true ? 'color:red; font-weight:bold;' : ''}}">Versions</a></li>
@@ -110,12 +110,12 @@
                                             </div>
                                         @endif
                                         {{ Form::open(array('action' => array('PluginController@postVersion', $plugin->id), 'class' => 'form-horizontal')) }}
-                                            <div style="margin-bottom: 25px" class="input-group">
+                                            <div style="margin-bottom: 25px" class="input-group {{ Session::has('errorVersion'.$plugin->id) && Session::get('errorVersion'.$plugin->id)->get('version') != null ? 'has-error' : '' }}">
                                                 {{ Form::label('version-label', 'Plugin Version') }}
                                                 {{ Form::text('version', '', array('class'=>'form-control', 'placeholder' => 'i.e 1.2.5')) }}
                                             </div>
 
-                                            <div style="margin-bottom: 25px" class="input-group">
+                                            <div style="margin-bottom: 25px" class="input-group {{ Session::has('errorVersion'.$plugin->id) && Session::get('errorVersion'.$plugin->id)->get('description') != null ? 'has-error' : '' }}">
                                                 {{ Form::label('description-label', 'Plugin Version Description') }}
                                                 {{ Form::text('description', '', array('class'=>'form-control', 'placeholder' => 'i.e This is a plugin version')) }}
                                             </div>

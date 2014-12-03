@@ -93,7 +93,7 @@ $(document).ready(function() {
                         </a>
                     </h4>
                 </div>
-                <div id="collapse{{ $role->id }}" class="panel-collapse collapse {{ Session::has('error'.$role->id) ? 'in' : '' }}">
+                <div id="collapse{{ $role->id }}" class="panel-collapse collapse {{ Session::has('open'.$role->id) ? 'in' : '' }}">
                     <div class="panel-body">
                         @if(Session::has('error'.$role->id))
                             <div class="row">

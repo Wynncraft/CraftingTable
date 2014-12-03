@@ -23,7 +23,7 @@ class ServerType extends Eloquent {
      */
     public function plugins()
     {
-        return $this->hasManyThrough('Plugin', 'PluginVersion', 'servertype_id', 'pluginversion_id');
+        return $this->hasMany('ServerTypePlugin', 'servertype_id');
     }
 
 

@@ -2,6 +2,44 @@
 
 class PluginController extends BaseController {
 
+    public function getPluginsJson() {
+        if (Auth::user()->can('read_plugin') == false) {
+            Redirect::to('/')->with('error', 'You do not have permission to view the plugins page');
+        }
+        return Plugin::all();
+    }
+
+    public function getPluginJson(Plugin $plugin = null) {
+        if ($plugin == null) {
+            return Response::json(array(), 404);
+        }
+        if (Auth::user()->can('read_plugin') == false) {
+            Redirect::to('/')->with('error', 'You do not have permission to view the plugins page');
+        }
+
+        return $plugin;
+    }
+
+    public function getPluginVersionsJson(Plugin $plugin = null) {
+        if ($plugin == null) {
+            return Response::json(array(), 404);
+        }
+        if (Auth::user()->can('read_plugin') == false) {
+            Redirect::to('/')->with('error', 'You do not have permission to view the plugins page');
+        }
+
+        return $plugin->versions()->get();
+    }
+
+    public function getPluginConfigsJson(Plugin $plugin = null) {
+        if ($plugin == null) {
+            return Response::json(array(), 404);
+        }
+        if (Auth::user()->can('read_plugin') == false) {
+            Redirect::to('/')->with('error', 'You do not have permission to view the plugins page');
+        }
+    }
+
     public function getPlugins() {
         if (Auth::user()->can('read_plugin') == false) {
             Redirect::to('/')->with('error', 'You do not have permission to view the plugins page');
@@ -49,7 +87,7 @@ class PluginController extends BaseController {
         $validator = Validator::make(
             array('version'=>$pluginVersion->version,
                 'description'=>Input::get('description')),
-            array('version'=>'required|max:100|unique:plugin_versions,plugin_id,'.$plugin->id,
+            array('version'=>'required|max:100|unique:plugin_versions,version,NULL,id,plugin_id,'.$plugin->id,
                 'description'=>'max:255')
         );
 
@@ -95,7 +133,7 @@ class PluginController extends BaseController {
             array('name'=>Input::get('name'),
                 'description'=>Input::get('description'),
                 'directory'=>Input::get('directory')),
-            array('name'=>'required|max:100|unique:plugins,id,'.$plugin->id,
+            array('name'=>'required|max:100|unique:plugins,name,'.$plugin->id,
                 'description'=>'max:255',
                 'directory'=>'required|max:255')
         );
@@ -103,7 +141,7 @@ class PluginController extends BaseController {
         $messages = $validator->messages();
 
         if ($validator->fails()) {
-            return Redirect::to('/plugins')->with('error'.$plugin->id, 'errorEdit')->with('errorEdit'.$plugin->id, $messages);
+            return Redirect::to('/plugins')->with('open'.$plugin->id, 'errorEdit')->with('errorEdit'.$plugin->id, $messages);
         } else {
             $plugin->name = Input::get('name');
             $plugin->description = Input::get('description');

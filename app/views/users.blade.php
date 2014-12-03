@@ -88,7 +88,7 @@
                         </a>
                     </h4>
                 </div>
-                <div id="collapse{{ $user->id }}" class="panel-collapse collapse {{ Session::has('error'.$user->id) ? 'in' : '' }}">
+                <div id="collapse{{ $user->id }}" class="panel-collapse collapse {{ Session::has('open'.$user->id) ? 'in' : '' }}">
                     <div class="panel-body">
                         @if(Session::has('error'.$user->id))
                             <div class="row">
