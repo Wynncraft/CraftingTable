@@ -73,6 +73,31 @@ class MainDatabase extends Migration {
 			$table->foreign('plugin_id')->references('id')->on('plugins')->onDelete('cascade');
 		});
 
+		// Create the worlds table
+		Schema::create('worlds', function($table) {
+			$table->engine = 'InnoDB';
+
+			$table->increments('id');
+			$table->string('name', 100)->index();
+			$table->string('description', 255)->nullable();
+			$table->string('directory', 255);
+			$table->timestamps();
+		});
+
+		// Create the world versions table
+		Schema::create('world_versions', function($table)
+		{
+			$table->engine = 'InnoDB';
+
+			$table->increments('id');
+			$table->integer('world_id')->unsigned()->index();
+			$table->string('version', 100)->index();
+			$table->string('description', 255)->nullable();
+			$table->timestamps();
+
+			$table->foreign('world_id')->references('id')->on('worlds')->onDelete('cascade');
+		});
+
 		// Create the servertypes table
 		Schema::create('servertypes', function($table) {
 			$table->engine = 'InnoDB';

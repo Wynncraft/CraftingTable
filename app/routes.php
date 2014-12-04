@@ -65,6 +65,7 @@ Route::group(array('before' => 'auth'), function() {
 	});
 	Route::model('servertypeplugin', 'ServerTypePlugin', function() {
 	});
+
 	Route::get('/servertypes', 'ServerTypeController@getServerTypes');
 	Route::post('/servertypes/add', array('uses' => 'ServerTypeController@postServerType'));
 	Route::put('/servertypes/{servertype}', array('uses' => 'ServerTypeController@putServerType'));
@@ -92,6 +93,15 @@ Route::group(array('before' => 'auth'), function() {
 	Route::delete('/plugins/{plugin}', array('uses' => 'PluginController@deletePlugin'));
 	Route::post('/plugins/{plugin}/versions/add', array('uses' => 'PluginController@postVersion'));
 	Route::delete('/plugins/{plugin}/versions/{version}', array('uses' => 'PluginController@deleteVersion'));
+});
+
+Route::group(array('before' => 'auth'), function() {
+	Route::model('world', 'World', function() {
+	});
+	Route::model('version', 'WorldVersion', function() {
+	});
+
+	Route::get('/worlds', 'WorldController@getWorlds');
 });
 
 //no auth

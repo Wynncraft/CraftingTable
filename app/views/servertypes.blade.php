@@ -26,6 +26,10 @@
             });
         });
     });
+
+    function ConfirmDeletePlugin(plugin){
+        return confirm("Are you sure you want to delete the plugin "+plugin+"?");
+    }
 </script>
 
 @if(Session::has('error'))
@@ -144,7 +148,7 @@
                                     <tbody>
                                         @foreach($serverType->plugins()->get() as $plugin)
                                             <tr>
-                                                {{ Form::open(array('action' => array('ServerTypeController@deleteServerTypePlugin', $serverType->id, $plugin->id), 'class' => 'form-horizontal', 'method' => 'DELETE')) }}
+                                                {{ Form::open(array('action' => array('ServerTypeController@deleteServerTypePlugin', $serverType->id, $plugin->id), 'class' => 'form-horizontal', 'method' => 'DELETE', 'onsubmit' => 'return ConfirmDeletePlugin("'.$plugin->plugin()->name.'")')) }}
                                                     <td>{{ $plugin->plugin()->name }}</td>
                                                     <td>{{ $plugin->pluginVersion()->version }}</td>
                                                     <td></td>

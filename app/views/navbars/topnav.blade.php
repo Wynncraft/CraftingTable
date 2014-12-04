@@ -20,6 +20,10 @@
                     <li class="{{ $navBarPage == "servertypes" ? 'active' : '' }}"><a href="{{ URL::to('/servertypes')  }}">Server Types</a></li>
                 @endif
 
+                @if(Auth::user()->can('read_world'))
+                    <li class="{{ $navBarPage == "worlds" ? 'active' : '' }}"><a href="{{ URL::to('/worlds')  }}">Worlds</a></li>
+                @endif
+
                 @if(Auth::user()->can('read_plugin'))
                     <li class="{{ $navBarPage == "plugins" ? 'active' : '' }}"><a href="{{ URL::to('/plugins')  }}">Plugins</a></li>
                 @endif
