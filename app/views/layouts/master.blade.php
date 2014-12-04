@@ -20,9 +20,17 @@
     </head>
     <body>
         <div class="container">
+            @if(App::environment() =='demo')
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="alert alert-danger alert-dismissible">
+                            <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                            <p>You are currently using Minestack in demo mode. Some functionality will be limited.</p>
+                        </div>
+                    </div>
+                </div>
+            @endif
             @yield('content')
-
-
         </div>
 
         <div class="footer">
