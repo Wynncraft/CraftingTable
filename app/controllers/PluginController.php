@@ -3,9 +3,9 @@
 class PluginController extends BaseController {
 
     public function getPluginsJson() {
-        if (Auth::user()->can('read_plugin') == false) {
+        /*if (Auth::user()->can('read_plugin') == false) {
             Redirect::to('/')->with('error', 'You do not have permission to view the plugins page');
-        }
+        }*/
         return Plugin::all();
     }
 
@@ -13,9 +13,9 @@ class PluginController extends BaseController {
         if ($plugin == null) {
             return Response::json(array(), 404);
         }
-        if (Auth::user()->can('read_plugin') == false) {
+        /*if (Auth::user()->can('read_plugin') == false) {
             Redirect::to('/')->with('error', 'You do not have permission to view the plugins page');
-        }
+        }*/
 
         return $plugin;
     }
@@ -24,9 +24,9 @@ class PluginController extends BaseController {
         if ($plugin == null) {
             return Response::json(array(), 404);
         }
-        if (Auth::user()->can('read_plugin') == false) {
+        /*if (Auth::user()->can('read_plugin') == false) {
             Redirect::to('/')->with('error', 'You do not have permission to view the plugins page');
-        }
+        }*/
 
         return $plugin->versions()->get();
     }

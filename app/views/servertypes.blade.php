@@ -25,11 +25,28 @@
                 }
             });
         });
+
+        var worldSelect = $('#worldList');
+        var worldVersionSelect = $('#worldVersionList');
+
+        worldSelect.change(function() {
+            worldVersionSelect.find('option').remove();
+
+            $.getJSON('worlds/'+worldSelect.val()+'/versions/json', function(data) {
+                for (var i = 0; i < data.length; i++) {
+                    worldVersionSelect.append('<option value='+data[i].id+'>'+data[i].version+'</option>');
+                }
+            });
+        });
     });
 
     function ConfirmDeletePlugin(plugin){
         return confirm("Are you sure you want to delete the plugin "+plugin+"?");
     }
+
+    function ConfirmDeleteWorld(world){
+            return confirm("Are you sure you want to delete the world "+world+"?");
+        }
 </script>
 
 @if(Session::has('error'))
@@ -116,9 +133,19 @@
                 </div>
                 <div id="collapse{{ $serverType->id }}" class="panel-collapse collapse {{ Session::has('open'.$serverType->id) ? 'in' : '' }}">
                     <div class="panel-body">
+                        @if($serverType->defaultWorld() == null)
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="alert alert-danger alert-dismissible">
+                                        <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                        <p>There is currently no default world set. This server will not function correctly without a default world.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
                         <ul class="nav nav-tabs">
                             <li role="presentation" class="active"><a href="#plugins{{ $serverType->id }}" data-toggle="tab" style="{{ Session::has('errorAddPlugin'.$serverType->id) == true ? 'color:red; font-weight:bold;' : ''}}">Plugins</a></li>
-                            <li role="presentation"><a href="#worlds{{ $serverType->id }}" data-toggle="tab">Worlds</a></li>
+                            <li role="presentation"><a href="#worlds{{ $serverType->id }}" data-toggle="tab" style="{{ Session::has('errorAddWorld'.$serverType->id) == true ? 'color:red; font-weight:bold;' : ''}}">Worlds</a></li>
                             <li role="presentation"><a href="#edit{{ $serverType->id }}" data-toggle="tab" style="{{ Session::has('errorEdit'.$serverType->id) == true ? 'color:red; font-weight:bold;' : ''}}">Edit</a></li>
                         </ul>
                         <div class="tab-content">
@@ -185,7 +212,68 @@
                                     </div>
                                 {{ Form::close() }}
                             </div>
-                            <div class="tab-pane" id="worlds{{ $serverType->id }}">worlds</div>
+                            <div class="tab-pane" id="worlds{{ $serverType->id }}" style="margin-top: 10px">
+                                @if(Session::has('errorAddWorld'.$serverType->id))
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <div class="alert alert-danger alert-dismissible">
+                                                <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                                <ul>
+                                                    @foreach(Session::get('errorAddWorld'.$serverType->id)->all() as $errorMessage)
+                                                        <li>{{ $errorMessage  }}</li>
+                                                    @endforeach
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
+                                <table style="margin-top: 10px" class="table table-bordered" data-toggle="table">
+                                                                    <thread>
+                                                                        <tr>
+                                                                            <th>World Name</th>
+                                                                            <th>World Version</th>
+                                                                            <th>Default</th>
+                                                                        </tr>
+                                                                    </thread>
+                                                                    <tbody>
+                                                                        @foreach($serverType->worlds()->get() as $world)
+                                                                            <tr>
+                                                                                {{ Form::open(array('action' => array('ServerTypeController@deleteServerTypeWorld', $serverType->id, $world->id), 'class' => 'form-horizontal', 'method' => 'DELETE', 'onsubmit' => 'return ConfirmDeleteWorld("'.$world->world()->name.'")')) }}
+                                                                                    <td>{{ $world->world()->name }}</td>
+                                                                                    <td>{{ $world->worldVersion()->version }}</td>
+                                                                                    <td>{{ $world->default == true ? 'Yes' : 'No' }}</td>
+                                                                                    <td>{{ Form::submit('Remove World', array('class'=>'btn btn-danger')) }}</td>
+                                                                                {{ Form::close() }}
+                                                                            </tr>
+                                                                        @endforeach
+                                                                    </tbody>
+                                                                </table>
+                                                                {{ Form::open(array('action' => array('ServerTypeController@postServerTypeWorld', $serverType->id), 'class' => 'form-horizontal', 'method' => 'POST')) }}
+                                                                    <div style="margin-bottom: 25px" class="input-group">
+                                                                        {{ Form::label('plugin-label', 'World Name') }}
+                                                                        <select name='world' class="form-control" id="worldList">
+                                                                            <option selected value="-1">Please select a world</option>
+                                                                            @foreach(World::all() as $world)
+                                                                                <option value="{{ $world->id }}">{{ $world->name }}</option>
+                                                                            @endforeach
+                                                                        </select>
+                                                                    </div>
+                                                                    <div style="margin-bottom: 25px" class="input-group">
+                                                                        {{ Form::label('worldVersion-label', 'World Version') }}
+                                                                        <select name='worldVersion' class="form-control" id="worldVersionList">
+                                                                        </select>
+                                                                    </div>
+                                                                    <div style="margin-bottom: 25px" class="input-group">
+                                                                        {{ Form::label('worldVersion-label', 'Default World') }}
+                                                                        {{ Form::checkbox('default', '1', false, array('class'=>'form-control')) }}
+                                                                    </div>
+                                                                    <div style="margin-top:10px" class="form-group">
+                                                                        <div class="col-md-12">
+                                                                            {{ Form::submit('Add World', array('class'=>'btn btn-primary')) }}
+                                                                        </div>
+                                                                    </div>
+                                                                {{ Form::close() }}
+                            </div>
                             <div class="tab-pane" id="edit{{ $serverType->id }}">
                                 @if(Session::has('errorEdit'.$serverType->id))
                                     <div class="row">
@@ -202,21 +290,21 @@
                                     </div>
                                 @endif
                                 {{ Form::open(array('action' => array('ServerTypeController@putServerType', $serverType->id), 'class' => 'form-horizontal', 'method' => 'PUT')) }}
-                                    <div style="margin-bottom: 25px" class="input-group {{ Session::has('errorAdd') && Session::get('errorAdd')->get('name') != null ? 'has-error' : '' }}">
+                                    <div style="margin-bottom: 25px" class="input-group {{ Session::has('errorEdit') && Session::get('errorEdit')->get('name') != null ? 'has-error' : '' }}">
                                         {{ Form::label('name-label', 'Name') }}
                                         {{ Form::text('name', $serverType->name, array('class'=>'form-control', 'placeholder' => 'i.e My Server Type', 'maxlength' => '100')) }}
                                     </div>
-                                    <div style="margin-bottom: 25px" class="input-group {{ Session::has('errorAdd') && Session::get('errorAdd')->get('description') != null ? 'has-error' : '' }}">
+                                    <div style="margin-bottom: 25px" class="input-group {{ Session::has('errorEdit') && Session::get('errorEdit')->get('description') != null ? 'has-error' : '' }}">
                                         {{ Form::label('description-label', 'Description') }}
                                         {{ Form::text('description', $serverType->description, array('class'=>'form-control', 'placeholder' => 'i.e This is a server type', 'maxlength' => '255')) }}
                                     </div>
 
-                                    <div style="margin-bottom: 25px" class="input-group {{ Session::has('errorAdd') && Session::get('errorAdd')->get('players') != null ? 'has-error' : '' }}">
+                                    <div style="margin-bottom: 25px" class="input-group {{ Session::has('errorEdit') && Session::get('errorEdit')->get('players') != null ? 'has-error' : '' }}">
                                         {{ Form::label('players-label', 'Players') }}
                                         {{ Form::text('players', $serverType->players, array('class'=>'form-control', 'placeholder' => 'i.e 10')) }}
                                     </div>
 
-                                    <div style="margin-bottom: 25px" class="input-group {{ Session::has('errorAdd') && Session::get('errorAdd')->get('ram') != null ? 'has-error' : '' }}">
+                                    <div style="margin-bottom: 25px" class="input-group {{ Session::has('errorEdit') && Session::get('errorEdit')->get('ram') != null ? 'has-error' : '' }}">
                                         {{ Form::label('ram-label', 'Memory (MB)') }}
                                         {{ Form::text('ram', $serverType->ram, array('class'=>'form-control', 'placeholder' => 'i.e 1024')) }}
                                     </div>

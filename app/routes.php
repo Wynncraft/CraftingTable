@@ -65,6 +65,8 @@ Route::group(array('before' => 'auth'), function() {
 	});
 	Route::model('servertypeplugin', 'ServerTypePlugin', function() {
 	});
+	Route::model('servertypeworld', 'ServerTypeWorld', function() {
+	});
 
 	Route::get('/servertypes', 'ServerTypeController@getServerTypes');
 	Route::post('/servertypes/add', array('uses' => 'ServerTypeController@postServerType'));
@@ -72,6 +74,8 @@ Route::group(array('before' => 'auth'), function() {
 	Route::delete('/servertypes/{servertype}', array('uses' => 'ServerTypeController@deleteServerType'));
 	Route::post('/servertypes/{servertype}/plugin', array('uses' => 'ServerTypeController@postServerTypePlugin'));
 	Route::delete('/servertypes/{servertype}/plugin/{servertypeplugin}', array('uses' => 'ServerTypeController@deleteServerTypePlugin'));
+	Route::post('/servertypes/{servertype}/world', array('uses' => 'ServerTypeController@postServerTypeWorld'));
+	Route::delete('/servertypes/{servertype}/world/{servertypeworld}', array('uses' => 'ServerTypeController@deleteServerTypeWorld'));
 });
 
 
@@ -79,7 +83,7 @@ Route::group(array('before' => 'auth'), function() {
 Route::group(array('before' => 'auth'), function() {
 	Route::model('plugin', 'Plugin', function() {
 	});
-	Route::model('version', 'PluginVersion', function() {
+	Route::model('pluginVersion', 'PluginVersion', function() {
 	});
 
 	Route::get('/plugins/json', 'PluginController@getPluginsJson');
@@ -92,16 +96,26 @@ Route::group(array('before' => 'auth'), function() {
 	Route::put('/plugins/{plugin}', array('uses' => 'PluginController@putPlugin'));
 	Route::delete('/plugins/{plugin}', array('uses' => 'PluginController@deletePlugin'));
 	Route::post('/plugins/{plugin}/versions/add', array('uses' => 'PluginController@postVersion'));
-	Route::delete('/plugins/{plugin}/versions/{version}', array('uses' => 'PluginController@deleteVersion'));
+	Route::delete('/plugins/{plugin}/versions/{pluginVersion}', array('uses' => 'PluginController@deleteVersion'));
 });
 
+//auth worlds
 Route::group(array('before' => 'auth'), function() {
 	Route::model('world', 'World', function() {
 	});
-	Route::model('version', 'WorldVersion', function() {
+	Route::model('worldVersion', 'WorldVersion', function() {
 	});
 
+	Route::get('/worlds/json', 'WorldController@getWorldsJson');
+	Route::get('/worlds/{world}/json', 'WorldController@getWorldJson');
+	Route::get('/worlds/{world}/versions/json', 'WorldController@getWorldVersionsJson');
+
 	Route::get('/worlds', 'WorldController@getWorlds');
+	Route::post('/worlds/add', array('uses' => 'WorldController@postWorld'));
+	Route::put('/worlds/{world}', array('uses' => 'WorldController@putWorld'));
+	Route::delete('/worlds/{world}', array('uses' => 'WorldController@deleteWorld'));
+	Route::post('/worlds/{world}/versions/add', array('uses' => 'WorldController@postVersion'));
+	Route::delete('/worlds/{world}/versions/{worldVersion}', array('uses' => 'WorldController@deleteVersion'));
 });
 
 //no auth

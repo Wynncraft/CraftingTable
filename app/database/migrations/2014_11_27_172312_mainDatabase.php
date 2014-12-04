@@ -126,6 +126,23 @@ class MainDatabase extends Migration {
 			$table->foreign('pluginversion_id')->references('id')->on('plugin_versions')->onDelete('cascade');
 		});
 
+		// Create the servertype/world relationship table
+		Schema::create('servertype_worlds', function($table)
+		{
+			$table->engine = 'InnoDB';
+
+			$table->increments('id');
+			$table->integer('servertype_id')->unsigned()->index();
+			$table->integer('world_id')->unsigned()->unique()->index();
+			$table->integer('worldversion_id')->unsigned()->index();
+			$table->boolean('default')->index();
+			$table->timestamps();
+
+			$table->foreign('servertype_id')->references('id')->on('servertypes')->onDelete('cascade');
+			$table->foreign('world_id')->references('id')->on('worlds')->onDelete('cascade');
+			$table->foreign('worldversion_id')->references('id')->on('world_versions')->onDelete('cascade');
+		});
+
 		// Create the network/servertype relationship table
 		Schema::create('network_servertype', function($table)
 		{
@@ -150,11 +167,15 @@ class MainDatabase extends Migration {
 	{
 		Schema::drop('network_servertype');
 		Schema::drop('network_node');
-		Schema::drop('networks');
 		Schema::drop('nodes');
+		Schema::drop('networks');
+
 		Schema::drop('servertype_plugins');
 		Schema::drop('plugin_versions');
 		Schema::drop('plugins');
+		Schema::drop('servertype_worlds');
+		Schema::drop('world_versions');
+		Schema::drop('worlds');
 		Schema::drop('servertypes');
 	}
 

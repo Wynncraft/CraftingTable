@@ -26,5 +26,24 @@ class ServerType extends Eloquent {
         return $this->hasMany('ServerTypePlugin', 'servertype_id');
     }
 
+    /**
+     * Worlds
+     *
+     * @return object
+     */
+    public function worlds()
+    {
+        return $this->hasMany('ServerTypeWorld', 'servertype_id');
+    }
+
+    /**
+     * Default world
+     *
+     * @return object
+     */
+    public function defaultWorld() {
+        return $this->worlds()->where('default', '=', '1')->first();
+    }
+
 
 }
