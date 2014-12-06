@@ -247,7 +247,7 @@
                                                                         @foreach($serverType->worlds()->get() as $world)
                                                                             <tr>
                                                                                 {{ Form::open(array('action' => array('ServerTypeController@deleteServerTypeWorld', $serverType->id, $world->id), 'class' => 'form-horizontal', 'method' => 'DELETE', 'onsubmit' => 'return ConfirmDeleteWorld("'.$world->world()->name.'")')) }}
-                                                                                    <td>{{ $world->world()->name }}}</td>
+                                                                                    <td>{{{ $world->world()->name }}}</td>
                                                                                     <td>{{{ $world->worldVersion()->version }}}</td>
                                                                                     <td>{{ $world->default == true ? 'Yes' : 'No' }}</td>
                                                                                     <td>{{ Form::submit('Remove World', array('class'=>'btn btn-danger')) }}</td>
