@@ -12,16 +12,20 @@
             var pluginVersionSelect = $('#pluginVersionList'+event.target.id);
             var pluginConfigSelect = $('#pluginConfigList'+event.target.id);
 
+            console.log(event.target);
+            console.log(pluginVersionSelect);
+            console.log(pluginConfigSelect);
+
             pluginVersionSelect.find('option').remove();
             pluginConfigSelect.find('option').remove();
 
-            $.getJSON('plugins/'+pluginSelect.val()+'/versions/json', function(data) {
+            $.getJSON('plugins/'+$(this).val()+'/versions/json', function(data) {
                 for (var i = 0; i < data.length; i++) {
                     pluginVersionSelect.append('<option value='+data[i].id+'>'+data[i].version+'</option>');
                 }
             });
 
-            $.getJSON('plugins/'+pluginSelect.val()+'/configs/json', function(data) {
+            $.getJSON('plugins/'+$(this).val()+'/configs/json', function(data) {
                 for (var i = 0; i < data.length; i++) {
                     pluginConfigSelect.append('<option value='+data[i].id+'>'+data[i].name+'</option>');
                 }
@@ -34,7 +38,7 @@
             var worldVersionSelect = $('#worldVersionList'+event.target.id);
             worldVersionSelect.find('option').remove();
 
-            $.getJSON('worlds/'+worldSelect.val()+'/versions/json', function(data) {
+            $.getJSON('worlds/'+$(this).val()+'/versions/json', function(data) {
                 for (var i = 0; i < data.length; i++) {
                     worldVersionSelect.append('<option value='+data[i].id+'>'+data[i].version+'</option>');
                 }
