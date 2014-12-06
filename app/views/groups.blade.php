@@ -117,7 +117,7 @@ $(document).ready(function() {
 
                             <div style="margin-bottom: 25px" class="input-group {{ isset($error) && $error->get('description') != null ? 'has-error' : '' }}">
                                 {{ Form::label('description-label', 'Group Description', array('class'=>'input-control','for'=>'description')) }}
-                                {{ Form::text('description', $role->description, array('class'=>'form-control', 'placeholder' => 'i.e This is my group', 'id' => 'description', 'maxlength'=> '255')) }}
+                                {{{ Form::text('description', $role->description, array('class'=>'form-control', 'placeholder' => 'i.e This is my group', 'id' => 'description', 'maxlength'=> '255')) }}}
                             </div>
 
                             {{ Form::label('permission_matrix', 'Permission Matrix', array('class'=>'input-control')) }}

@@ -176,7 +176,7 @@
                                     </div>
                                     <div style="margin-bottom: 25px" class="input-group {{ Session::has('errorEdit'.$world->id) && Session::get('errorEdit'.$world->id)->get('description') != null ? 'has-error' : '' }}">
                                         {{ Form::label('description-label', 'World Description') }}
-                                        {{ Form::text('description', $world->description, array('class'=>'form-control', 'placeholder' => 'i.e This is my world')) }}
+                                        {{{ Form::text('description', $world->description, array('class'=>'form-control', 'placeholder' => 'i.e This is my world')) }}}
                                     </div>
                                     <div style="margin-bottom: 25px" class="input-group {{ Session::has('errorEdit'.$world->id) && Session::get('errorEdit'.$world->id)->get('directory') != null ? 'has-error' : '' }}">
                                         {{ Form::label('directory-label', 'World Directory') }}
