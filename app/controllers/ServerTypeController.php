@@ -111,6 +111,20 @@ class ServerTypeController extends BaseController {
             return true;
         }, 'Please select a valid plugin');
 
+        Validator::extend('checkType', function($attribute, $value, $parameters) {
+            $plugin = Plugin::find($value);
+
+            if ($plugin == null) {
+                return false;
+            }
+
+            if ($plugin->type != 'SERVER') {
+                return false;
+            }
+
+            return true;
+        }, 'Please select a plugin for servers.');
+
         Validator::extend('checkVersion', function($attribute, $value, $parameters) {
             $plugin = Plugin::find(Input::get('plugin'));
 
@@ -130,7 +144,7 @@ class ServerTypeController extends BaseController {
         $validator = Validator::make(
             array('plugin'=>Input::get('plugin'),
                 'pluginVersion'=>Input::get('pluginVersion')),
-            array('plugin'=>'required|checkPlugin',
+            array('plugin'=>'required|checkPlugin|checkType',
                 'pluginVersion'=>'required|checkVersion')
         );
 

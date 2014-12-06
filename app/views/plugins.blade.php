@@ -50,6 +50,13 @@
                                 {{ Form::label('name-label', 'Plugin Name') }}
                                 {{ Form::text('name', '', array('class'=>'form-control', 'placeholder' => 'i.e My Plugin')) }}
                             </div>
+                            <div style="margin-bottom: 25px" class="input-group {{ Session::has('errorAdd') && Session::get('errorAdd')->get('type') != null ? 'has-error' : '' }}">
+                                {{ Form::label('type-label', 'Plugin Type') }}
+                                <div>
+                                    {{ Form::radio('type', 'SERVER') }} Server<br />
+                                    {{ Form::radio('type', 'BUNGEE') }} Bungee
+                                </div>
+                            </div>
                             <div style="margin-bottom: 25px" class="input-group {{ Session::has('errorAdd') && Session::get('errorAdd')->get('description') != null ? 'has-error' : '' }}">
                                 {{ Form::label('description-label', 'Plugin Description') }}
                                 {{ Form::text('description', '', array('class'=>'form-control', 'placeholder' => 'i.e This is my plugin')) }}
@@ -184,6 +191,13 @@
                                     <div style="margin-bottom: 25px" class="input-group {{ Session::has('errorEdit'.$plugin->id) && Session::get('errorEdit'.$plugin->id)->get('name') != null ? 'has-error' : '' }}">
                                         {{ Form::label('name-label', 'Plugin Name') }}
                                         {{ Form::text('name', $plugin->name, array('class'=>'form-control', 'placeholder' => 'i.e My Plugin')) }}
+                                    </div>
+                                    <div style="margin-bottom: 25px" class="input-group {{ Session::has('errorEdit'.$plugin->id) && Session::get('errorEdit'.$plugin->id)->get('type') != null ? 'has-error' : '' }}">
+                                        {{ Form::label('type-label', 'Plugin Type') }}
+                                        <div>
+                                            {{ Form::radio('type', 'SERVER', $plugin->type == 'SERVER' ? true : false, array('disabled')) }} Server<br />
+                                            {{ Form::radio('type', 'BUNGEE', $plugin->type == 'BUNGEE' ? true : false, array('disabled')) }} Bungee
+                                        </div>
                                     </div>
                                     <div style="margin-bottom: 25px" class="input-group {{ Session::has('errorEdit'.$plugin->id) && Session::get('errorEdit'.$plugin->id)->get('description') != null ? 'has-error' : '' }}">
                                         {{ Form::label('description-label', 'Plugin Description') }}

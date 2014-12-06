@@ -54,9 +54,14 @@ Route::group(array('before' => 'auth'), function() {
 Route::group(array('before' => 'auth'), function() {
 	Route::model('network', 'Network', function() {
 	});
+	Route::model('networkservertype', 'NetworkServerType', function() {
+	});
 	Route::post('/networks/add', array('uses' => 'NetworkController@postNetwork'));
 	Route::put('/networks/{network}', array('uses' => 'NetworkController@putNetwork'));
 	Route::delete('/networks/{network}', array('uses' => 'NetworkController@deleteNetwork'));
+
+	Route::post('/networks/{network}/servertype', array('uses' => 'NetworkController@postServerType'));
+	Route::delete('/networks/{network}/servertype/{networkservertype}', array('uses' => 'NetworkController@deleteServerType'));
 });
 
 //auth servertypes

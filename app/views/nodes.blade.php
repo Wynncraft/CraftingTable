@@ -56,7 +56,7 @@
                             </div>
                             <div style="margin-bottom: 25px" class="input-group {{ Session::has('errorAdd') && Session::get('errorAdd')->get('ram') != null ? 'has-error' : '' }}">
                                 {{ Form::label('ram-label', 'Memory (MB)') }}
-                                {{ Form::text('ram', '', array('class'=>'form-control', 'placeholder' => '8192')) }}
+                                {{ Form::number('ram', 1024, array('class'=>'form-control', 'min' => 1024)) }}
                             </div>
                             <div style="margin-top:10px" class="form-group">
                                 <div class="col-md-12">
@@ -105,7 +105,7 @@
                             </div>
                             <div style="margin-bottom: 25px" class="input-group {{ Session::has('error'.$node->id) && Session::get('error'.$node->id)->get('ram') != null ? 'has-error' : '' }}">
                                 {{ Form::label('ram-label', 'Memory (MB)') }}
-                                {{ Form::text('ram', $node->ram, array('class'=>'form-control', 'placeholder' => 'ram')) }}
+                                {{ Form::number('ram', $node->ram, array('class'=>'form-control', 'placeholder' => 'ram')) }}
                             </div>
                             @if(Auth::user()->can('update_node'))
                                 <div style="margin-top:10px" class="form-group">

@@ -23,9 +23,7 @@ class Network extends Eloquent {
      */
     public function nodes()
     {
-        return $this->belongsToMany('Node',
-            'network_node'
-        )->withTimestamps();
+        return $this->hasMany('NetworkNode', 'network_id');
     }
 
     /**
@@ -35,9 +33,16 @@ class Network extends Eloquent {
      */
     public function servertypes()
     {
-        return $this->belongsToMany('ServerType',
-            'network_servertype'
-        )->withTimestamps();
+        return $this->hasMany('NetworkServerType', 'network_id');
+    }
+
+    /**
+     * Default world
+     *
+     * @return object
+     */
+    public function defaultServerType() {
+        return $this->servertypes()->where('default', '=', '1')->first();
     }
 
     public function overProvisioned() {
@@ -48,12 +53,12 @@ class Network extends Eloquent {
 
         $nodes = $this->nodes()->get()->all();
         foreach ($nodes as $node) {
-            $usableRam += $node->ram;
+            $usableRam += $node->node()->ram;
         }
 
         $servertypes = $this->servertypes()->get()->all();
         foreach ($servertypes as $servertype) {
-            $provisionedRam += $servertype->pivot->amount * $servertype->ram;
+            $provisionedRam += $servertype->amount * $servertype->servertype()->ram;
         }
 
         if ($provisionedRam > $usableRam) {

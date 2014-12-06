@@ -5,11 +5,13 @@
 
 <script>
     $(document).ready(function(){
-        var pluginSelect = $('#pluginList');
-        var pluginVersionSelect = $('#pluginVersionList');
-        var pluginConfigSelect = $('#pluginVersionList');
+        var pluginSelect = $('.pluginList');
 
-        pluginSelect.change(function() {
+        pluginSelect.change(function(event) {
+            console.log('id '+event.target.id);
+            var pluginVersionSelect = $('#pluginVersionList'+event.target.id);
+            var pluginConfigSelect = $('#pluginConfigList'+event.target.id);
+
             pluginVersionSelect.find('option').remove();
             pluginConfigSelect.find('option').remove();
 
@@ -26,10 +28,10 @@
             });
         });
 
-        var worldSelect = $('#worldList');
-        var worldVersionSelect = $('#worldVersionList');
+        var worldSelect = $('.worldList');
 
-        worldSelect.change(function() {
+        worldSelect.change(function(event) {
+            var worldVersionSelect = $('#worldVersionList'+event.target.id);
             worldVersionSelect.find('option').remove();
 
             $.getJSON('worlds/'+worldSelect.val()+'/versions/json', function(data) {
@@ -103,12 +105,12 @@
 
                             <div style="margin-bottom: 25px" class="input-group {{ Session::has('errorAdd') && Session::get('errorAdd')->get('players') != null ? 'has-error' : '' }}">
                                 {{ Form::label('players-label', 'Players') }}
-                                {{ Form::text('players', '', array('class'=>'form-control', 'placeholder' => 'i.e 10')) }}
+                                {{ Form::number('players', 1, array('class'=>'form-control', 'min' => 1)) }}
                             </div>
 
                             <div style="margin-bottom: 25px" class="input-group {{ Session::has('errorAdd') && Session::get('errorAdd')->get('ram') != null ? 'has-error' : '' }}">
                                 {{ Form::label('ram-label', 'Memory (MB)') }}
-                                {{ Form::text('ram', '', array('class'=>'form-control', 'placeholder' => 'i.e 1024')) }}
+                                {{ Form::number('ram', 1024, array('class'=>'form-control', 'min' => 1024)) }}
                             </div>
 
                             <div style="margin-top:10px" class="form-group">
@@ -188,21 +190,23 @@
                                 {{ Form::open(array('action' => array('ServerTypeController@postServerTypePlugin', $serverType->id), 'class' => 'form-horizontal', 'method' => 'POST')) }}
                                     <div style="margin-bottom: 25px" class="input-group">
                                         {{ Form::label('plugin-label', 'Plugin Name') }}
-                                        <select name='plugin' class="form-control" id="pluginList">
+                                        <select name='plugin' class="form-control pluginList" id="{{$serverType->id}}">
                                             <option selected value="-1">Please select a plugin</option>
                                             @foreach(Plugin::all() as $plugin)
-                                                <option value="{{ $plugin->id }}">{{ $plugin->name }}</option>
+                                                @if($plugin->type == 'SERVER')
+                                                    <option value="{{ $plugin->id }}">{{ $plugin->name }}</option>
+                                                @endif
                                             @endforeach
                                         </select>
                                     </div>
                                     <div style="margin-bottom: 25px" class="input-group">
                                         {{ Form::label('pluginVersion-label', 'Plugin Version') }}
-                                        <select name='pluginVersion' class="form-control" id="pluginVersionList">
+                                        <select name='pluginVersion' class="form-control" id="pluginVersionList{{$serverType->id}}">
                                         </select>
                                     </div>
                                     <div style="margin-bottom: 25px" class="input-group">
                                         {{ Form::label('pluginConfig-label', 'Plugin Config') }}
-                                        <select name='pluginConfig' class="form-control" id="pluginConfigList">
+                                        <select name='pluginConfig' class="form-control" id="pluginConfigList{{$serverType->id}}">
                                         </select>
                                     </div>
                                     <div style="margin-top:10px" class="form-group">
@@ -251,7 +255,7 @@
                                                                 {{ Form::open(array('action' => array('ServerTypeController@postServerTypeWorld', $serverType->id), 'class' => 'form-horizontal', 'method' => 'POST')) }}
                                                                     <div style="margin-bottom: 25px" class="input-group">
                                                                         {{ Form::label('plugin-label', 'World Name') }}
-                                                                        <select name='world' class="form-control" id="worldList">
+                                                                        <select name='world' class="form-control worldList" id="{{$serverType->id}}">
                                                                             <option selected value="-1">Please select a world</option>
                                                                             @foreach(World::all() as $world)
                                                                                 <option value="{{ $world->id }}">{{ $world->name }}</option>
@@ -260,11 +264,11 @@
                                                                     </div>
                                                                     <div style="margin-bottom: 25px" class="input-group">
                                                                         {{ Form::label('worldVersion-label', 'World Version') }}
-                                                                        <select name='worldVersion' class="form-control" id="worldVersionList">
+                                                                        <select name='worldVersion' class="form-control" id="worldVersionList{{$serverType->id}}">
                                                                         </select>
                                                                     </div>
                                                                     <div style="margin-bottom: 25px" class="input-group">
-                                                                        {{ Form::label('worldVersion-label', 'Default World') }}
+                                                                        {{ Form::label('default-label', 'Default World') }}
                                                                         {{ Form::checkbox('default', '1', false, array('class'=>'form-control')) }}
                                                                     </div>
                                                                     <div style="margin-top:10px" class="form-group">
@@ -301,12 +305,12 @@
 
                                     <div style="margin-bottom: 25px" class="input-group {{ Session::has('errorEdit') && Session::get('errorEdit')->get('players') != null ? 'has-error' : '' }}">
                                         {{ Form::label('players-label', 'Players') }}
-                                        {{ Form::text('players', $serverType->players, array('class'=>'form-control', 'placeholder' => 'i.e 10')) }}
+                                        {{ Form::number('players', $serverType->players, array('class'=>'form-control', 'min' =>  1)) }}
                                     </div>
 
                                     <div style="margin-bottom: 25px" class="input-group {{ Session::has('errorEdit') && Session::get('errorEdit')->get('ram') != null ? 'has-error' : '' }}">
                                         {{ Form::label('ram-label', 'Memory (MB)') }}
-                                        {{ Form::text('ram', $serverType->ram, array('class'=>'form-control', 'placeholder' => 'i.e 1024')) }}
+                                        {{ Form::number('ram', $serverType->ram, array('class'=>'form-control', 'min' => 1024)) }}
                                     </div>
 
                                     <div style="margin-top:10px" class="form-group">

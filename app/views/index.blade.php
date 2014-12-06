@@ -3,6 +3,11 @@
 @section('content')
 @include('navbars.topnav', array('navBarPage'=>'networks'))
 
+<script>
+    function ConfirmDeletePlugin(servertype){
+            return confirm("Are you sure you want to delete the server type "+servertype+"?");
+    }
+</script>
 
 @if(Session::has('error'))
     <div class="alert alert-danger alert-dismissible">
@@ -91,16 +96,140 @@
                                 </div>
                             </div>
                         @endif
+                        @if($network->defaultServerType() == null)
+                            <div class="row">
+                                <div class="col-sm-12">
+                                <div class="alert alert-danger alert-dismissible">
+                                    <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                    <p>There is currently no default server type. This network will not function correctly without a default server type.</p>
+                                </div>
+                                </div>
+                            </div>
+                        @endif
                         <ul class="nav nav-tabs">
                             <li role="presentation" class="active"><a href="#stats{{ $network->id }}" data-toggle="tab">Stats</a></li>
-                            <li role="presentation"><a href="#servertypes{{ $network->id }}" data-toggle="tab">Server Types</a></li>
+                            <li role="presentation"><a href="#servertypes{{ $network->id }}" data-toggle="tab" style="{{ Session::has('errorAddServerType'.$network->id) == true ? 'color:red; font-weight:bold;' : ''}}">Server Types</a></li>
                             <li role="presentation"><a href="#nodes{{ $network->id }}" data-toggle="tab">Nodes</a></li>
+                            <li role="presentation"><a href="#bungee{{ $network->id }}" data-toggle="tab">Bungee</a></li>
                             <li role="presentation"><a href="#edit{{ $network->id }}" data-toggle="tab" style="{{ Session::has('errorEdit'.$network->id) == true ? 'color:red; font-weight:bold;' : ''}}">Edit</a></li>
                         </ul>
                         <div class="tab-content">
-                            <div class="tab-pane active" id="stats{{ $network->id }}">stats</div>
-                            <div class="tab-pane" id="servertypes{{ $network->id }}">server types</div>
+                            <div class="tab-pane active" id="stats{{ $network->id }}">
+                                <div class="row">
+                                    <div class="col-xs-3">
+                                        <h4 class="text-center">Online Players</h4>
+                                        <p class="text-center"><span class="text-muted">0 / 0</span></p>
+                                    </div>
+                                    <div class="col-xs-3">
+                                        <h4 class="text-center">Memory Usage</h4>
+                                        <p class="text-center"><span class="text-muted">0 MB / 0 MB</span></p>
+                                    </div>
+                                    <div class="col-xs-3">
+                                        <h4 class="text-center">Something else</h4>
+                                        <p class="text-center"><span class="text-muted">something</span></p>
+                                    </div>
+                                    <div class="col-xs-3">
+                                        <h4 class="text-center">Something else</h4>
+                                        <p class="text-center"><span class="text-muted">something</span></p>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <h4>Online Bungees</h4>
+                                        <table class="table table-striped table-bordered table-hover">
+                                            <thread>
+                                                <tr>
+                                                    <td>Bungee Number</td>
+                                                    <td>Node</td>
+                                                    <td>Manage</td>
+                                                </tr>
+                                            </thread>
+                                            <tbody>
+
+                                            </tbody>
+                                        </table>
+
+                                        <h4>Online Servers</h4>
+                                        <table class="table table-striped table-bordered table-hover">
+                                            <thread>
+                                                <tr>
+                                                    <td>Server Type</td>
+                                                    <td>Server Number</td>
+                                                    <td>Node</td>
+                                                    <td>Port</td>
+                                                    <td>Manage</td>
+                                                </tr>
+                                            </thread>
+                                            <tbody>
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane" id="servertypes{{ $network->id }}">
+                                @if(Session::has('errorAddServerType'.$network->id))
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <div class="alert alert-danger alert-dismissible">
+                                                <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                                <ul>
+                                                    @foreach(Session::get('errorAddServerType'.$network->id)->all() as $errorMessage)
+                                                        <li>{{ $errorMessage  }}</li>
+                                                    @endforeach
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
+                                <table style="margin-top: 10px" class="table table-striped table-bordered table-hover">
+                                    <thread>
+                                        <tr>
+                                            <td>Server Type Name</td>
+                                            <td>Amount</td>
+                                            <td>Default</td>
+                                        </tr>
+                                    </thread>
+                                    <tbody>
+                                        @foreach($network->servertypes()->get() as $servertype)
+                                            <tr>
+                                                {{ Form::open(array('action' => array('NetworkController@deleteServerType', $network->id, $servertype->id), 'class' => 'form-horizontal', 'method' => 'DELETE', 'onsubmit' => 'return ConfirmDeleteServerType("'.$servertype->servertype()->name.'")')) }}
+                                                    <td>{{ $servertype->servertype()->name }}</td>
+                                                    <td>{{ $servertype->amount }}</td>
+                                                    <td>{{ $servertype->default ? 'Yes' : 'No' }}</td>
+                                                    <td>{{ Form::submit('Remove Server Type', array('class'=>'btn btn-danger')) }}</td>
+                                                {{ Form::close() }}
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                                {{ Form::open(array('action' => array('NetworkController@postServerType', $network->id), 'class' => 'form-horizontal', 'method' => 'POST')) }}
+                                    <div style="margin-bottom: 25px" class="input-group">
+                                        {{ Form::label('servertype-label', 'Server Type Name') }}
+                                        <select name='servertype' class="form-control" id="servertypeList">
+                                            <option selected value="-1">Please select a server type</option>
+                                            @foreach(ServerType::all() as $servertype)
+                                                <option value="{{ $servertype->id }}">{{ $servertype->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div style="margin-top:10px" class="input-group">
+                                        {{ Form::label('amount-label', 'Server Type Amount') }}
+                                        {{ Form::number('amount', 1, array('class' => 'form-control', 'min' => 1)) }}
+                                    </div>
+                                    <div style="margin-bottom: 25px" class="input-group">
+                                        {{ Form::label('default-label', 'Default Server Type') }}
+                                        {{ Form::checkbox('default', '1', false, array('class'=>'form-control')) }}
+                                    </div>
+                                    <div style="margin-top:10px" class="form-group">
+                                        <div class="col-md-12">
+                                            {{ Form::submit('Add Server Type', array('class'=>'btn btn-primary')) }}
+                                        </div>
+                                    </div>
+                                {{ Form::close() }}
+                            </div>
                             <div class="tab-pane" id="nodes{{ $network->id }}">nodes</div>
+                            <div class="tab-pane" id="bungee{{ $network->id }}">bungee config</div>
                             <div class="tab-pane" id="edit{{ $network->id }}">
                                 @if(Session::has('errorEdit'.$network->id))
                                     <div class="row">
