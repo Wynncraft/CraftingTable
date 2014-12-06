@@ -12,14 +12,14 @@
 @if(Session::has('error'))
     <div class="alert alert-danger alert-dismissible">
         <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-        <p>{{ Session::get('error') }}</p>
+        <p>{{{ Session::get('error') }}}</p>
     </div>
 @endif
 
 @if(Session::has('success'))
     <div class="alert alert-success alert-dismissible">
         <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-        <p>{{ Session::get('success') }}</p>
+        <p>{{{ Session::get('success') }}}</p>
     </div>
 @endif
 
@@ -35,7 +35,7 @@
                         </a>
                     </h4>
                 </div>
-                <div id="collapseAdd" class="panel-collapse collapse {{ Session::has('errorAdd') ? 'in' : '' }}">
+                <div id="collapseAdd" class="panel-collapse collapse {{{ Session::has('errorAdd') ? 'in' : '' }}}">
                     <div class="panel-body">
                         @if(Session::has('errorAdd'))
                             <div class="row">
@@ -44,7 +44,7 @@
                                         <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
                                             <ul>
                                                 @foreach(Session::get('errorAdd')->all() as $errorMessage)
-                                                    <li>{{ $errorMessage  }}</li>
+                                                    <li>{{{ $errorMessage  }}}</li>
                                                 @endforeach
                                             </ul>
                                     </div>
@@ -53,12 +53,12 @@
                         @endif
                         {{ Form::open(array('action' => 'NetworkController@postNetwork', 'class' => 'form-horizontal')) }}
 
-                            <div style="margin-bottom: 25px" class="input-group {{ Session::has('errorAdd') && Session::get('errorAdd')->get('name') != null ? 'has-error' : '' }}">
+                            <div style="margin-bottom: 25px" class="input-group {{{ Session::has('errorAdd') && Session::get('errorAdd')->get('name') != null ? 'has-error' : '' }}}">
                                 {{ Form::label('name-label', 'Network Name') }}
                                 {{ Form::text('name', '', array('class'=>'form-control', 'placeholder' => 'i.e My Network', 'maxlength' => '100')) }}
                             </div>
 
-                            <div style="margin-bottom: 25px" class="input-group {{ Session::has('errorAdd') && Session::get('errorAdd')->get('description') != null ? 'has-error' : '' }}">
+                            <div style="margin-bottom: 25px" class="input-group {{{ Session::has('errorAdd') && Session::get('errorAdd')->get('description') != null ? 'has-error' : '' }}}">
                                 {{ Form::label('description-label', 'Network Description') }}
                                 {{ Form::text('description', '', array('class'=>'form-control', 'placeholder' => 'i.e This is my network', 'maxlength' => '255')) }}
                             </div>
@@ -84,7 +84,7 @@
                         </a>
                     </h4>
                 </div>
-                <div id="collapse{{ $network->id }}" class="panel-collapse collapse {{ Session::has('open'.$network->id) ? 'in' : '' }}">
+                <div id="collapse{{{ $network->id }}}" class="panel-collapse collapse {{{ Session::has('open'.$network->id) ? 'in' : '' }}}">
                     <div class="panel-body">
                         @if($network->overProvisioned() == true)
                             <div class="row">
@@ -194,10 +194,10 @@
                                         @foreach($network->servertypes()->get() as $servertype)
                                             <tr>
                                                 {{ Form::open(array('action' => array('NetworkController@deleteServerType', $network->id, $servertype->id), 'class' => 'form-horizontal', 'method' => 'DELETE', 'onsubmit' => 'return ConfirmDeleteServerType("'.$servertype->servertype()->name.'")')) }}
-                                                    <td>{{ $servertype->servertype()->name }}</td>
-                                                    <td>{{ $servertype->amount }}</td>
-                                                    <td>{{ $servertype->default ? 'Yes' : 'No' }}</td>
-                                                    <td>{{ Form::submit('Remove Server Type', array('class'=>'btn btn-danger')) }}</td>
+                                                    <td>{{{ $servertype->servertype()->name }}}</td>
+                                                    <td>{{{ $servertype->amount }}}</td>
+                                                    <td>{{{ $servertype->default ? 'Yes' : 'No' }}}</td>
+                                                    <td>{{{ Form::submit('Remove Server Type', array('class'=>'btn btn-danger')) }}}</td>
                                                 {{ Form::close() }}
                                             </tr>
                                         @endforeach
@@ -209,7 +209,7 @@
                                         <select name='servertype' class="form-control" id="servertypeList">
                                             <option selected value="-1">Please select a server type</option>
                                             @foreach(ServerType::all() as $servertype)
-                                                <option value="{{ $servertype->id }}">{{ $servertype->name }}</option>
+                                                <option value="{{ $servertype->id }}">{{{ $servertype->name }}}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -268,7 +268,7 @@
                                 {{ Form::close() }}
                                 <script>
                                     function ConfirmDelete(){
-                                        return confirm("Are you sure you want to delete the network {{ $network->name }}?");
+                                        return confirm("Are you sure you want to delete the network {{{ $network->name }}}?");
                                     }
                                 </script>
                                 @if(Auth::user()->can('delete_network'))
