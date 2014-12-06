@@ -262,7 +262,7 @@
                                                                         <select name='world' class="form-control worldList" id="{{$serverType->id}}">
                                                                             <option selected value="-1">Please select a world</option>
                                                                             @foreach(World::all() as $world)
-                                                                                <option value="{{ $world->id }}">{{ $world->name }}</option>
+                                                                                <option value="{{ $world->id }}">{{{ $world->name }}}</option>
                                                                             @endforeach
                                                                         </select>
                                                                     </div>
@@ -300,11 +300,11 @@
                                 {{ Form::open(array('action' => array('ServerTypeController@putServerType', $serverType->id), 'class' => 'form-horizontal', 'method' => 'PUT')) }}
                                     <div style="margin-bottom: 25px" class="input-group {{ Session::has('errorEdit') && Session::get('errorEdit')->get('name') != null ? 'has-error' : '' }}">
                                         {{ Form::label('name-label', 'Name') }}
-                                       { {{ Form::text('name', $serverType->name, array('class'=>'form-control', 'placeholder' => 'i.e My Server Type', 'maxlength' => '100')) }}}
+                                        {{ Form::text('name', $serverType->name, array('class'=>'form-control', 'placeholder' => 'i.e My Server Type', 'maxlength' => '100')) }}
                                     </div>
                                     <div style="margin-bottom: 25px" class="input-group {{ Session::has('errorEdit') && Session::get('errorEdit')->get('description') != null ? 'has-error' : '' }}">
                                         {{ Form::label('description-label', 'Description') }}
-                                        {{{ Form::text('description', $serverType->description, array('class'=>'form-control', 'placeholder' => 'i.e This is a server type', 'maxlength' => '255')) }}}
+                                        {{ Form::text('description', $serverType->description, array('class'=>'form-control', 'placeholder' => 'i.e This is a server type', 'maxlength' => '255')) }}
                                     </div>
 
                                     <div style="margin-bottom: 25px" class="input-group {{ Session::has('errorEdit') && Session::get('errorEdit')->get('players') != null ? 'has-error' : '' }}">
