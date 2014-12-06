@@ -13,7 +13,7 @@
 @if(Session::has('success'))
     <div class="alert alert-success alert-dismissible">
         <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-        <p>{{ Session::get('success') }}</p>
+        <p>{{{ Session::get('success') }}}</p>
     </div>
 @endif
 
@@ -176,7 +176,7 @@
                                     </div>
                                     <div style="margin-bottom: 25px" class="input-group {{ Session::has('errorEdit'.$world->id) && Session::get('errorEdit'.$world->id)->get('description') != null ? 'has-error' : '' }}">
                                         {{ Form::label('description-label', 'World Description') }}
-                                        {{{ Form::text('description', $world->description, array('class'=>'form-control', 'placeholder' => 'i.e This is my world')) }}}
+                                        {{ Form::text('description', $world->description, array('class'=>'form-control', 'placeholder' => 'i.e This is my world')) }}
                                     </div>
                                     <div style="margin-bottom: 25px" class="input-group {{ Session::has('errorEdit'.$world->id) && Session::get('errorEdit'.$world->id)->get('directory') != null ? 'has-error' : '' }}">
                                         {{ Form::label('directory-label', 'World Directory') }}

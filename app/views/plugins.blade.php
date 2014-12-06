@@ -13,7 +13,7 @@
 @if(Session::has('success'))
     <div class="alert alert-success alert-dismissible">
         <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-        <p>{{ Session::get('success') }}</p>
+        <p>{{{ Session::get('success') }}}</p>
     </div>
 @endif
 
@@ -190,7 +190,7 @@
                                 {{ Form::open(array('action' => array('PluginController@putPlugin', $plugin->id), 'class' => 'form-horizontal', 'method' => 'PUT')) }}
                                     <div style="margin-bottom: 25px" class="input-group {{ Session::has('errorEdit'.$plugin->id) && Session::get('errorEdit'.$plugin->id)->get('name') != null ? 'has-error' : '' }}">
                                         {{ Form::label('name-label', 'Plugin Name') }}
-                                        {{{ Form::text('name', $plugin->name, array('class'=>'form-control', 'placeholder' => 'i.e My Plugin')) }}}
+                                        {{ Form::text('name', $plugin->name, array('class'=>'form-control', 'placeholder' => 'i.e My Plugin')) }}
                                     </div>
                                     <div style="margin-bottom: 25px" class="input-group {{ Session::has('errorEdit'.$plugin->id) && Session::get('errorEdit'.$plugin->id)->get('type') != null ? 'has-error' : '' }}">
                                         {{ Form::label('type-label', 'Plugin Type') }}
@@ -201,7 +201,7 @@
                                     </div>
                                     <div style="margin-bottom: 25px" class="input-group {{ Session::has('errorEdit'.$plugin->id) && Session::get('errorEdit'.$plugin->id)->get('description') != null ? 'has-error' : '' }}">
                                         {{ Form::label('description-label', 'Plugin Description') }}
-                                        {{{ Form::text('description', $plugin->description, array('class'=>'form-control', 'placeholder' => 'i.e This is my plugin')) }}}
+                                        {{ Form::text('description', $plugin->description, array('class'=>'form-control', 'placeholder' => 'i.e This is my plugin')) }}
                                     </div>
                                     <div style="margin-bottom: 25px" class="input-group {{ Session::has('errorEdit'.$plugin->id) && Session::get('errorEdit'.$plugin->id)->get('directory') != null ? 'has-error' : '' }}">
                                         {{ Form::label('directory-label', 'Plugin Directory') }}
