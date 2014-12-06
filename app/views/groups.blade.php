@@ -190,6 +190,82 @@ $(document).ready(function() {
                                         {{ Form::hidden('PERM:'.$perm->name, $hasPerm ? 'true' : 'false', array('id' => $role->id.$perm->name)) }}
                                         <td><button id="{{$role->id.$perm->name}}" type="button" class="btn perm {{ $hasPerm ? 'btn-success' : 'btn-danger' }}">{{ $hasPerm ? 'Allow' : 'Deny' }}</button></td>
                                     </tr>
+                                    <tr>
+                                        <td>Node</td>
+                                        {{--*/ $perm = Toddish\Verify\Models\Permission::firstOrNew(array('name'=>'create_node')) /*--}}
+                                        {{--*/ $hasPerm = ($role->permissions()->where('name', '=', $perm->name)->first() == null) ? false : true /*--}}
+                                        {{ Form::hidden('PERM:'.$perm->name, $hasPerm ? 'true' : 'false', array('id' => $role->id.$perm->name)) }}
+                                        <td><button id="{{$role->id.$perm->name}}" type="button" class="btn perm {{ $hasPerm ? 'btn-success' : 'btn-danger' }}">{{ $hasPerm ? 'Allow' : 'Deny' }}</button></td>
+                                        {{--*/ $perm = Toddish\Verify\Models\Permission::firstOrNew(array('name'=>'read_node')) /*--}}
+                                        {{--*/ $hasPerm = ($role->permissions()->where('name', '=', $perm->name)->first() == null) ? false : true /*--}}
+                                        {{ Form::hidden('PERM:'.$perm->name, $hasPerm ? 'true' : 'false', array('id' => $role->id.$perm->name)) }}
+                                        <td><button id="{{$role->id.$perm->name}}" type="button" class="btn perm {{ $hasPerm ? 'btn-success' : 'btn-danger' }}">{{ $hasPerm ? 'Allow' : 'Deny' }}</button></td>
+                                        {{--*/ $perm = Toddish\Verify\Models\Permission::firstOrNew(array('name'=>'update_node')) /*--}}
+                                        {{--*/ $hasPerm = ($role->permissions()->where('name', '=', $perm->name)->first() == null) ? false : true /*--}}
+                                        {{ Form::hidden('PERM:'.$perm->name, $hasPerm ? 'true' : 'false', array('id' => $role->id.$perm->name)) }}
+                                        <td><button id="{{$role->id.$perm->name}}" type="button" class="btn perm {{ $hasPerm ? 'btn-success' : 'btn-danger' }}">{{ $hasPerm ? 'Allow' : 'Deny' }}</button></td>
+                                        {{--*/ $perm = Toddish\Verify\Models\Permission::firstOrNew(array('name'=>'delete_node')) /*--}}
+                                        {{--*/ $hasPerm = ($role->permissions()->where('name', '=', $perm->name)->first() == null) ? false : true /*--}}
+                                        {{ Form::hidden('PERM:'.$perm->name, $hasPerm ? 'true' : 'false', array('id' => $role->id.$perm->name)) }}
+                                        <td><button id="{{$role->id.$perm->name}}" type="button" class="btn perm {{ $hasPerm ? 'btn-success' : 'btn-danger' }}">{{ $hasPerm ? 'Allow' : 'Deny' }}</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Server Type</td>
+                                        {{--*/ $perm = Toddish\Verify\Models\Permission::firstOrNew(array('name'=>'create_servertype')) /*--}}
+                                        {{--*/ $hasPerm = ($role->permissions()->where('name', '=', $perm->name)->first() == null) ? false : true /*--}}
+                                        {{ Form::hidden('PERM:'.$perm->name, $hasPerm ? 'true' : 'false', array('id' => $role->id.$perm->name)) }}
+                                        <td><button id="{{$role->id.$perm->name}}" type="button" class="btn perm {{ $hasPerm ? 'btn-success' : 'btn-danger' }}">{{ $hasPerm ? 'Allow' : 'Deny' }}</button></td>
+                                        {{--*/ $perm = Toddish\Verify\Models\Permission::firstOrNew(array('name'=>'read_servertype')) /*--}}
+                                        {{--*/ $hasPerm = ($role->permissions()->where('name', '=', $perm->name)->first() == null) ? false : true /*--}}
+                                        {{ Form::hidden('PERM:'.$perm->name, $hasPerm ? 'true' : 'false', array('id' => $role->id.$perm->name)) }}
+                                        <td><button id="{{$role->id.$perm->name}}" type="button" class="btn perm {{ $hasPerm ? 'btn-success' : 'btn-danger' }}">{{ $hasPerm ? 'Allow' : 'Deny' }}</button></td>
+                                        {{--*/ $perm = Toddish\Verify\Models\Permission::firstOrNew(array('name'=>'update_servertype')) /*--}}
+                                        {{--*/ $hasPerm = ($role->permissions()->where('name', '=', $perm->name)->first() == null) ? false : true /*--}}
+                                        {{ Form::hidden('PERM:'.$perm->name, $hasPerm ? 'true' : 'false', array('id' => $role->id.$perm->name)) }}
+                                        <td><button id="{{$role->id.$perm->name}}" type="button" class="btn perm {{ $hasPerm ? 'btn-success' : 'btn-danger' }}">{{ $hasPerm ? 'Allow' : 'Deny' }}</button></td>
+                                        {{--*/ $perm = Toddish\Verify\Models\Permission::firstOrNew(array('name'=>'delete_servertype')) /*--}}
+                                        {{--*/ $hasPerm = ($role->permissions()->where('name', '=', $perm->name)->first() == null) ? false : true /*--}}
+                                        {{ Form::hidden('PERM:'.$perm->name, $hasPerm ? 'true' : 'false', array('id' => $role->id.$perm->name)) }}
+                                        <td><button id="{{$role->id.$perm->name}}" type="button" class="btn perm {{ $hasPerm ? 'btn-success' : 'btn-danger' }}">{{ $hasPerm ? 'Allow' : 'Deny' }}</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td>World</td>
+                                        {{--*/ $perm = Toddish\Verify\Models\Permission::firstOrNew(array('name'=>'create_world')) /*--}}
+                                        {{--*/ $hasPerm = ($role->permissions()->where('name', '=', $perm->name)->first() == null) ? false : true /*--}}
+                                        {{ Form::hidden('PERM:'.$perm->name, $hasPerm ? 'true' : 'false', array('id' => $role->id.$perm->name)) }}
+                                        <td><button id="{{$role->id.$perm->name}}" type="button" class="btn perm {{ $hasPerm ? 'btn-success' : 'btn-danger' }}">{{ $hasPerm ? 'Allow' : 'Deny' }}</button></td>
+                                        {{--*/ $perm = Toddish\Verify\Models\Permission::firstOrNew(array('name'=>'read_world')) /*--}}
+                                        {{--*/ $hasPerm = ($role->permissions()->where('name', '=', $perm->name)->first() == null) ? false : true /*--}}
+                                        {{ Form::hidden('PERM:'.$perm->name, $hasPerm ? 'true' : 'false', array('id' => $role->id.$perm->name)) }}
+                                        <td><button id="{{$role->id.$perm->name}}" type="button" class="btn perm {{ $hasPerm ? 'btn-success' : 'btn-danger' }}">{{ $hasPerm ? 'Allow' : 'Deny' }}</button></td>
+                                        {{--*/ $perm = Toddish\Verify\Models\Permission::firstOrNew(array('name'=>'update_world')) /*--}}
+                                        {{--*/ $hasPerm = ($role->permissions()->where('name', '=', $perm->name)->first() == null) ? false : true /*--}}
+                                        {{ Form::hidden('PERM:'.$perm->name, $hasPerm ? 'true' : 'false', array('id' => $role->id.$perm->name)) }}
+                                        <td><button id="{{$role->id.$perm->name}}" type="button" class="btn perm {{ $hasPerm ? 'btn-success' : 'btn-danger' }}">{{ $hasPerm ? 'Allow' : 'Deny' }}</button></td>
+                                        {{--*/ $perm = Toddish\Verify\Models\Permission::firstOrNew(array('name'=>'delete_world')) /*--}}
+                                        {{--*/ $hasPerm = ($role->permissions()->where('name', '=', $perm->name)->first() == null) ? false : true /*--}}
+                                        {{ Form::hidden('PERM:'.$perm->name, $hasPerm ? 'true' : 'false', array('id' => $role->id.$perm->name)) }}
+                                        <td><button id="{{$role->id.$perm->name}}" type="button" class="btn perm {{ $hasPerm ? 'btn-success' : 'btn-danger' }}">{{ $hasPerm ? 'Allow' : 'Deny' }}</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Plugin</td>
+                                        {{--*/ $perm = Toddish\Verify\Models\Permission::firstOrNew(array('name'=>'create_plugin')) /*--}}
+                                        {{--*/ $hasPerm = ($role->permissions()->where('name', '=', $perm->name)->first() == null) ? false : true /*--}}
+                                        {{ Form::hidden('PERM:'.$perm->name, $hasPerm ? 'true' : 'false', array('id' => $role->id.$perm->name)) }}
+                                        <td><button id="{{$role->id.$perm->name}}" type="button" class="btn perm {{ $hasPerm ? 'btn-success' : 'btn-danger' }}">{{ $hasPerm ? 'Allow' : 'Deny' }}</button></td>
+                                        {{--*/ $perm = Toddish\Verify\Models\Permission::firstOrNew(array('name'=>'read_plugin')) /*--}}
+                                        {{--*/ $hasPerm = ($role->permissions()->where('name', '=', $perm->name)->first() == null) ? false : true /*--}}
+                                        {{ Form::hidden('PERM:'.$perm->name, $hasPerm ? 'true' : 'false', array('id' => $role->id.$perm->name)) }}
+                                        <td><button id="{{$role->id.$perm->name}}" type="button" class="btn perm {{ $hasPerm ? 'btn-success' : 'btn-danger' }}">{{ $hasPerm ? 'Allow' : 'Deny' }}</button></td>
+                                        {{--*/ $perm = Toddish\Verify\Models\Permission::firstOrNew(array('name'=>'update_plugin')) /*--}}
+                                        {{--*/ $hasPerm = ($role->permissions()->where('name', '=', $perm->name)->first() == null) ? false : true /*--}}
+                                        {{ Form::hidden('PERM:'.$perm->name, $hasPerm ? 'true' : 'false', array('id' => $role->id.$perm->name)) }}
+                                        <td><button id="{{$role->id.$perm->name}}" type="button" class="btn perm {{ $hasPerm ? 'btn-success' : 'btn-danger' }}">{{ $hasPerm ? 'Allow' : 'Deny' }}</button></td>
+                                        {{--*/ $perm = Toddish\Verify\Models\Permission::firstOrNew(array('name'=>'delete_plugin')) /*--}}
+                                        {{--*/ $hasPerm = ($role->permissions()->where('name', '=', $perm->name)->first() == null) ? false : true /*--}}
+                                        {{ Form::hidden('PERM:'.$perm->name, $hasPerm ? 'true' : 'false', array('id' => $role->id.$perm->name)) }}
+                                        <td><button id="{{$role->id.$perm->name}}" type="button" class="btn perm {{ $hasPerm ? 'btn-success' : 'btn-danger' }}">{{ $hasPerm ? 'Allow' : 'Deny' }}</button></td>
+                                    </tr>
                                 </tbody>
                             </table>
 
