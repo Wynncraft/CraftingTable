@@ -80,8 +80,8 @@
                             @if($user->disabled)
                                 <strike>
                             @endif
-                            {{ $user->username }}
-                            <small>{{ $user->email }}</small>
+                            {{{ $user->username }}}
+                            <small>{{{ $user->email }}}</small>
                             @if($user->disabled)
                                 </strike>
                             @endif

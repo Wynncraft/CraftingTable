@@ -49,7 +49,7 @@ class NodeController extends BaseController {
             array('name'=>$node->name,
                 'address'=>$node->address,
                 'ram'=>$node->ram),
-            array('name'=>'required|unique:nodes',
+            array('name'=>'required|min:3|max:100|unique:nodes',
                 'address'=>'required|unique:nodes|checkip',
                 'ram'=>'required|Integer|Min:1024'),
             array('checkip'=>'Invalid IP address')
@@ -78,7 +78,7 @@ class NodeController extends BaseController {
         $validator = Validator::make(
             array('name'=>Input::get('name'),
                 'ram'=>Input::get('ram')),
-            array('name'=>'required|unique:nodes,id,'.$node->id,
+            array('name'=>'required|min:3|max:100|unique:nodes,id,'.$node->id,
                 'ram'=>'required|Integer|Min:1024')
         );
 

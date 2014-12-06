@@ -132,8 +132,8 @@
                 <div class="panel-heading">
                     <h4 class="panel-title">
                         <a data-toggle="collapse" data-parent="#accordion" href="#collapse{{ $serverType->id }}">
-                            {{ $serverType->name }}
-                            <small>{{ $serverType->description }}</small>
+                            {{{ $serverType->name }}}
+                            <small>{{{ $serverType->description }}}</small>
                         </a>
                     </h4>
                 </div>
@@ -182,8 +182,8 @@
                                         @foreach($serverType->plugins()->get() as $plugin)
                                             <tr>
                                                 {{ Form::open(array('action' => array('ServerTypeController@deleteServerTypePlugin', $serverType->id, $plugin->id), 'class' => 'form-horizontal', 'method' => 'DELETE', 'onsubmit' => 'return ConfirmDeletePlugin("'.$plugin->plugin()->name.'")')) }}
-                                                    <td>{{ $plugin->plugin()->name }}</td>
-                                                    <td>{{ $plugin->pluginVersion()->version }}</td>
+                                                    <td>{{{ $plugin->plugin()->name }}}</td>
+                                                    <td>{{{ $plugin->pluginVersion()->version }}}</td>
                                                     <td></td>
                                                     <td>{{ Form::submit('Remove Plugin', array('class'=>'btn btn-danger')) }}</td>
                                                 {{ Form::close() }}
@@ -198,7 +198,7 @@
                                             <option selected value="-1">Please select a plugin</option>
                                             @foreach(Plugin::all() as $plugin)
                                                 @if($plugin->type == 'SERVER')
-                                                    <option value="{{ $plugin->id }}">{{ $plugin->name }}</option>
+                                                    <option value="{{ $plugin->id }}">{{{ $plugin->name }}}</option>
                                                 @endif
                                             @endforeach
                                         </select>
@@ -247,8 +247,8 @@
                                                                         @foreach($serverType->worlds()->get() as $world)
                                                                             <tr>
                                                                                 {{ Form::open(array('action' => array('ServerTypeController@deleteServerTypeWorld', $serverType->id, $world->id), 'class' => 'form-horizontal', 'method' => 'DELETE', 'onsubmit' => 'return ConfirmDeleteWorld("'.$world->world()->name.'")')) }}
-                                                                                    <td>{{ $world->world()->name }}</td>
-                                                                                    <td>{{ $world->worldVersion()->version }}</td>
+                                                                                    <td>{{ $world->world()->name }}}</td>
+                                                                                    <td>{{{ $world->worldVersion()->version }}}</td>
                                                                                     <td>{{ $world->default == true ? 'Yes' : 'No' }}</td>
                                                                                     <td>{{ Form::submit('Remove World', array('class'=>'btn btn-danger')) }}</td>
                                                                                 {{ Form::close() }}

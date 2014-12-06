@@ -79,8 +79,8 @@
                 <div class="panel-heading">
                     <h4 class="panel-title">
                         <a data-toggle="collapse" data-parent="#accordion" href="#collapse{{ $network->id }}">
-                            {{ $network->name }}
-                            <small>{{ $network->description }}</small>
+                            {{{ $network->name }}}
+                            <small>{{{ $network->description }}}</small>
                         </a>
                     </h4>
                 </div>

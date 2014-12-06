@@ -25,7 +25,7 @@ class UserController extends BaseController {
                 'password'=>Input::get('password'),
                 'password_confirmation'=>Input::get('password_confirmation')),
             array('email'=>'required|email|unique:users',
-                'username'=>'required|unique:users',
+                'username'=>'required|min:3|max:100|unique:users',
                 'password'=>'required|confirmed',
                 'password_confirmation'=>'required|same:password')
         );
@@ -60,7 +60,7 @@ class UserController extends BaseController {
                 'password'=>Input::get('password'),
                 'password_confirmation'=>Input::get('password_confirmation')),
             array('email'=>'required|email|unique:users',
-                'username'=>'required|unique:users',
+                'username'=>'required|min:3|max:100|unique:users',
                 'password'=>'required|confirmed',
                 'password_confirmation'=>'required|same:password')
         );
@@ -182,7 +182,7 @@ class UserController extends BaseController {
 
         if ($userEdit == false) {
             $input['username'] = Input::get('username');
-            $rules['username'] = 'required|unique:users,username,'.$user->id;
+            $rules['username'] = 'required|min:3|max:100|unique:users,username,'.$user->id;
         }
 
         if ($group == null) {

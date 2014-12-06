@@ -48,7 +48,7 @@ class WorldController extends BaseController
             array('name'=>$world->name,
                 'description'=>Input::get('description'),
                 'directory'=>Input::get('directory')),
-            array('name'=>'required|max:100|unique:worlds',
+            array('name'=>'required|min:3|max:100|unique:worlds',
                 'description'=>'max:255',
                 'directory'=>'required|max:255')
         );
@@ -76,7 +76,7 @@ class WorldController extends BaseController
         $validator = Validator::make(
             array('version'=>$worldVersion->version,
                 'description'=>Input::get('description')),
-            array('version'=>'required|max:100|unique:world_versions,version,NULL,id,world_id,'.$world->id,
+            array('version'=>'required|min:3|max:100|unique:world_versions,version,NULL,id,world_id,'.$world->id,
                 'description'=>'max:255')
         );
 
@@ -122,7 +122,7 @@ class WorldController extends BaseController
             array('name'=>Input::get('name'),
                 'description'=>Input::get('description'),
                 'directory'=>Input::get('directory')),
-            array('name'=>'required|max:100|unique:worlds,name,'.$world->id,
+            array('name'=>'required|min:3|max:100|unique:worlds,name,'.$world->id,
                 'description'=>'max:255',
                 'directory'=>'required|max:255')
         );

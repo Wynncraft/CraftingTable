@@ -57,7 +57,7 @@ class GroupController extends BaseController {
 
         $validator = Validator::make(
             array('name'=>Input::get('name')),
-            array('name'=>'required|unique:roles,name,'.$role->id)
+            array('name'=>'required|min:3|max:100|unique:roles,name,'.$role->id)
         );
 
         if ($validator->fails()) {
@@ -86,7 +86,7 @@ class GroupController extends BaseController {
 
         $validator = Validator::make(
             array('name'=>$role->name),
-            array('name'=>'required|unique:roles')
+            array('name'=>'required|min:3|max:100|unique:roles')
         );
 
         if ($validator->fails()) {

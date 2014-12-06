@@ -73,8 +73,8 @@
                 <div class="panel-heading">
                     <h4 class="panel-title">
                         <a data-toggle="collapse" data-parent="#accordion" href="#collapse{{ $world->id }}">
-                            {{ $world->name }}
-                            <small>{{ $world->description }}</small>
+                            {{{ $world->name }}}
+                            <small>{{{ $world->description }}}</small>
                         </a>
                     </h4>
                 </div>
@@ -89,7 +89,7 @@
                                 <ul style="margin-top: 10px" class="nav nav-tabs">
                                     <li role="presentation" class="active"><a href="#addVersion{{ $world->id }}" data-toggle="tab">Add Version</a></li>
                                     @foreach($world->versions()->get() as $version)
-                                        <li role="presentation"><a href="#version{{ $version->id }}" data-toggle="tab">{{ $version->version }}</a></li>
+                                        <li role="presentation"><a href="#version{{ $version->id }}" data-toggle="tab">{{{ $version->version }}}</a></li>
                                     @endforeach
                                 </ul>
                                 <div class="tab-content">

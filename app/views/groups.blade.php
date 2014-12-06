@@ -88,8 +88,8 @@ $(document).ready(function() {
                 <div class="panel-heading">
                     <h4 class="panel-title">
                         <a data-toggle="collapse" data-parent="#accordion" href="#collapse{{ $role->id }}">
-                            {{ $role->name }}
-                            <small>{{ $role->description }}</small>
+                            {{{ $role->name }}}
+                            <small>{{{ $role->description }}}</small>
                         </a>
                     </h4>
                 </div>
