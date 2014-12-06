@@ -4,7 +4,7 @@
 @include('navbars.topnav', array('navBarPage'=>'networks'))
 
 <script>
-    function ConfirmDeletePlugin(servertype){
+    function ConfirmDeleteServerType(servertype){
             return confirm("Are you sure you want to delete the server type "+servertype+"?");
     }
 </script>
