@@ -117,7 +117,7 @@
                         {{ Form::close() }}
                         <script>
                             function ConfirmDelete(){
-                                return confirm("Are you sure you want to delete the node {{ $node->name }}?");
+                                return confirm("Are you sure you want to delete the node {{{ $node->name }}}?");
                             }
                         </script>
                         @if(Auth::user()->can('delete_node'))

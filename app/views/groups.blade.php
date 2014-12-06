@@ -280,7 +280,7 @@ $(document).ready(function() {
                         {{ Form::close() }}
                         <script>
                             function ConfirmDelete(){
-                                return confirm("Are you sure you want to delete the group {{ $role->name }}?");
+                                return confirm("Are you sure you want to delete the group {{{ $role->name }}}?");
                             }
                         </script>
                         @if(Auth::user()->can('delete_group'))

@@ -150,7 +150,7 @@
                         {{ Form::close() }}
                         <script>
                             function ConfirmDelete(){
-                                return confirm("Are you sure you want to delete the user {{ $user->username }}?");
+                                return confirm("Are you sure you want to delete the user {{{ $user->username }}}?");
                             }
                         </script>
                         @if(Auth::user()->can('delete_user'))

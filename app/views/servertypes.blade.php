@@ -325,7 +325,7 @@
                                 {{ Form::close() }}
                                 <script>
                                     function ConfirmDelete(){
-                                        return confirm("Are you sure you want to delete the server type {{ $serverType->name }}?");
+                                        return confirm("Are you sure you want to delete the server type {{{ $serverType->name }}}?");
                                     }
                                 </script>
                                 @if(Auth::user()->can('delete_servertype'))

@@ -192,7 +192,7 @@
                                 {{ Form::close() }}
                                 <script>
                                     function ConfirmDelete(){
-                                        return confirm("Are you sure you want to delete the world {{ $world->name }}?");
+                                        return confirm("Are you sure you want to delete the world {{{ $world->name }}}?");
                                     }
                                 </script>
                                 @if(Auth::user()->can('delete_world'))

@@ -217,7 +217,7 @@
                                 {{ Form::close() }}
                                 <script>
                                     function ConfirmDelete(){
-                                        return confirm("Are you sure you want to delete the plugin {{ $plugin->name }}?");
+                                        return confirm("Are you sure you want to delete the plugin {{{ $plugin->name }}}?");
                                     }
                                 </script>
                                 @if(Auth::user()->can('delete_plugin'))
