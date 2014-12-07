@@ -22,10 +22,15 @@ Route::group(array('before' => 'auth'), function() {
 Route::group(array('before' => 'auth'), function() {
 	Route::model('node', 'Node', function() {
 	});
+	Route::model('address', 'NodePublicAddress', function() {
+	});
 	Route::get('/nodes', 'NodeController@getNodes');
 	Route::post('/nodes/add', 'NodeController@postNode');
 	Route::put('/nodes/{node}', 'NodeController@putNode');
 	Route::delete('/nodes/{node}', 'NodeController@deleteNode');
+
+	Route::post('/nodes/{node}/paddress', 'NodeController@postPAddress');
+	Route::delete('/nodes/{node}/paddress/{address}', 'NodeController@deletePAddress');
 });
 
 //auth users
@@ -83,6 +88,20 @@ Route::group(array('before' => 'auth'), function() {
 	Route::delete('/servertypes/{servertype}/world/{servertypeworld}', array('uses' => 'ServerTypeController@deleteServerTypeWorld'));
 });
 
+//auth bungeetypes
+Route::group(array('before' => 'auth'), function() {
+	Route::model('bungeetype', 'BungeeType', function() {
+	});
+	Route::model('bungeetypeplugin', 'BungeeTypePlugin', function() {
+	});
+
+	Route::get('/bungeetypes', 'BungeeTypeController@getBungeeTypes');
+	Route::post('/bungeetypes/add', array('uses' => 'BungeeTypeController@postBungeeType'));
+	Route::put('/bungeetypes/{bungeetype}', array('uses' => 'BungeeTypeController@putBungeeType'));
+	Route::delete('/bungeetypes/{bungeetype}', array('uses' => 'BungeeTypeController@deleteBungeeType'));
+	Route::post('/bungeetypes/{bungeetype}/plugin', array('uses' => 'BungeeTypeController@postBungeeTypePlugin'));
+	Route::delete('/bungeetypes/{bungeetype}/plugin/{bungeetypeplugin}', array('uses' => 'BungeeTypeController@deleteBungeeTypePlugin'));
+});
 
 //auth plugins
 Route::group(array('before' => 'auth'), function() {

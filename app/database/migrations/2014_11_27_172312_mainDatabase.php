@@ -110,6 +110,33 @@ class MainDatabase extends Migration {
 			$table->foreign('worldversion_id')->references('id')->on('world_versions')->onDelete('cascade');
 		});
 
+		// Create the servertypes table
+		Schema::create('bungeetypes', function($table) {
+			$table->engine = 'InnoDB';
+
+			$table->increments('id');
+			$table->string('name', 100)->index();
+			$table->string('description', 255)->nullable();
+			$table->integer('ram');
+			$table->timestamps();
+		});
+
+		// Create the bungee/plugin relationship table
+		Schema::create('bungeetype_plugins', function($table)
+		{
+			$table->engine = 'InnoDB';
+
+			$table->increments('id');
+			$table->integer('bungeetype_id')->unsigned()->index();
+			$table->integer('plugin_id')->unsigned()->unique()->index();
+			$table->integer('pluginversion_id')->unsigned()->index();
+			$table->timestamps();
+
+			$table->foreign('bungeetype_id')->references('id')->on('bungeetypes')->onDelete('cascade');
+			$table->foreign('plugin_id')->references('id')->on('plugins')->onDelete('cascade');
+			$table->foreign('pluginversion_id')->references('id')->on('plugin_versions')->onDelete('cascade');
+		});
+
 		// Create the networks table
 		Schema::create('networks', function($table)
 		{
@@ -128,9 +155,22 @@ class MainDatabase extends Migration {
 
 			$table->increments('id');
 			$table->string('name', 100)->index();
-			$table->string('address', 15)->index();
+			$table->string('private_address', 15)->unique()->index();
 			$table->integer('ram');
 			$table->timestamps();
+		});
+
+		// Create the nodes public addresses table
+		Schema::create('node_public_addresses', function($table)
+		{
+			$table->engine = 'InnoDB';
+
+			$table->increments('id');
+			$table->integer('node_id')->unsigned()->index();
+			$table->string('public_address', 15)->unique()->index();
+			$table->timestamps();
+
+			$table->foreign('node_id')->references('id')->on('nodes')->onDelete('cascade');
 		});
 
 		// Create the network/node relationship table
@@ -141,10 +181,14 @@ class MainDatabase extends Migration {
 			$table->increments('id');
 			$table->integer('network_id')->unsigned()->index();
 			$table->integer('node_id')->unsigned()->index();
+			$table->integer('node_public_address_id')->unsigned()->index();
+			$table->integer('bungee_type_id')->unsigned()->index();
 			$table->timestamps();
 
 			$table->foreign('network_id')->references('id')->on('networks')->onDelete('cascade');
 			$table->foreign('node_id')->references('id')->on('nodes')->onDelete('cascade');
+			$table->foreign('node_public_address_id')->references('id')->on('node_public_addresses')->onDelete('cascade');
+			$table->foreign('bungee_type_id')->references('id')->on('bungeetypes')->onDelete('cascade');
 		});
 
 		// Create the network/servertype relationship table
@@ -162,6 +206,8 @@ class MainDatabase extends Migration {
 			$table->foreign('network_id')->references('id')->on('networks')->onDelete('cascade');
 			$table->foreign('server_type_id')->references('id')->on('servertypes')->onDelete('cascade');
 		});
+
+
 	}
 
 	/**
@@ -173,16 +219,24 @@ class MainDatabase extends Migration {
 	{
 		Schema::drop('network_servertypes');
 		Schema::drop('network_nodes');
-		Schema::drop('nodes');
 		Schema::drop('networks');
 
+		Schema::drop('node_public_addresses');
+		Schema::drop('nodes');
+
+		Schema::drop('bungeetype_plugins');
+		Schema::drop('bungeetypes');
+
 		Schema::drop('servertype_plugins');
+		Schema::drop('servertype_worlds');
+		Schema::drop('servertypes');
+
 		Schema::drop('plugin_versions');
 		Schema::drop('plugins');
-		Schema::drop('servertype_worlds');
+
 		Schema::drop('world_versions');
 		Schema::drop('worlds');
-		Schema::drop('servertypes');
+
 	}
 
 }

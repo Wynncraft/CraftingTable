@@ -16,6 +16,10 @@
                     <li class="{{ $navBarPage == "networks" ? 'active' : '' }}"><a href="{{ URL::to('/')  }}">Networks</a></li>
                 @endif
 
+                @if(Auth::user()->can('read_bungeetype'))
+                    <li class="{{ $navBarPage == "bungeetypes" ? 'active' : '' }}"><a href="{{ URL::to('/bungeetypes')  }}">Bungee Types</a></li>
+                @endif
+
                 @if(Auth::user()->can('read_servertype'))
                     <li class="{{ $navBarPage == "servertypes" ? 'active' : '' }}"><a href="{{ URL::to('/servertypes')  }}">Server Types</a></li>
                 @endif

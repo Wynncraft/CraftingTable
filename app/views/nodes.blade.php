@@ -51,8 +51,8 @@
                                 {{ Form::text('name', '', array('class'=>'form-control', 'placeholder' => 'name')) }}
                             </div>
                             <div style="margin-bottom: 25px" class="input-group {{ Session::has('errorAdd') && Session::get('errorAdd')->get('address') != null ? 'has-error' : '' }}">
-                                {{ Form::label('address-label', 'IP Address') }}
-                                {{ Form::text('address', '', array('class'=>'form-control', 'placeholder' => '172.16.0.1')) }}
+                                {{ Form::label('private_address-label', 'Private IP Address') }}
+                                {{ Form::text('private_address', '', array('class'=>'form-control', 'placeholder' => '172.16.0.1')) }}
                             </div>
                             <div style="margin-bottom: 25px" class="input-group {{ Session::has('errorAdd') && Session::get('errorAdd')->get('ram') != null ? 'has-error' : '' }}">
                                 {{ Form::label('ram-label', 'Memory (MB)') }}
@@ -80,55 +80,108 @@
                 </div>
                 <div id="collapse{{ $node->id }}" class="panel-collapse collapse {{ Session::has('open'.$node->id) ? 'in' : '' }}">
                     <div class="panel-body">
-                        @if(Session::has('error'.$node->id))
-                            <div class="row">
-                                <div class="col-sm-12">
-                                    <div class="alert alert-danger alert-dismissible">
-                                        <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                                        <ul>
-                                            @foreach(Session::get('error'.$node->id)->all() as $errorMessage)
-                                                <li>{{ $errorMessage  }}</li>
-                                            @endforeach
-                                        </ul>
+                        <ul class="nav nav-tabs">
+                            <li role="presentation" class="active"><a href="#ip{{ $node->id }}" data-toggle="tab" style="{{ Session::has('errorIP'.$node->id) == true ? 'color:red; font-weight:bold;' : ''}}">Public IP Addresses</a></li>
+                            <li role="presentation"><a href="#edit{{ $node->id }}" data-toggle="tab" style="{{ Session::has('errorEdit'.$node->id) == true ? 'color:red; font-weight:bold;' : ''}}">Edit</a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <div class="tab-pane active" id="ip{{ $node->id }}">
+                                @if(Session::has('errorIP'.$node->id))
+                                                                    <div class="row">
+                                                                        <div class="col-sm-12">
+                                                                            <div class="alert alert-danger alert-dismissible">
+                                                                                <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                                                                <ul>
+                                                                                    @foreach(Session::get('errorIP'.$node->id)->all() as $errorMessage)
+                                                                                        <li>{{ $errorMessage  }}</li>
+                                                                                    @endforeach
+                                                                                </ul>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                @endif
+                                <table style="margin-top: 10px" class="table table-striped table-bordered table-hover">
+                                    <caption>Public IP Addresses for Bungee's to listen on.</caption>
+                                    <thread>
+                                        <tr>
+                                            <th>IP Address<th>
+                                        </tr>
+                                    </thread>
+                                    <tbody>
+                                        @foreach($node->publicaddresses()->get() as $publicaddress)
+                                            <tr>
+                                                {{ Form::open(array('action' => array('NodeController@deletePAddress', $node->id, $publicaddress->id), 'class' => 'form-horizontal', 'method' => 'DELETE')) }}
+                                                    <td>{{ $publicaddress->public_address }}</td>
+                                                    <td>{{ Form::submit('Remove Address', array('class'=>'btn btn-danger')) }}</td>
+                                                {{ Form::close() }}
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                                {{ Form::open(array('action' => array('NodeController@postPAddress', $node->id), 'class' => 'form-horizontal', 'method' => 'POST')) }}
+                                    <div style="margin-bottom: 25px" class="input-group {{ Session::has('errorIP'.$node->id) && Session::get('errorIP'.$node->id)->get('name') != null ? 'has-error' : '' }}">
+                                        {{ Form::label('address-label', 'IP Address') }}
+                                        {{ Form::text('address', '', array('class'=>'form-control', 'placeholder' => '1.1.1.1')) }}
                                     </div>
-                                </div>
-                            </div>
-                        @endif
-                        {{ Form::open(array('action' => array('NodeController@putNode', $node->id), 'class' => 'form-horizontal', 'method' => 'PUT')) }}
-                            <div style="margin-bottom: 25px" class="input-group {{ Session::has('error'.$node->id) && Session::get('error'.$node->id)->get('name') != null ? 'has-error' : '' }}">
-                                {{ Form::label('name-label', 'Name') }}
-                                {{ Form::text('name', $node->name, array('class'=>'form-control', 'placeholder' => 'name')) }}
-                            </div>
-                            <div style="margin-bottom: 25px" class="input-group {{ Session::has('error'.$node->id) && Session::get('error'.$node->id)->get('address') != null ? 'has-error' : '' }}">
-                                {{ Form::label('address-label', 'IP Address') }}
-                                {{ Form::text('address', $node->address, array('class'=>'form-control', 'placeholder' => 'address', 'disabled')) }}
-                            </div>
-                            <div style="margin-bottom: 25px" class="input-group {{ Session::has('error'.$node->id) && Session::get('error'.$node->id)->get('ram') != null ? 'has-error' : '' }}">
-                                {{ Form::label('ram-label', 'Memory (MB)') }}
-                                {{ Form::number('ram', $node->ram, array('class'=>'form-control', 'placeholder' => 'ram')) }}
-                            </div>
-                            @if(Auth::user()->can('update_node'))
-                                <div style="margin-top:10px" class="form-group">
-                                    <div class="col-md-12">
-                                        {{ Form::submit('Save', array('class'=>'btn btn-primary')) }}
+                                    <div style="margin-top:10px" class="form-group">
+                                        <div class="col-md-12">
+                                            {{ Form::submit('Add IP Address', array('class'=>'btn btn-primary')) }}
+                                        </div>
                                     </div>
-                                </div>
-                            @endif
-                        {{ Form::close() }}
-                        <script>
-                            function ConfirmDelete(){
-                                return confirm("Are you sure you want to delete the node {{{ $node->name }}}?");
-                            }
-                        </script>
-                        @if(Auth::user()->can('delete_node'))
-                            {{ Form::open(array('action' => array('NodeController@deleteNode', $node->id), 'class' => 'form-horizontal', 'method'=>'DELETE', 'onsubmit' => 'return ConfirmDelete()')) }}
-                                <div style="margin-top:10px" class="form-group">
-                                    <div class="col-md-12">
-                                        {{ Form::submit('Delete', array('class'=>'btn btn-danger')) }}
+                                {{ Form::close() }}
+                            </div>
+                            <div class="tab-pane" id="edit{{ $node->id }}">
+                                @if(Session::has('errorEdit'.$node->id))
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <div class="alert alert-danger alert-dismissible">
+                                                <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                                <ul>
+                                                    @foreach(Session::get('errorEdit'.$node->id)->all() as $errorMessage)
+                                                        <li>{{ $errorMessage  }}</li>
+                                                    @endforeach
+                                                </ul>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                            {{ Form::close() }}
-                        @endif
+                                @endif
+                                {{ Form::open(array('action' => array('NodeController@putNode', $node->id), 'class' => 'form-horizontal', 'method' => 'PUT')) }}
+                                    <div style="margin-bottom: 25px" class="input-group {{ Session::has('errorEdit'.$node->id) && Session::get('errorEdit'.$node->id)->get('name') != null ? 'has-error' : '' }}">
+                                        {{ Form::label('name-label', 'Name') }}
+                                        {{ Form::text('name', $node->name, array('class'=>'form-control', 'placeholder' => 'name')) }}
+                                    </div>
+                                    <div style="margin-bottom: 25px" class="input-group {{ Session::has('errorEdit'.$node->id) && Session::get('errorEdit'.$node->id)->get('address') != null ? 'has-error' : '' }}">
+                                        {{ Form::label('private_address-label', 'Private IP Address') }}
+                                        {{ Form::text('private_address', $node->address, array('class'=>'form-control', 'placeholder' => '172.16.0.1', 'disabled')) }}
+                                    </div>
+                                    <div style="margin-bottom: 25px" class="input-group {{ Session::has('errorEdit'.$node->id) && Session::get('errorEdit'.$node->id)->get('ram') != null ? 'has-error' : '' }}">
+                                        {{ Form::label('ram-label', 'Memory (MB)') }}
+                                        {{ Form::number('ram', $node->ram, array('class'=>'form-control', 'placeholder' => 'ram')) }}
+                                    </div>
+                                    @if(Auth::user()->can('update_node'))
+                                        <div style="margin-top:10px" class="form-group">
+                                            <div class="col-md-12">
+                                                {{ Form::submit('Save', array('class'=>'btn btn-primary')) }}
+                                            </div>
+                                        </div>
+                                    @endif
+                                {{ Form::close() }}
+                                    <script>
+                                        function ConfirmDelete(){
+                                            return confirm("Are you sure you want to delete the node {{{ $node->name }}}?");
+                                        }
+                                    </script>
+                                @if(Auth::user()->can('delete_node'))
+                                    {{ Form::open(array('action' => array('NodeController@deleteNode', $node->id), 'class' => 'form-horizontal', 'method'=>'DELETE', 'onsubmit' => 'return ConfirmDelete()')) }}
+                                        <div style="margin-top:10px" class="form-group">
+                                            <div class="col-md-12">
+                                                {{ Form::submit('Delete', array('class'=>'btn btn-danger')) }}
+                                            </div>
+                                        </div>
+                                    {{ Form::close() }}
+                                @endif
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

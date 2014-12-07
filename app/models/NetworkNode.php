@@ -15,7 +15,15 @@ class NetworkNode extends Eloquent
      *
      * @var array
      */
-    protected $fillable = ['network_id', 'node_id'];
+    protected $fillable = ['network_id', 'node_id', 'node_public_address_id', 'bungee_type_id'];
+
+    public function publicaddress() {
+        return $this->hasOne('NodePublicAddress', 'id', 'node_public_address_id')->first();
+    }
+
+    public function bungeetype() {
+        return $this->hasOne('BungeeType', 'id', 'bungee_type_id')->first();
+    }
 
     public function node() {
         return $this->hasOne('Node', 'id', 'node_id')->first();

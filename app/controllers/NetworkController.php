@@ -20,8 +20,10 @@ class NetworkController extends BaseController {
         if ($validator->fails()) {
             return Redirect::to('/')->with('errorAdd', $validator->messages());
         } else {
+
             $network->description = Input::get('description');
             $network->save();
+
             return Redirect::to('/')->with('open'.$network->id, 'successAdd')->with('success', 'Created network '.$network->name);
         }
 
@@ -52,6 +54,7 @@ class NetworkController extends BaseController {
             $network->name = Input::get('name');
             $network->description = Input::get('description');
             $network->save();
+
             return Redirect::to('/')->with('open'.$network->id, 'successEdit')->with('success', 'Saved network '.$network->name);
         }
     }
@@ -65,6 +68,8 @@ class NetworkController extends BaseController {
         if (Auth::user()->can('delete_network') == false) {
             return Redirect::to('/')->with('error', 'You do not have permissions to delete networks');
         }
+
+        $network->bungeetype()->bungeetype()->delete();
 
         $network->delete();
 

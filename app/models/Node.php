@@ -14,5 +14,15 @@ class Node extends Eloquent {
      *
      * @var array
      */
-    protected $fillable = ['name', 'address', 'ram'];
+    protected $fillable = ['name', 'private_address', 'ram'];
+
+    /**
+     * Public Addresses
+     *
+     * @return object
+     */
+    public function publicaddresses()
+    {
+        return $this->hasMany('NodePublicAddress', 'node_id');
+    }
 }

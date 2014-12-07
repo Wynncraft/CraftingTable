@@ -17,7 +17,7 @@ class NodeController extends BaseController {
 
         $node = new Node;
         $node->name = Input::get('name');
-        $node->address = Input::get('address');
+        $node->private_address = Input::get('private_address');
         $node->ram = Input::get('ram');
 
         Validator::extend('checkip', function($attribute, $value, $params) {
@@ -47,10 +47,10 @@ class NodeController extends BaseController {
 
         $validator = Validator::make(
             array('name'=>$node->name,
-                'address'=>$node->address,
+                'private_address'=>$node->private_address,
                 'ram'=>$node->ram),
             array('name'=>'required|min:3|max:100|unique:nodes',
-                'address'=>'required|unique:nodes|checkip',
+                'private_address'=>'required|unique:nodes|checkip',
                 'ram'=>'required|Integer|Min:1024'),
             array('checkip'=>'Invalid IP address')
         );
@@ -61,7 +61,7 @@ class NodeController extends BaseController {
 
             $node->save();
 
-            return Redirect::to('/nodes')->with('open'.$node->id, 'successAdd')->with('success', 'Created the node '.$node->name.' ('.$node->address.')');
+            return Redirect::to('/nodes')->with('open'.$node->id, 'successAdd')->with('success', 'Created the node '.$node->name.' ('.$node->private_address.')');
 
         }
     }
@@ -72,7 +72,7 @@ class NodeController extends BaseController {
         }
 
         if (Auth::user()->can('update_node') == false) {
-            return Redirect::to('/nodes')->with('errorAdd', 'You do not have permissions to update nodes.');
+            return Redirect::to('/nodes')->with('errorEdit', 'You do not have permissions to update nodes.');
         }
 
         $validator = Validator::make(
@@ -83,7 +83,7 @@ class NodeController extends BaseController {
         );
 
         if ($validator->fails()) {
-            return Redirect::to('/nodes')->with('open'.$node->id, 'errorEdit')->with('error'.$node->id, $validator->messages());
+            return Redirect::to('/nodes')->with('open'.$node->id, 'errorEdit')->with('errorEdit'.$node->id, $validator->messages());
         } else {
             $node->name = Input::get('name');
             $node->ram = Input::get('ram');
@@ -107,6 +107,75 @@ class NodeController extends BaseController {
         $node->delete();
 
         return Redirect::to('/nodes')->with('success', 'Deleted node '.$node->name);
+    }
+
+    public function postPAddress(Node $node = null) {
+        if ($node == null) {
+            return Redirect::to('/nodes')->with('error', 'Unknown node Id');
+        }
+
+        if (Auth::user()->can('update_node') == false) {
+            return Redirect::to('/nodes')->with('errorEdit', 'You do not have permissions to update nodes.');
+        }
+
+        Validator::extend('checkip', function($attribute, $value, $params) {
+            $split = explode('.', $value);
+            if (count($split) != 4) {
+                return false;
+            }
+
+            if (intval($split[0]) < 0 || intval($split[0]) > 255) {
+                return false;
+            }
+
+            if (intval($split[1]) < 0 || intval($split[1]) > 255) {
+                return false;
+            }
+
+            if (intval($split[2]) < 0 || intval($split[2]) > 255) {
+                return false;
+            }
+
+            if (intval($split[3]) < 0 || intval($split[3]) > 255) {
+                return false;
+            }
+
+            return true;
+        }, 'Invalid IP Address');
+
+        $validator = Validator::make(
+            array('public_address'=>Input::get('address')),
+            array('public_address'=>'required|unique:node_public_addresses|checkip')
+        );
+
+        if ($validator->fails()) {
+            return Redirect::to('/nodes')->with('open'.$node->id, 'errorIP')->with('errorIP'.$node->id, $validator->messages());
+        } else {
+
+            $nodePAddress = NodePublicAddress::firstOrNew(array('node_id'=>$node->id, 'public_address'=>Input::get('address')));
+            $nodePAddress->save();
+
+            return Redirect::to('/nodes')->with('open'.$node->id, 'successAddIP')->with('success', 'Added the public address '.$nodePAddress->public_address.' to node '.$node->name);
+        }
+    }
+
+    public function deletePAddress(Node $node = null, NodePublicAddress $address = null) {
+        if ($node == null) {
+            return Redirect::to('/nodes')->with('error', 'Unknown node Id');
+        }
+
+        if ($address == null) {
+            return Redirect::to('/nodes')->with('error', 'Unknown address Id');
+        }
+
+
+        if (Auth::user()->can('update_node') == false) {
+            return Redirect::to('/nodes')->with('errorEdit', 'You do not have permissions to update nodes.');
+        }
+
+        $address->delete();
+
+        return Redirect::to('/nodes')->with('open'.$node->id, 'successDeleteIP')->with('success', 'Deleted address '.$address->public_address.' from node '.$node->name);
     }
 
 }

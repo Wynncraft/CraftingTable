@@ -58,9 +58,11 @@ class PluginController extends BaseController {
         $validator = Validator::make(
             array('name'=>$plugin->name,
                 'description'=>Input::get('description'),
+                'type'=>Input::get('type'),
                 'directory'=>Input::get('directory')),
             array('name'=>'required|min:3|max:100|unique:plugins',
                 'description'=>'max:255',
+                'type'=>'required',
                 'directory'=>'required|max:255')
         );
 
@@ -68,6 +70,7 @@ class PluginController extends BaseController {
             return Redirect::to('/plugins')->with('errorAdd', $validator->messages());
         } else {
             $plugin->description = Input::get('description');
+            $plugin->type = Input::get('type');
             $plugin->directory = Input::get('directory');
             $plugin->save();
             return Redirect::to('/plugins')->with('open'.$plugin->id, 'successAdd')->with('success', 'Created plugin '.$plugin->name);

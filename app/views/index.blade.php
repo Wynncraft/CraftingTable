@@ -110,7 +110,6 @@
                             <li role="presentation" class="active"><a href="#stats{{ $network->id }}" data-toggle="tab">Stats</a></li>
                             <li role="presentation"><a href="#servertypes{{ $network->id }}" data-toggle="tab" style="{{ Session::has('errorAddServerType'.$network->id) == true ? 'color:red; font-weight:bold;' : ''}}">Server Types</a></li>
                             <li role="presentation"><a href="#nodes{{ $network->id }}" data-toggle="tab">Nodes</a></li>
-                            <li role="presentation"><a href="#bungee{{ $network->id }}" data-toggle="tab">Bungee</a></li>
                             <li role="presentation"><a href="#edit{{ $network->id }}" data-toggle="tab" style="{{ Session::has('errorEdit'.$network->id) == true ? 'color:red; font-weight:bold;' : ''}}">Edit</a></li>
                         </ul>
                         <div class="tab-content">
@@ -229,7 +228,6 @@
                                 {{ Form::close() }}
                             </div>
                             <div class="tab-pane" id="nodes{{ $network->id }}">nodes</div>
-                            <div class="tab-pane" id="bungee{{ $network->id }}">bungee config</div>
                             <div class="tab-pane" id="edit{{ $network->id }}">
                                 @if(Session::has('errorEdit'.$network->id))
                                     <div class="row">
