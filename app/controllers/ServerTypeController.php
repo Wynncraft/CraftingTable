@@ -176,6 +176,13 @@ class ServerTypeController extends BaseController {
 
             $serverTypePlugin->pluginversion_id = $pluginVersion->id;
 
+            if (Input::has('pluginConfig')) {
+                $pluginConfig = $plugin->configs()->where('id', '=', Input::get('pluginConfig'))->first();
+                if ($pluginConfig != null) {
+                    $serverTypePlugin->pluginconfig_id = $pluginConfig->id;
+                }
+            }
+
             $serverTypePlugin->save();
 
             return Redirect::to('/servertypes')->with('open'.$serverType->id, 'successPluginAdd')->with('success', 'Added the plugin '.$plugin->name.' to the server type '.$serverType->name);

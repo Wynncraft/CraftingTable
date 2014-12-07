@@ -109,6 +109,8 @@ Route::group(array('before' => 'auth'), function() {
 	});
 	Route::model('pluginVersion', 'PluginVersion', function() {
 	});
+	Route::model('pluginConfig', 'PluginConfig', function() {
+	});
 
 	Route::get('/plugins/json', 'PluginController@getPluginsJson');
 	Route::get('/plugins/{plugin}/json', 'PluginController@getPluginJson');
@@ -119,8 +121,12 @@ Route::group(array('before' => 'auth'), function() {
 	Route::post('/plugins/add', array('uses' => 'PluginController@postPlugin'));
 	Route::put('/plugins/{plugin}', array('uses' => 'PluginController@putPlugin'));
 	Route::delete('/plugins/{plugin}', array('uses' => 'PluginController@deletePlugin'));
+
 	Route::post('/plugins/{plugin}/versions/add', array('uses' => 'PluginController@postVersion'));
 	Route::delete('/plugins/{plugin}/versions/{pluginVersion}', array('uses' => 'PluginController@deleteVersion'));
+
+	Route::post('/plugins/{plugin}/configs/add', array('uses' => 'PluginController@postConfig'));
+	Route::delete('/plugins/{plugin}/configs/{pluginConfig}', array('uses' => 'PluginController@deleteConfig'));
 });
 
 //auth worlds

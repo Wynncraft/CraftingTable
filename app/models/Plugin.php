@@ -20,5 +20,7 @@ class Plugin extends Eloquent {
         return $this->hasMany('PluginVersion', 'plugin_id');
     }
 
-
+    public function configs() {
+        return $this->hasMany('PluginConfig', 'plugin_id');
+    }
 }

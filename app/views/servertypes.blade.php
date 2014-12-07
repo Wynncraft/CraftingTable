@@ -184,7 +184,7 @@
                                                 {{ Form::open(array('action' => array('ServerTypeController@deleteServerTypePlugin', $serverType->id, $plugin->id), 'class' => 'form-horizontal', 'method' => 'DELETE', 'onsubmit' => 'return ConfirmDeletePlugin("'.$plugin->plugin()->name.'")')) }}
                                                     <td>{{{ $plugin->plugin()->name }}}</td>
                                                     <td>{{{ $plugin->pluginVersion()->version }}}</td>
-                                                    <td></td>
+                                                    <td>{{{ $plugin->pluginConfig() != null ? $plugin->pluginConfig()->name : '' }}}</td>
                                                     <td>{{ Form::submit('Remove Plugin', array('class'=>'btn btn-danger')) }}</td>
                                                 {{ Form::close() }}
                                             </tr>

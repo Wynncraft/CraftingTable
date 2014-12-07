@@ -35,9 +35,11 @@ class PluginController extends BaseController {
         if ($plugin == null) {
             return Response::json(array(), 404);
         }
-        if (Auth::user()->can('read_plugin') == false) {
+        /*if (Auth::user()->can('read_plugin') == false) {
             Redirect::to('/')->with('error', 'You do not have permission to view the plugins page');
-        }
+        }*/
+
+        return $plugin->configs()->get();
     }
 
     public function getPlugins() {
@@ -120,7 +122,57 @@ class PluginController extends BaseController {
 
         $pluginVersion->delete();
 
-        return Redirect::to('/plugins')->with('open'.$plugin->id, 'successVersionDelete')->with('success', 'Deleted plugin version '.$pluginVersion->version.' for plugin '.$plugin->name);
+        return Redirect::to('/plugins')->with('open'.$plugin->id, 'successVersionDelete')->with('success', 'Deleted plugin version '.$pluginVersion->version.' from plugin '.$plugin->name);
+
+    }
+
+    public function postConfig(Plugin $plugin = null) {
+        if ($plugin == null) {
+            return Redirect::to('/plugins')->with('error', 'Unknown plugin Id');
+        }
+        if (Auth::user()->can('update_plugin') == false) {
+            Redirect::to('/plugins')->with('error', 'You do not have permission to update plugins');
+        }
+
+        $pluginConfig = PluginConfig::firstOrNew(array('plugin_id' => $plugin->id, 'name'=> Input::get('name')));
+
+        $validator = Validator::make(
+            array('name'=>$pluginConfig->name,
+                'description'=>Input::get('description'),
+                'directory'=>Input::get('directory')),
+            array('name'=>'required|min:3|max:100|unique:plugin_configs,name,NULL,id,plugin_id,'.$plugin->id,
+                'description'=>'max:255',
+                'directory'=>'required|max:255')
+        );
+
+        $messages = $validator->messages();
+
+        if ($validator->fails()) {
+            return Redirect::to('/plugins')->with('open'.$plugin->id, 'errorConfig')->with('errorConfig' . $plugin->id, $messages);
+        } else {
+            $pluginConfig->description = Input::get('description');
+            $pluginConfig->directory = Input::get('directory');
+            $pluginConfig->plugin_id = $plugin->id;
+            $pluginConfig->save();
+
+            return Redirect::to('/plugins')->with('open'.$plugin->id, 'successConfigAdd')->with('success', 'Added config '.$pluginConfig->name.' to plugin '.$plugin->name);
+        }
+    }
+
+    public function deleteConfig(Plugin $plugin = null, PluginConfig $pluginConfig = null) {
+        if ($plugin == null) {
+            return Redirect::to('/plugins')->with('error', 'Unknown plugin Id');
+        }
+        if ($pluginConfig == null) {
+            return Redirect::to('/plugins')->with('error', 'Unknown plugin config Id');
+        }
+        if (Auth::user()->can('update_plugin') == false) {
+            Redirect::to('/plugins')->with('error', 'You do not have permission to update plugins');
+        }
+
+        $pluginConfig->delete();
+
+        return Redirect::to('/plugins')->with('open'.$plugin->id, 'successConfigDelete')->with('success', 'Deleted plugin config '.$pluginConfig->name.' from plugin '.$plugin->name);
 
     }
 

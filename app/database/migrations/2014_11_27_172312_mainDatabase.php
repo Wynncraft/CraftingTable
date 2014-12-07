@@ -40,6 +40,21 @@ class MainDatabase extends Migration {
 			$table->foreign('plugin_id')->references('id')->on('plugins')->onDelete('cascade');
 		});
 
+		// Create the plugin versions table
+		Schema::create('plugin_configs', function($table)
+		{
+			$table->engine = 'InnoDB';
+
+			$table->increments('id');
+			$table->integer('plugin_id')->unsigned()->index();
+			$table->string('name', 100)->index();
+			$table->string('description', 255)->nullable();
+			$table->string('directory', 255);
+			$table->timestamps();
+
+			$table->foreign('plugin_id')->references('id')->on('plugins')->onDelete('cascade');
+		});
+
 		// Create the worlds table
 		Schema::create('worlds', function($table) {
 			$table->engine = 'InnoDB';
@@ -85,12 +100,14 @@ class MainDatabase extends Migration {
 			$table->increments('id');
 			$table->integer('servertype_id')->unsigned()->index();
 			$table->integer('plugin_id')->unsigned()->unique()->index();
-			$table->integer('pluginversion_id')->unsigned()->index();
+			$table->integer('pluginversion_id')->unsigned();
+			$table->integer('pluginconfig_id')->unsigned()->nullable();
 			$table->timestamps();
 
 			$table->foreign('servertype_id')->references('id')->on('servertypes')->onDelete('cascade');
 			$table->foreign('plugin_id')->references('id')->on('plugins')->onDelete('cascade');
 			$table->foreign('pluginversion_id')->references('id')->on('plugin_versions')->onDelete('cascade');
+			$table->foreign('pluginconfig_id')->references('id')->on('plugin_configs')->onDelete('cascade');
 		});
 
 		// Create the servertype/world relationship table
@@ -129,12 +146,14 @@ class MainDatabase extends Migration {
 			$table->increments('id');
 			$table->integer('bungeetype_id')->unsigned()->index();
 			$table->integer('plugin_id')->unsigned()->unique()->index();
-			$table->integer('pluginversion_id')->unsigned()->index();
+			$table->integer('pluginversion_id')->unsigned();
+			$table->integer('pluginconfig_id')->unsigned()->nullable();
 			$table->timestamps();
 
 			$table->foreign('bungeetype_id')->references('id')->on('bungeetypes')->onDelete('cascade');
 			$table->foreign('plugin_id')->references('id')->on('plugins')->onDelete('cascade');
 			$table->foreign('pluginversion_id')->references('id')->on('plugin_versions')->onDelete('cascade');
+			$table->foreign('pluginconfig_id')->references('id')->on('plugin_configs')->onDelete('cascade');
 		});
 
 		// Create the networks table
@@ -181,7 +200,7 @@ class MainDatabase extends Migration {
 			$table->increments('id');
 			$table->integer('network_id')->unsigned()->index();
 			$table->integer('node_id')->unsigned()->index();
-			$table->integer('node_public_address_id')->unsigned()->index();
+			$table->integer('node_public_address_id')->unique()->unsigned()->index();
 			$table->integer('bungee_type_id')->unsigned()->index();
 			$table->timestamps();
 

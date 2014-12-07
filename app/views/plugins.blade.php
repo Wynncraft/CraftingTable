@@ -3,6 +3,12 @@
 @section('content')
 @include('navbars.topnav', array('navBarPage'=>'plugins'))
 
+<script>
+    function ConfirmDeleteConfig(configName){
+        return confirm("Are you sure you want to delete the plugin config "+configName+"?");
+    }
+</script>
+
 @if(Session::has('error'))
     <div class="alert alert-danger alert-dismissible">
         <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
@@ -89,7 +95,7 @@
                     <div class="panel-body">
                         <ul class="nav nav-tabs">
                             <li role="presentation" class="active"><a href="#versions{{ $plugin->id }}" data-toggle="tab" style="{{ Session::has('errorVersion'.$plugin->id) == true ? 'color:red; font-weight:bold;' : ''}}">Versions</a></li>
-                            <li role="presentation"><a href="#configs{{ $plugin->id }}" data-toggle="tab">Configs</a></li>
+                            <li role="presentation"><a href="#configs{{ $plugin->id }}" data-toggle="tab" style="{{ Session::has('errorConfig'.$plugin->id) == true ? 'color:red; font-weight:bold;' : ''}}">Configs</a></li>
                             <li role="presentation"><a href="#edit{{ $plugin->id }}" data-toggle="tab" style="{{ Session::has('errorEdit'.$plugin->id) == true ? 'color:red; font-weight:bold;' : ''}}">Edit</a></li>
                         </ul>
                         <div class="tab-content">
@@ -165,11 +171,75 @@
                             <div class="tab-pane" id="configs{{ $plugin->id }}">
                                 <ul style="margin-top: 10px" class="nav nav-tabs">
                                     <li role="presentation" class="active"><a href="#addConfig{{ $plugin->id }}" data-toggle="tab">Add Config</a></li>
+                                    @foreach($plugin->configs()->get() as $config)
+                                        <li role="presentation"><a href="#config{{ $config->id }}" data-toggle="tab">{{ $config->name }}</a></li>
+                                    @endforeach
                                 </ul>
                                 <div class="tab-content">
-                                    <div class="tab-pane" id="addConfig{{ $plugin->id }}">
-                                        <p>add config</p>
+                                    <div class="tab-pane active" id="addConfig{{ $plugin->id }}">
+                                        @if(Session::has('errorConfig'.$plugin->id))
+                                            <div class="row">
+                                                <div class="col-sm-12">
+                                                    <div class="alert alert-danger alert-dismissible">
+                                                        <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                                        <ul>
+                                                            @foreach(Session::get('errorConfig'.$plugin->id)->all() as $errorMessage)
+                                                                <li>{{ $errorMessage  }}</li>
+                                                            @endforeach
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endif
+                                        {{ Form::open(array('action' => array('PluginController@postConfig', $plugin->id), 'class' => 'form-horizontal')) }}
+                                            <div style="margin-bottom: 25px" class="input-group {{ Session::has('errorConfig'.$plugin->id) && Session::get('errorConfig'.$plugin->id)->get('name') != null ? 'has-error' : '' }}">
+                                                {{ Form::label('name-label', 'Plugin Config Name') }}
+                                                {{ Form::text('name', '', array('class'=>'form-control', 'placeholder' => 'i.e myPluginConfig')) }}
+                                            </div>
+
+                                            <div style="margin-bottom: 25px" class="input-group {{ Session::has('errorConfig'.$plugin->id) && Session::get('errorConfig'.$plugin->id)->get('description') != null ? 'has-error' : '' }}">
+                                                {{ Form::label('description-label', 'Plugin Config Description') }}
+                                                {{ Form::text('description', '', array('class'=>'form-control', 'placeholder' => 'i.e This is a plugin config')) }}
+                                            </div>
+
+                                            <div style="margin-bottom: 25px" class="input-group {{ Session::has('errorConfig'.$plugin->id) && Session::get('errorConfig'.$plugin->id)->get('directory') != null ? 'has-error' : '' }}">
+                                                {{ Form::label('directory-label', 'Plugin Config Directory') }}
+                                                {{ Form::text('directory', '', array('class'=>'form-control', 'placeholder' => 'myPluginConfigDir')) }}
+                                            </div>
+
+                                            <div style="margin-top:10px" class="form-group">
+                                                <div class="col-md-12">
+                                                    {{ Form::submit('Add Config', array('class'=>'btn btn-success')) }}
+                                                </div>
+                                            </div>
+                                        {{ Form::close() }}
                                     </div>
+                                    @foreach($plugin->configs()->get() as $config)
+                                        <div class="tab-pane" id="config{{ $config->id }}">
+                                            {{ Form::open(array('action' => array('PluginController@deleteConfig', $plugin->id, $config->id), 'class' => 'form-horizontal', 'method' => 'DELETE', 'onsubmit' => 'return ConfirmDeleteConfig("'.$config->name.'")')) }}
+                                                <div style="margin-bottom: 25px" class="input-group">
+                                                    {{ Form::label('name-label', 'Plugin Config') }}
+                                                    {{ Form::text('name', $config->name, array('class'=>'form-control', 'placeholder' => 'myPluginConfig', 'disabled')) }}
+                                                </div>
+
+                                                <div style="margin-bottom: 25px" class="input-group">
+                                                    {{ Form::label('description-label', 'Plugin Config Description') }}
+                                                    {{ Form::text('description', $config->description, array('class'=>'form-control', 'placeholder' => 'i.e This is a plugin config', 'disabled')) }}
+                                                </div>
+
+                                                <div style="margin-bottom: 25px" class="input-group {{ Session::has('errorConfig'.$plugin->id) && Session::get('errorConfig'.$plugin->id)->get('directory') != null ? 'has-error' : '' }}">
+                                                    {{ Form::label('directory-label', 'Plugin Config Directory') }}
+                                                    {{ Form::text('directory', $config->directory, array('class'=>'form-control', 'placeholder' => 'myPluginConfigDir', 'disabled')) }}
+                                                </div>
+
+                                                <div style="margin-top:10px" class="form-group">
+                                                    <div class="col-md-12">
+                                                        {{ Form::submit('Delete Config', array('class'=>'btn btn-danger')) }}
+                                                    </div>
+                                                </div>
+                                            {{ Form::close() }}
+                                        </div>
+                                    @endforeach
                                 </div>
                             </div>
                             <div class="tab-pane" id="edit{{ $plugin->id }}">

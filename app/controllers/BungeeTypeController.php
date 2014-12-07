@@ -170,6 +170,13 @@ class BungeeTypeController extends BaseController {
 
             $bungeeTypePlugin->pluginversion_id = $pluginVersion->id;
 
+            if (Input::has('pluginConfig')) {
+                $pluginConfig = $plugin->configs()->where('id', '=', Input::get('pluginConfig'))->first();
+                if ($pluginConfig != null) {
+                    $bungeeTypePlugin->pluginconfig_id = $pluginConfig->id;
+                }
+            }
+
             $bungeeTypePlugin->save();
 
             return Redirect::to('/bungeetypes')->with('open'.$bungeeType->id, 'successPluginAdd')->with('success', 'Added the plugin '.$plugin->name.' to the bungee type '.$bungeeType->name);
