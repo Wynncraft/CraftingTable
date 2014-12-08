@@ -69,8 +69,6 @@ class NetworkController extends BaseController {
             return Redirect::to('/')->with('error', 'You do not have permissions to delete networks');
         }
 
-        $network->bungeetype()->bungeetype()->delete();
-
         $network->delete();
 
         return Redirect::to('/')->with('success', 'Deleted network '.$network->name);
