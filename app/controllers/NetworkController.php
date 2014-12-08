@@ -269,4 +269,22 @@ class NetworkController extends BaseController {
         }
     }
 
+    public function deleteNode(Network $network = null, NetworkNode $networkNode = null) {
+        if ($network == null) {
+            return Redirect::to('/')->with('error', 'Unknown network Id');
+        }
+
+        if ($networkNode == null) {
+            return Redirect::to('/')->with('error', 'Unknown node Id');
+        }
+
+        if (Auth::user()->can('update_network') == false) {
+            Redirect::to('/')->with('error', 'You do not have permission to update networks');
+        }
+
+        $networkNode->delete();
+
+        return Redirect::to('/')->with('open'.$network->id, 'successServerTypeDelete')->with('success', 'Deleted node '.$networkNode->node()->name.' from '.$network->name);
+    }
+
 }

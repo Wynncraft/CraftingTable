@@ -99,7 +99,7 @@ class MainDatabase extends Migration {
 
 			$table->increments('id');
 			$table->integer('servertype_id')->unsigned()->index();
-			$table->integer('plugin_id')->unsigned()->unique()->index();
+			$table->integer('plugin_id')->unsigned()->index();
 			$table->integer('pluginversion_id')->unsigned();
 			$table->integer('pluginconfig_id')->unsigned()->nullable();
 			$table->timestamps();
@@ -145,7 +145,7 @@ class MainDatabase extends Migration {
 
 			$table->increments('id');
 			$table->integer('bungeetype_id')->unsigned()->index();
-			$table->integer('plugin_id')->unsigned()->unique()->index();
+			$table->integer('plugin_id')->unsigned()->index();
 			$table->integer('pluginversion_id')->unsigned();
 			$table->integer('pluginconfig_id')->unsigned()->nullable();
 			$table->timestamps();
