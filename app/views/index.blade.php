@@ -7,6 +7,10 @@
     function ConfirmDeleteServerType(servertype){
             return confirm("Are you sure you want to delete the server type "+servertype+"?");
     }
+
+    function ConfirmDeleteNode(node){
+            return confirm("Are you sure you want to delete the node "+node+"?");
+    }
 </script>
 
 @if(Session::has('error'))
