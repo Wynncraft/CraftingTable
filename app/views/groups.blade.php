@@ -210,6 +210,25 @@ $(document).ready(function() {
                                         <td><button id="{{$role->id.$perm->name}}" type="button" class="btn perm {{ $hasPerm ? 'btn-success' : 'btn-danger' }}">{{ $hasPerm ? 'Allow' : 'Deny' }}</button></td>
                                     </tr>
                                     <tr>
+                                        <td>Bungee Type</td>
+                                        {{--*/ $perm = Toddish\Verify\Models\Permission::firstOrNew(array('name'=>'create_bungeetype')) /*--}}
+                                        {{--*/ $hasPerm = ($role->permissions()->where('name', '=', $perm->name)->first() == null) ? false : true /*--}}
+                                        {{ Form::hidden('PERM:'.$perm->name, $hasPerm ? 'true' : 'false', array('id' => $role->id.$perm->name)) }}
+                                        <td><button id="{{$role->id.$perm->name}}" type="button" class="btn perm {{ $hasPerm ? 'btn-success' : 'btn-danger' }}">{{ $hasPerm ? 'Allow' : 'Deny' }}</button></td>
+                                        {{--*/ $perm = Toddish\Verify\Models\Permission::firstOrNew(array('name'=>'read_bungeetype')) /*--}}
+                                        {{--*/ $hasPerm = ($role->permissions()->where('name', '=', $perm->name)->first() == null) ? false : true /*--}}
+                                        {{ Form::hidden('PERM:'.$perm->name, $hasPerm ? 'true' : 'false', array('id' => $role->id.$perm->name)) }}
+                                        <td><button id="{{$role->id.$perm->name}}" type="button" class="btn perm {{ $hasPerm ? 'btn-success' : 'btn-danger' }}">{{ $hasPerm ? 'Allow' : 'Deny' }}</button></td>
+                                        {{--*/ $perm = Toddish\Verify\Models\Permission::firstOrNew(array('name'=>'update_bungeetype')) /*--}}
+                                        {{--*/ $hasPerm = ($role->permissions()->where('name', '=', $perm->name)->first() == null) ? false : true /*--}}
+                                        {{ Form::hidden('PERM:'.$perm->name, $hasPerm ? 'true' : 'false', array('id' => $role->id.$perm->name)) }}
+                                        <td><button id="{{$role->id.$perm->name}}" type="button" class="btn perm {{ $hasPerm ? 'btn-success' : 'btn-danger' }}">{{ $hasPerm ? 'Allow' : 'Deny' }}</button></td>
+                                        {{--*/ $perm = Toddish\Verify\Models\Permission::firstOrNew(array('name'=>'delete_bungeetype')) /*--}}
+                                        {{--*/ $hasPerm = ($role->permissions()->where('name', '=', $perm->name)->first() == null) ? false : true /*--}}
+                                        {{ Form::hidden('PERM:'.$perm->name, $hasPerm ? 'true' : 'false', array('id' => $role->id.$perm->name)) }}
+                                        <td><button id="{{$role->id.$perm->name}}" type="button" class="btn perm {{ $hasPerm ? 'btn-success' : 'btn-danger' }}">{{ $hasPerm ? 'Allow' : 'Deny' }}</button></td>
+                                    </tr>
+                                    <tr>
                                         <td>Server Type</td>
                                         {{--*/ $perm = Toddish\Verify\Models\Permission::firstOrNew(array('name'=>'create_servertype')) /*--}}
                                         {{--*/ $hasPerm = ($role->permissions()->where('name', '=', $perm->name)->first() == null) ? false : true /*--}}

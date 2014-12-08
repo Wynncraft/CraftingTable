@@ -106,10 +106,20 @@
                                 </div>
                             </div>
                         @endif
+                        @if($network->hasBungee() == false)
+                            <div class="row">
+                                <div class="col-sm-12">
+                                <div class="alert alert-danger alert-dismissible">
+                                    <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                    <p>This network is currently unjoinable. Please add a node with a bungee type.</p>
+                                </div>
+                                </div>
+                            </div>
+                        @endif
                         <ul class="nav nav-tabs">
                             <li role="presentation" class="active"><a href="#stats{{ $network->id }}" data-toggle="tab">Stats</a></li>
                             <li role="presentation"><a href="#servertypes{{ $network->id }}" data-toggle="tab" style="{{ Session::has('errorAddServerType'.$network->id) == true ? 'color:red; font-weight:bold;' : ''}}">Server Types</a></li>
-                            <li role="presentation"><a href="#nodes{{ $network->id }}" data-toggle="tab">Nodes</a></li>
+                            <li role="presentation"><a href="#nodes{{ $network->id }}" data-toggle="tab" style="{{ Session::has('errorAddNode'.$network->id) == true ? 'color:red; font-weight:bold;' : ''}}">Nodes</a></li>
                             <li role="presentation"><a href="#edit{{ $network->id }}" data-toggle="tab" style="{{ Session::has('errorEdit'.$network->id) == true ? 'color:red; font-weight:bold;' : ''}}">Edit</a></li>
                         </ul>
                         <div class="tab-content">
@@ -140,6 +150,7 @@
                                                 <tr>
                                                     <td>Bungee Number</td>
                                                     <td>Node</td>
+                                                    <td>Public IP Address</td>
                                                     <td>Manage</td>
                                                 </tr>
                                             </thread>
@@ -227,7 +238,70 @@
                                     </div>
                                 {{ Form::close() }}
                             </div>
-                            <div class="tab-pane" id="nodes{{ $network->id }}">nodes</div>
+                            <div class="tab-pane" id="nodes{{ $network->id }}">
+                                @if(Session::has('errorAddNode'.$network->id))
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <div class="alert alert-danger alert-dismissible">
+                                                <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                                <ul>
+                                                    @foreach(Session::get('errorAddNode'.$network->id)->all() as $errorMessage)
+                                                        <li>{{ $errorMessage  }}</li>
+                                                    @endforeach
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
+                                <table style="margin-top: 10px" class="table table-striped table-bordered table-hover">
+                                    <thread>
+                                        <tr>
+                                            <td>Node Name</td>
+                                            <td>Bungee Name</td>
+                                            <td>Public IP Address</td>
+                                        </tr>
+                                    </thread>
+                                    <tbody>
+                                        @foreach($network->nodes()->get() as $node)
+                                            <tr>
+                                                {{ Form::open(array('action' => array('NetworkController@deleteNode', $network->id, $node->id), 'class' => 'form-horizontal', 'method' => 'DELETE', 'onsubmit' => 'return ConfirmDeleteNode("'.$node->node()->name.'")')) }}
+                                                    <td>{{{ $node->node()->name }}}</td>
+                                                    <td>{{{ $node->bungeetype() != null ? $node->bungeetype()->name : '' }}}</td>
+                                                    <td>{{{ $node->publicaddress() != null ? $node->publicaddress()->public_address: '' }}}</td>
+                                                    <td>{{ Form::submit('Remove Node', array('class'=>'btn btn-danger')) }}</td>
+                                                {{ Form::close() }}
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                                {{ Form::open(array('action' => array('NetworkController@postNode', $network->id), 'class' => 'form-horizontal', 'method' => 'POST')) }}
+                                    <div style="margin-bottom: 25px" class="input-group">
+                                        {{ Form::label('node-label', 'Node Name') }}
+                                        <select name='node' class="form-control nodeList" id="{{$network->id}}">
+                                            <option selected value="-1">Please select a node</option>
+                                            @foreach(Node::all() as $node)
+                                                <option value="{{ $node->id }}">{{{ $node->name }}}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+                                    <div style="margin-bottom: 25px" class="input-group">
+                                        {{ Form::label('bungeetype-label', 'Optional Bungee Type') }}
+                                        <select name='bungeetype' class="form-control" id="servertypeList">
+                                            <option selected value="-1">Please select a bungee type</option>
+                                            @foreach(BungeeType::all() as $bungee)
+                                                <option value="{{ $bungee->id }}">{{{ $bungee->name }}}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+                                    <div style="margin-top:10px" class="form-group">
+                                        <div class="col-md-12">
+                                            {{ Form::submit('Add Node', array('class'=>'btn btn-primary')) }}
+                                        </div>
+                                    </div>
+                                {{ Form::close() }}
+                            </div>
                             <div class="tab-pane" id="edit{{ $network->id }}">
                                 @if(Session::has('errorEdit'.$network->id))
                                     <div class="row">

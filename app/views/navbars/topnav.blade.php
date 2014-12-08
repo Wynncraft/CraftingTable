@@ -49,10 +49,6 @@
                         </ul>
                     </li>
                 @endif
-
-                @if(Auth::user()->can('read_option'))
-                    <li class="{{ $navBarPage == "options" ? 'active' : '' }}"><a href="{{ URL::to('/options') }}">Options</a></li>
-                @endif
             @else
                 <li class="{{ $navBarPage == "login" ? 'active' : '' }}"><a href="{{ URL::to('/login')  }}">Sign In</a></li>
             @endif

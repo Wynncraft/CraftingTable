@@ -68,5 +68,18 @@ class Network extends Eloquent {
         return $overProvisioned;
     }
 
+    public function hasBungee() {
+        $hasBungee = false;
+
+        $nodes = $this->nodes()->get()->all();
+        foreach ($nodes as $node) {
+            if ($node->bungeetype() != null) {
+                $hasBungee = true;
+                break;
+            }
+        }
+
+        return $hasBungee;
+    }
 
 }

@@ -24,6 +24,8 @@ Route::group(array('before' => 'auth'), function() {
 	});
 	Route::model('address', 'NodePublicAddress', function() {
 	});
+
+
 	Route::get('/nodes', 'NodeController@getNodes');
 	Route::post('/nodes/add', 'NodeController@postNode');
 	Route::put('/nodes/{node}', 'NodeController@putNode');
@@ -61,12 +63,17 @@ Route::group(array('before' => 'auth'), function() {
 	});
 	Route::model('networkservertype', 'NetworkServerType', function() {
 	});
+	Route::model('networknode', 'NetworkNode', function() {
+	});
 	Route::post('/networks/add', array('uses' => 'NetworkController@postNetwork'));
 	Route::put('/networks/{network}', array('uses' => 'NetworkController@putNetwork'));
 	Route::delete('/networks/{network}', array('uses' => 'NetworkController@deleteNetwork'));
 
 	Route::post('/networks/{network}/servertype', array('uses' => 'NetworkController@postServerType'));
 	Route::delete('/networks/{network}/servertype/{networkservertype}', array('uses' => 'NetworkController@deleteServerType'));
+
+	Route::post('/networks/{network}/node', array('uses' => 'NetworkController@postNode'));
+	Route::delete('/networks/{network}/node/{networknode}', array('uses' => 'NetworkController@deleteNode'));
 });
 
 //auth servertypes

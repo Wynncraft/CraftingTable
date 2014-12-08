@@ -175,4 +175,98 @@ class NetworkController extends BaseController {
         return Redirect::to('/')->with('open'.$network->id, 'successServerTypeDelete')->with('success', 'Deleted server type '.$networkServerType->servertype()->name.' from '.$network->name);
     }
 
+    public function postNode(Network $network = null) {
+        if ($network == null) {
+            return Redirect::to('/')->with('error', 'Unknown network Id');
+        }
+
+        if (Auth::user()->can('update_network') == false) {
+            return Redirect::to('/')->with('error', 'You do not have permissions to edit networks');
+        }
+
+        Validator::extend('checkType', function($attribute, $value, $parameters) {
+            $node = Node::find($value);
+
+            if ($node == null) {
+                return false;
+            }
+
+            return true;
+        }, 'Please select a valid node');
+
+        $validator = Validator::make(
+            array('node'=>Input::get('node')),
+            array('node'=>'required|checkType')
+        );
+
+        if ($validator->fails()) {
+            return Redirect::to('/')->with('open'.$network->id, 'errorAddNode')->with('errorAddNode'.$network->id, $validator->messages());
+        } else {
+            $node = Node::find(Input::get('node'));
+            $networkNode = NetworkNode::firstOrNew(array('network_id'=>$network->id, 'node_id'=>$node->id));
+
+            Validator::extend('nodeExists', function($attribute, $value, $parameters) {
+
+                if ($value->exists == true) {
+                    return false;
+                }
+
+                return true;
+            }, 'The node '.$node->name.' is already added');
+
+
+            $validator = Validator::make(
+                array('node'=>$networkNode),
+                array('node'=>'nodeExists')
+            );
+
+            if ($validator->fails()) {
+                return Redirect::to('/')->with('open'.$network->id, 'errorAddNode')->with('errorAddNode'.$network->id, $validator->messages());
+            }
+
+            if (Input::get('bungeetype') != -1) {
+                $bungeetype = BungeeType::find(Input::get('bungeetype'))->first();
+
+                $validator = Validator::make(
+                    array('bungeetype'=>$bungeetype),
+                    array('bungeetype'=>'required'),
+                    array('required'=>'Unknown bungee type id')
+                );
+
+                if ($validator->fails()) {
+                    return Redirect::to('/')->with('open'.$network->id, 'errorAddNode')->with('errorAddNode'.$network->id, $validator->messages());
+                }
+
+                $networkNode->bungee_type_id = $bungeetype->id;
+
+                $nodePublicAddress = null;
+
+                foreach ($node->publicaddresses()->get() as $address) {
+                    $testNetworkNode = NetworkNode::firstOrNew(array('node_id'=>$node->id, 'node_public_address_id'=>$address->id));
+
+                    if ($testNetworkNode->exists == false) {
+                        $nodePublicAddress = $address;
+                        break;
+                    }
+                }
+
+                $validator = Validator::make(
+                    array('address'=>$nodePublicAddress),
+                    array('address'=>'required'),
+                    array('required'=>'No public address available on node '.$node->name)
+                );
+
+                if ($validator->fails()) {
+                    return Redirect::to('/')->with('open'.$network->id, 'errorAddNode')->with('errorAddNode'.$network->id, $validator->messages());
+                } else {
+                    $networkNode->node_public_address_id = $nodePublicAddress->id;
+                }
+            }
+
+            $networkNode->save();
+
+            return Redirect::to('/')->with('open'.$network->id, 'errorAddNode')->with('success', 'Added the node '.$node->name.' to the network '.$network->name);
+        }
+    }
+
 }

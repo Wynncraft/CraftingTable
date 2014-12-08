@@ -12,10 +12,6 @@
             var pluginVersionSelect = $('#pluginVersionList'+event.target.id);
             var pluginConfigSelect = $('#pluginConfigList'+event.target.id);
 
-            console.log(event.target);
-            console.log(pluginVersionSelect);
-            console.log(pluginConfigSelect);
-
             pluginVersionSelect.find('option').remove();
             pluginConfigSelect.find('option').remove();
 

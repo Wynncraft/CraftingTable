@@ -200,8 +200,8 @@ class MainDatabase extends Migration {
 			$table->increments('id');
 			$table->integer('network_id')->unsigned()->index();
 			$table->integer('node_id')->unsigned()->index();
-			$table->integer('node_public_address_id')->unique()->unsigned()->index();
-			$table->integer('bungee_type_id')->unsigned()->index();
+			$table->integer('node_public_address_id')->unique()->unsigned()->nullable();
+			$table->integer('bungee_type_id')->unsigned()->nullable();
 			$table->timestamps();
 
 			$table->foreign('network_id')->references('id')->on('networks')->onDelete('cascade');
