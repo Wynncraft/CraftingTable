@@ -210,7 +210,7 @@
                                                 {{ Form::open(array('action' => array('NetworkController@deleteServerType', $network->id, $servertype->id), 'class' => 'form-horizontal', 'method' => 'DELETE', 'onsubmit' => 'return ConfirmDeleteServerType("'.$servertype->servertype()->name.'")')) }}
                                                     <td>{{{ $servertype->servertype()->name }}}</td>
                                                     <td>{{{ $servertype->amount }}}</td>
-                                                    <td>{{ $servertype->default ? 'Yes' : 'No' }}</td>
+                                                    <td>{{ $servertype->defaultServerType ? 'Yes' : 'No' }}</td>
                                                     <td>{{ Form::submit('Remove Server Type', array('class'=>'btn btn-danger')) }}</td>
                                                 {{ Form::close() }}
                                             </tr>

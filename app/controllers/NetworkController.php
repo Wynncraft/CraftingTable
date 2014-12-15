@@ -146,7 +146,7 @@ class NetworkController extends BaseController {
             $networkServerType->amount = Input::get('amount');
 
             if (Input::has('default') == true) {
-                $networkServerType->default = true;
+                $networkServerType->defaultServerType = true;
             }
 
             $networkServerType->save();

@@ -119,7 +119,7 @@ class MainDatabase extends Migration {
 			$table->integer('servertype_id')->unsigned()->index();
 			$table->integer('world_id')->unsigned()->unique()->index();
 			$table->integer('worldversion_id')->unsigned()->index();
-			$table->boolean('default')->index();
+			$table->boolean('defaultWorld')->index();
 			$table->timestamps();
 
 			$table->foreign('servertype_id')->references('id')->on('servertypes')->onDelete('cascade');
@@ -219,7 +219,7 @@ class MainDatabase extends Migration {
 			$table->integer('network_id')->unsigned()->index();
 			$table->integer('server_type_id')->unsigned()->index();
 			$table->integer('amount');
-			$table->boolean('default');
+			$table->boolean('defaultServerType');
 			$table->timestamps();
 
 			$table->foreign('network_id')->references('id')->on('networks')->onDelete('cascade');

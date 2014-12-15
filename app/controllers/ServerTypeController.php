@@ -298,7 +298,7 @@ class ServerTypeController extends BaseController {
             $serverTypeWorld->worldversion_id = $worldVersion->id;
 
             if (Input::has('default') == true) {
-                $serverTypeWorld->default = true;
+                $serverTypeWorld->defaultWorld = true;
             }
 
             $serverTypeWorld->save();
