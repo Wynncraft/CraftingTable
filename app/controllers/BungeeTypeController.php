@@ -149,7 +149,7 @@ class BungeeTypeController extends BaseController {
             $plugin = Plugin::find(Input::get('plugin'));
             $pluginVersion = $plugin->versions()->where('id', '=', Input::get('pluginVersion'))->first();
 
-            $bungeeTypePlugin = BungeeTypePlugin::firstOrNew(array('bungeetype_id'=>$bungeeType->id, 'plugin_id'=>$plugin->id));
+            $bungeeTypePlugin = PluginHolderPlugin::firstOrNew(array('pluginholder_id'=>$bungeeType->id, 'pluginholder_type'=>'BungeeType', 'plugin_id'=>$plugin->id));
 
             Validator::extend('pluginExists', function($attribute, $value, $parameters) {
 

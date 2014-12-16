@@ -80,7 +80,7 @@ Route::group(array('before' => 'auth'), function() {
 Route::group(array('before' => 'auth'), function() {
 	Route::model('servertype', 'ServerType', function() {
 	});
-	Route::model('servertypeplugin', 'ServerTypePlugin', function() {
+	Route::model('servertypeplugin', 'PluginHolderPlugin', function() {
 	});
 	Route::model('servertypeworld', 'ServerTypeWorld', function() {
 	});
@@ -99,7 +99,7 @@ Route::group(array('before' => 'auth'), function() {
 Route::group(array('before' => 'auth'), function() {
 	Route::model('bungeetype', 'BungeeType', function() {
 	});
-	Route::model('bungeetypeplugin', 'BungeeTypePlugin', function() {
+	Route::model('bungeetypeplugin', 'PluginHolderPlugin', function() {
 	});
 
 	Route::get('/bungeetypes', 'BungeeTypeController@getBungeeTypes');

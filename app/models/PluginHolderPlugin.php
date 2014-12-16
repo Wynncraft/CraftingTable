@@ -1,6 +1,6 @@
 <?php
 
-class BungeeTypePlugin extends Eloquent
+class PluginHolderPlugin extends Eloquent
 {
 
     /**
@@ -8,14 +8,14 @@ class BungeeTypePlugin extends Eloquent
      *
      * @var string
      */
-    protected $table = 'bungeetype_plugins';
+    protected $table = 'pluginholder_plugins';
 
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
-    protected $fillable = ['bungeetype_id', 'plugin_id', 'pluginversion_id', 'pluginconfig_id'];
+    protected $fillable = ['pluginholder_id', 'pluginholder_type', 'plugin_id', 'pluginversion_id', 'pluginconfig_id'];
 
     public function plugin() {
         return $this->hasOne('Plugin', 'id', 'plugin_id')->first();
@@ -29,8 +29,8 @@ class BungeeTypePlugin extends Eloquent
         return $this->hasOne('PluginConfig', 'id', 'pluginconfig_id')->first();
     }
 
-    public function bungeeType() {
-        return $this->belongsTo('BungeeType', 'id', 'bungeetype_id');
+    public function pluginholder() {
+        return $this->belongsTo('PluginHolder', 'id', 'pluginholder_id');
     }
 
 }

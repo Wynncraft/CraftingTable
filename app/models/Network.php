@@ -42,7 +42,7 @@ class Network extends Eloquent {
      * @return object
      */
     public function defaultServerType() {
-        return $this->servertypes()->where('default', '=', '1')->first();
+        return $this->servertypes()->where('defaultServerType', '=', '1')->first();
     }
 
     public function overProvisioned() {

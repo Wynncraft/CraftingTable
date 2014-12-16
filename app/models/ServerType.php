@@ -1,6 +1,6 @@
 <?php
 
-class ServerType extends Eloquent {
+class ServerType extends PluginHolder {
 
     /**
      * The database table used by the model.
@@ -15,16 +15,6 @@ class ServerType extends Eloquent {
      * @var array
      */
     protected $fillable = ['name', 'description'];
-
-    /**
-     * Plugins
-     *
-     * @return object
-     */
-    public function plugins()
-    {
-        return $this->hasMany('ServerTypePlugin', 'servertype_id');
-    }
 
     /**
      * Worlds
@@ -42,7 +32,7 @@ class ServerType extends Eloquent {
      * @return object
      */
     public function defaultWorld() {
-        return $this->worlds()->where('default', '=', '1')->first();
+        return $this->worlds()->where('defaultWorld', '=', '1')->first();
     }
 
 

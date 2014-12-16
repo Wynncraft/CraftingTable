@@ -1,6 +1,6 @@
 <?php
 
-class BungeeType extends Eloquent {
+class BungeeType extends PluginHolder {
 
     /**
      * The database table used by the model.
@@ -15,16 +15,5 @@ class BungeeType extends Eloquent {
      * @var array
      */
     protected $fillable = ['name', 'description'];
-
-    /**
-     * Plugins
-     *
-     * @return object
-     */
-    public function plugins()
-    {
-        return $this->hasMany('BungeeTypePlugin', 'bungeetype_id');
-    }
-
 
 }

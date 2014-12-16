@@ -92,24 +92,6 @@ class MainDatabase extends Migration {
 			$table->timestamps();
 		});
 
-		// Create the servertype/plugin relationship table
-		Schema::create('servertype_plugins', function($table)
-		{
-			$table->engine = 'InnoDB';
-
-			$table->increments('id');
-			$table->integer('servertype_id')->unsigned()->index();
-			$table->integer('plugin_id')->unsigned()->index();
-			$table->integer('pluginversion_id')->unsigned();
-			$table->integer('pluginconfig_id')->unsigned()->nullable();
-			$table->timestamps();
-
-			$table->foreign('servertype_id')->references('id')->on('servertypes')->onDelete('cascade');
-			$table->foreign('plugin_id')->references('id')->on('plugins')->onDelete('cascade');
-			$table->foreign('pluginversion_id')->references('id')->on('plugin_versions')->onDelete('cascade');
-			$table->foreign('pluginconfig_id')->references('id')->on('plugin_configs')->onDelete('cascade');
-		});
-
 		// Create the servertype/world relationship table
 		Schema::create('servertype_worlds', function($table)
 		{
@@ -138,19 +120,19 @@ class MainDatabase extends Migration {
 			$table->timestamps();
 		});
 
-		// Create the bungee/plugin relationship table
-		Schema::create('bungeetype_plugins', function($table)
+		// Create the servertype/plugin relationship table
+		Schema::create('pluginholder_plugins', function($table)
 		{
 			$table->engine = 'InnoDB';
 
 			$table->increments('id');
-			$table->integer('bungeetype_id')->unsigned()->index();
+			$table->integer('pluginholder_id')->unsigned()->index();
+			$table->string('pluginholder_type')->index();
 			$table->integer('plugin_id')->unsigned()->index();
 			$table->integer('pluginversion_id')->unsigned();
 			$table->integer('pluginconfig_id')->unsigned()->nullable();
 			$table->timestamps();
 
-			$table->foreign('bungeetype_id')->references('id')->on('bungeetypes')->onDelete('cascade');
 			$table->foreign('plugin_id')->references('id')->on('plugins')->onDelete('cascade');
 			$table->foreign('pluginversion_id')->references('id')->on('plugin_versions')->onDelete('cascade');
 			$table->foreign('pluginconfig_id')->references('id')->on('plugin_configs')->onDelete('cascade');
@@ -243,12 +225,12 @@ class MainDatabase extends Migration {
 		Schema::drop('node_public_addresses');
 		Schema::drop('nodes');
 
-		Schema::drop('bungeetype_plugins');
 		Schema::drop('bungeetypes');
 
-		Schema::drop('servertype_plugins');
 		Schema::drop('servertype_worlds');
 		Schema::drop('servertypes');
+
+		Schema::drop('pluginholder_plugins');
 
 		Schema::drop('plugin_versions');
 		Schema::drop('plugins');

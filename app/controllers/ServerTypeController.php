@@ -155,7 +155,7 @@ class ServerTypeController extends BaseController {
             $plugin = Plugin::find(Input::get('plugin'));
             $pluginVersion = $plugin->versions()->where('id', '=', Input::get('pluginVersion'))->first();
 
-            $serverTypePlugin = ServerTypePlugin::firstOrNew(array('servertype_id'=>$serverType->id, 'plugin_id'=>$plugin->id));
+            $serverTypePlugin = PluginHolderPlugin::firstOrNew(array('pluginholder_id'=>$serverType->id, 'pluginholder_type'=>'ServerType','plugin_id'=>$plugin->id));
 
             Validator::extend('pluginExists', function($attribute, $value, $parameters) {
 
