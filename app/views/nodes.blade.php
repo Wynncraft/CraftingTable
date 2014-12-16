@@ -51,8 +51,8 @@
                                 {{ Form::text('name', '', array('class'=>'form-control', 'placeholder' => 'name')) }}
                             </div>
                             <div style="margin-bottom: 25px" class="input-group {{ Session::has('errorAdd') && Session::get('errorAdd')->get('address') != null ? 'has-error' : '' }}">
-                                {{ Form::label('private_address-label', 'Private IP Address') }}
-                                {{ Form::text('private_address', '', array('class'=>'form-control', 'placeholder' => '172.16.0.1')) }}
+                                {{ Form::label('privateAddress-label', 'Private IP Address') }}
+                                {{ Form::text('privateAddress', '', array('class'=>'form-control', 'placeholder' => '172.16.0.1')) }}
                             </div>
                             <div style="margin-bottom: 25px" class="input-group {{ Session::has('errorAdd') && Session::get('errorAdd')->get('ram') != null ? 'has-error' : '' }}">
                                 {{ Form::label('ram-label', 'Memory (MB)') }}
@@ -111,7 +111,7 @@
                                         @foreach($node->publicaddresses()->get() as $publicaddress)
                                             <tr>
                                                 {{ Form::open(array('action' => array('NodeController@deletePAddress', $node->id, $publicaddress->id), 'class' => 'form-horizontal', 'method' => 'DELETE')) }}
-                                                    <td>{{ $publicaddress->public_address }}</td>
+                                                    <td>{{ $publicaddress->publicAddress }}</td>
                                                     <td>{{ Form::submit('Remove Address', array('class'=>'btn btn-danger')) }}</td>
                                                 {{ Form::close() }}
                                             </tr>
@@ -120,8 +120,8 @@
                                 </table>
                                 {{ Form::open(array('action' => array('NodeController@postPAddress', $node->id), 'class' => 'form-horizontal', 'method' => 'POST')) }}
                                     <div style="margin-bottom: 25px" class="input-group {{ Session::has('errorIP'.$node->id) && Session::get('errorIP'.$node->id)->get('name') != null ? 'has-error' : '' }}">
-                                        {{ Form::label('address-label', 'IP Address') }}
-                                        {{ Form::text('address', '', array('class'=>'form-control', 'placeholder' => '1.1.1.1')) }}
+                                        {{ Form::label('publicAddress-label', 'IP Address') }}
+                                        {{ Form::text('publicAddress', '', array('class'=>'form-control', 'placeholder' => '1.1.1.1')) }}
                                     </div>
                                     <div style="margin-top:10px" class="form-group">
                                         <div class="col-md-12">
@@ -151,8 +151,8 @@
                                         {{ Form::text('name', $node->name, array('class'=>'form-control', 'placeholder' => 'name')) }}
                                     </div>
                                     <div style="margin-bottom: 25px" class="input-group {{ Session::has('errorEdit'.$node->id) && Session::get('errorEdit'.$node->id)->get('address') != null ? 'has-error' : '' }}">
-                                        {{ Form::label('private_address-label', 'Private IP Address') }}
-                                        {{ Form::text('private_address', $node->address, array('class'=>'form-control', 'placeholder' => '172.16.0.1', 'disabled')) }}
+                                        {{ Form::label('privateAddress-label', 'Private IP Address') }}
+                                        {{ Form::text('privateAddress', $node->address, array('class'=>'form-control', 'placeholder' => '172.16.0.1', 'disabled')) }}
                                     </div>
                                     <div style="margin-bottom: 25px" class="input-group {{ Session::has('errorEdit'.$node->id) && Session::get('errorEdit'.$node->id)->get('ram') != null ? 'has-error' : '' }}">
                                         {{ Form::label('ram-label', 'Memory (MB)') }}

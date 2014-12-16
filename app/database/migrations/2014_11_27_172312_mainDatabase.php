@@ -156,7 +156,7 @@ class MainDatabase extends Migration {
 
 			$table->increments('id');
 			$table->string('name', 100)->index();
-			$table->string('private_address', 15)->unique()->index();
+			$table->string('privateAddress', 15)->unique()->index();
 			$table->integer('ram');
 			$table->timestamps();
 		});
@@ -168,7 +168,7 @@ class MainDatabase extends Migration {
 
 			$table->increments('id');
 			$table->integer('node_id')->unsigned()->index();
-			$table->string('public_address', 15)->unique()->index();
+			$table->string('publicAddress', 15)->unique()->index();
 			$table->timestamps();
 
 			$table->foreign('node_id')->references('id')->on('nodes')->onDelete('cascade');

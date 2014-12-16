@@ -257,7 +257,7 @@ class NetworkController extends BaseController {
                 if ($validator->fails()) {
                     return Redirect::to('/')->with('open'.$network->id, 'errorAddNode')->with('errorAddNode'.$network->id, $validator->messages());
                 } else {
-                    $networkNode->node_public_address_id = $nodePublicAddress->id;
+                    $networkNode->node_publicAddress_id = $nodePublicAddress->id;
                 }
             }
 

@@ -17,7 +17,7 @@ class NodeController extends BaseController {
 
         $node = new Node;
         $node->name = Input::get('name');
-        $node->private_address = Input::get('private_address');
+        $node->privateAddress = Input::get('privateAddress');
         $node->ram = Input::get('ram');
 
         Validator::extend('checkip', function($attribute, $value, $params) {
@@ -47,10 +47,10 @@ class NodeController extends BaseController {
 
         $validator = Validator::make(
             array('name'=>$node->name,
-                'private_address'=>$node->private_address,
+                'privateAddress'=>$node->privateAddress,
                 'ram'=>$node->ram),
             array('name'=>'required|min:3|max:100|unique:nodes',
-                'private_address'=>'required|unique:nodes|checkip',
+                'privateAddress'=>'required|unique:nodes|checkip',
                 'ram'=>'required|Integer|Min:1024'),
             array('checkip'=>'Invalid IP address')
         );
@@ -61,7 +61,7 @@ class NodeController extends BaseController {
 
             $node->save();
 
-            return Redirect::to('/nodes')->with('open'.$node->id, 'successAdd')->with('success', 'Created the node '.$node->name.' ('.$node->private_address.')');
+            return Redirect::to('/nodes')->with('open'.$node->id, 'successAdd')->with('success', 'Created the node '.$node->name.' ('.$node->privateAddress.')');
 
         }
     }
@@ -144,18 +144,19 @@ class NodeController extends BaseController {
         }, 'Invalid IP Address');
 
         $validator = Validator::make(
-            array('public_address'=>Input::get('address')),
-            array('public_address'=>'required|unique:node_public_addresses|checkip')
+            array('publicAddress'=>Input::get('publicAddress')),
+            array('publicAddress'=>'required|unique:node_public_addresses|checkip')
         );
 
         if ($validator->fails()) {
             return Redirect::to('/nodes')->with('open'.$node->id, 'errorIP')->with('errorIP'.$node->id, $validator->messages());
         } else {
 
-            $nodePAddress = NodePublicAddress::firstOrNew(array('node_id'=>$node->id, 'public_address'=>Input::get('address')));
+            $nodePAddress = NodePublicAddress::firstOrNew(array('node_id'=>$node->id, 'publicAddress'=>Input::get('publicAddress')));
+            $nodePAddress->publicAddress = Input::get('publicAddress');
             $nodePAddress->save();
 
-            return Redirect::to('/nodes')->with('open'.$node->id, 'successAddIP')->with('success', 'Added the public address '.$nodePAddress->public_address.' to node '.$node->name);
+            return Redirect::to('/nodes')->with('open'.$node->id, 'successAddIP')->with('success', 'Added the public address '.$nodePAddress->publicAddress.' to node '.$node->name);
         }
     }
 
@@ -175,7 +176,7 @@ class NodeController extends BaseController {
 
         $address->delete();
 
-        return Redirect::to('/nodes')->with('open'.$node->id, 'successDeleteIP')->with('success', 'Deleted address '.$address->public_address.' from node '.$node->name);
+        return Redirect::to('/nodes')->with('open'.$node->id, 'successDeleteIP')->with('success', 'Deleted address '.$address->publicAddress.' from node '.$node->name);
     }
 
 }

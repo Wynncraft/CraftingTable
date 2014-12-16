@@ -14,7 +14,7 @@ class Node extends Eloquent {
      *
      * @var array
      */
-    protected $fillable = ['name', 'private_address', 'ram'];
+    protected $fillable = ['name', 'privateAddress', 'ram'];
 
     /**
      * Public Addresses

@@ -271,7 +271,7 @@
                                                 {{ Form::open(array('action' => array('NetworkController@deleteNode', $network->id, $node->id), 'class' => 'form-horizontal', 'method' => 'DELETE', 'onsubmit' => 'return ConfirmDeleteNode("'.$node->node()->name.'")')) }}
                                                     <td>{{{ $node->node()->name }}}</td>
                                                     <td>{{{ $node->bungeetype() != null ? $node->bungeetype()->name : '' }}}</td>
-                                                    <td>{{{ $node->publicaddress() != null ? $node->publicaddress()->public_address: '' }}}</td>
+                                                    <td>{{{ $node->publicaddress() != null ? $node->publicaddress()->publicAddress: '' }}}</td>
                                                     <td>{{ Form::submit('Remove Node', array('class'=>'btn btn-danger')) }}</td>
                                                 {{ Form::close() }}
                                             </tr>
