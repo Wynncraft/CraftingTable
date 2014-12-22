@@ -52,6 +52,7 @@ class WorldController extends BaseController
                 'description'=>'max:255',
                 'directory'=>'required|max:255')
         );
+        Validator::getPresenceVerifier()->setConnection("mongodb");
 
         if ($validator->fails()) {
             return Redirect::to('/worlds')->with('errorAdd', $validator->messages());
@@ -71,14 +72,26 @@ class WorldController extends BaseController
             Redirect::to('/worlds')->with('error', 'You do not have permission to update worlds');
         }
 
-        $worldVersion = WorldVersion::firstOrNew(array('world_id' => $world->id, 'version'=> Input::get('version')));
+        //$worldVersion = WorldVersion::firstOrNew(array('world_id' => $world->id, 'version'=> Input::get('version')));
+
+        $worldVersion= new WorldVersion(array('version'=> Input::get('version')));
+
+        Validator::extend('uniqueVersion', function($attribute, $value, $params) {
+            foreach (World::all() as $world) {
+                if ($world->versions()->where('version', '=', $value)->first() != null) {
+                    return false;
+                }
+            }
+            return true;
+        }, "The version has already been taken.");
 
         $validator = Validator::make(
             array('version'=>$worldVersion->version,
                 'description'=>Input::get('description')),
-            array('version'=>'required|min:3|max:100|unique:world_versions,version,NULL,id,world_id,'.$world->id,
+            array('version'=>'required|min:3|max:100|uniqueVersion',
                 'description'=>'max:255')
         );
+        Validator::getPresenceVerifier()->setConnection("mongodb");
 
         $messages = $validator->messages();
 
@@ -87,16 +100,18 @@ class WorldController extends BaseController
         } else {
             $worldVersion->description = Input::get('description');
             $worldVersion->world_id = $world->id;
-            $worldVersion->save();
+            //$worldVersion->save();
+            $world->versions()->save($worldVersion);
 
             return Redirect::to('/worlds')->with('open'.$world->id, 'successVersionAdd')->with('success', 'Added version '.$worldVersion->version.' to world '.$world->name);
         }
     }
 
-    public function deleteVersion(World $world = null, WorldVersion $worldVersion = null) {
+    public function deleteVersion(World $world = null, $worldVersion) {
         if ($world == null) {
             return Redirect::to('/worlds')->with('error', 'Unknown world Id');
         }
+        $worldVersion = $world->versions()->where("_id", "=", $worldVersion)->first();
         if ($worldVersion == null) {
             return Redirect::to('/worlds')->with('error', 'Unknown world version Id');
         }
@@ -126,6 +141,7 @@ class WorldController extends BaseController
                 'description'=>'max:255',
                 'directory'=>'required|max:255')
         );
+        Validator::getPresenceVerifier()->setConnection("mongodb");
 
         $messages = $validator->messages();
 

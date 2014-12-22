@@ -22,9 +22,8 @@ Route::group(array('before' => 'auth'), function() {
 Route::group(array('before' => 'auth'), function() {
 	Route::model('node', 'Node', function() {
 	});
-	Route::model('address', 'NodePublicAddress', function() {
-	});
-
+	/*Route::model('address', 'NodePublicAddress', function() {
+	});*/
 
 	Route::get('/nodes', 'NodeController@getNodes');
 	Route::post('/nodes/add', 'NodeController@postNode');
@@ -61,10 +60,10 @@ Route::group(array('before' => 'auth'), function() {
 Route::group(array('before' => 'auth'), function() {
 	Route::model('network', 'Network', function() {
 	});
-	Route::model('networkservertype', 'NetworkServerType', function() {
+	/*Route::model('networkservertype', 'NetworkServerType', function() {
 	});
 	Route::model('networknode', 'NetworkNode', function() {
-	});
+	});*/
 	Route::post('/networks/add', array('uses' => 'NetworkController@postNetwork'));
 	Route::put('/networks/{network}', array('uses' => 'NetworkController@putNetwork'));
 	Route::delete('/networks/{network}', array('uses' => 'NetworkController@deleteNetwork'));
@@ -80,10 +79,10 @@ Route::group(array('before' => 'auth'), function() {
 Route::group(array('before' => 'auth'), function() {
 	Route::model('servertype', 'ServerType', function() {
 	});
-	Route::model('servertypeplugin', 'PluginHolderPlugin', function() {
+	/*Route::model('servertypeplugin', 'PluginHolderPlugin', function() {
 	});
 	Route::model('servertypeworld', 'ServerTypeWorld', function() {
-	});
+	});*/
 
 	Route::get('/servertypes', 'ServerTypeController@getServerTypes');
 	Route::post('/servertypes/add', array('uses' => 'ServerTypeController@postServerType'));
@@ -114,10 +113,10 @@ Route::group(array('before' => 'auth'), function() {
 Route::group(array('before' => 'auth'), function() {
 	Route::model('plugin', 'Plugin', function() {
 	});
-	Route::model('pluginVersion', 'PluginVersion', function() {
+	/*Route::model('pluginVersion', 'PluginVersion', function() {
 	});
 	Route::model('pluginConfig', 'PluginConfig', function() {
-	});
+	});*/
 
 	Route::get('/plugins/json', 'PluginController@getPluginsJson');
 	Route::get('/plugins/{plugin}/json', 'PluginController@getPluginJson');
@@ -140,8 +139,8 @@ Route::group(array('before' => 'auth'), function() {
 Route::group(array('before' => 'auth'), function() {
 	Route::model('world', 'World', function() {
 	});
-	Route::model('worldVersion', 'WorldVersion', function() {
-	});
+	/*Route::bind('worldVersion', 'WorldVersion', function() {
+	});*/
 
 	Route::get('/worlds/json', 'WorldController@getWorldsJson');
 	Route::get('/worlds/{world}/json', 'WorldController@getWorldJson');

@@ -1,13 +1,8 @@
 <?php
 
-class PluginConfig extends Eloquent {
+class PluginConfig extends Moloquent  {
 
-    /**
-     * The database table used by the model.
-     *
-     * @var string
-     */
-    protected $table = 'plugin_configs';
+    protected $connection = 'mongodb';
 
     /**
      * The attributes that are mass assignable.
@@ -16,8 +11,20 @@ class PluginConfig extends Eloquent {
      */
     protected $fillable = ['name', 'description'];
 
-    public function plugin() {
-        return $this->belongsTo('Plugin');
+    public static function boot() {
+        parent::boot();
+
+        PluginConfig::deleting(function($pluginConfig) {
+            foreach(ServerType::all() as $serverType) {
+                foreach($serverType->plugins()->all() as $serverTypePlugin) {
+                    if ($serverTypePlugin->pluginConfig()->id == $pluginConfig->id) {
+                        $serverTypePlugin->delete();
+                    }
+                }
+            }
+
+            return true;
+        });
     }
 
 }

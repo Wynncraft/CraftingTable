@@ -1,14 +1,8 @@
 <?php
 
-class ServerTypeWorld extends Eloquent
+class ServerTypeWorld extends Moloquent
 {
-
-    /**
-     * The database table used by the model.
-     *
-     * @var string
-     */
-    protected $table = 'servertype_worlds';
+    protected $connection = 'mongodb';
 
     /**
      * The attributes that are mass assignable.
@@ -18,15 +12,12 @@ class ServerTypeWorld extends Eloquent
     protected $fillable = ['servertype_id', 'world_id', 'worldversion_id'];
 
     public function world() {
-        return $this->hasOne('World', 'id', 'world_id')->first();
+        return $this->hasOne('World', '_id', 'world_id')->first();
     }
 
     public function worldVersion() {
-        return $this->hasOne('WorldVersion', 'id', 'worldversion_id')->first();
-    }
-
-    public function serverType() {
-        return $this->belongsTo('ServerType', 'id', 'servertype_id');
+        $worldVersion = $this->world()->versions()->where('id', '=', $this->worldversion_id)->first();
+        return $worldVersion;
     }
 
 }

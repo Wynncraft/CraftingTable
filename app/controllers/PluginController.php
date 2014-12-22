@@ -67,6 +67,7 @@ class PluginController extends BaseController {
                 'type'=>'required',
                 'directory'=>'required|max:255')
         );
+        Validator::getPresenceVerifier()->setConnection("mongodb");
 
         if ($validator->fails()) {
             return Redirect::to('/plugins')->with('errorAdd', $validator->messages());
@@ -87,14 +88,24 @@ class PluginController extends BaseController {
             Redirect::to('/plugins')->with('error', 'You do not have permission to update plugins');
         }
 
-        $pluginVersion = PluginVersion::firstOrNew(array('plugin_id' => $plugin->id, 'version'=> Input::get('version')));
+        $pluginVersion = new PluginVersion(array('version'=> Input::get('version')));
+
+        Validator::extend('uniqueVersion', function($attribute, $value, $params) {
+            foreach (Plugin::all() as $plugin) {
+                if ($plugin->versions()->where('version', '=', $value)->first() != null) {
+                    return false;
+                }
+            }
+            return true;
+        }, "The version has already been taken.");
 
         $validator = Validator::make(
             array('version'=>$pluginVersion->version,
                 'description'=>Input::get('description')),
-            array('version'=>'required|min:3|max:100|unique:plugin_versions,version,NULL,id,plugin_id,'.$plugin->id,
+            array('version'=>'required|min:3|max:100|uniqueVersion',
                 'description'=>'max:255')
         );
+        Validator::getPresenceVerifier()->setConnection("mongodb");
 
         $messages = $validator->messages();
 
@@ -103,16 +114,18 @@ class PluginController extends BaseController {
         } else {
             $pluginVersion->description = Input::get('description');
             $pluginVersion->plugin_id = $plugin->id;
-            $pluginVersion->save();
+            //$pluginVersion->save();
+            $plugin->versions()->save($pluginVersion);
 
             return Redirect::to('/plugins')->with('open'.$plugin->id, 'successVersionAdd')->with('success', 'Added version '.$pluginVersion->version.' to plugin '.$plugin->name);
         }
     }
 
-    public function deleteVersion(Plugin $plugin = null, PluginVersion $pluginVersion = null) {
+    public function deleteVersion(Plugin $plugin = null, $pluginVersion = null) {
         if ($plugin == null) {
             return Redirect::to('/plugins')->with('error', 'Unknown plugin Id');
         }
+        $pluginVersion = $plugin->versions()->where("_id", "=", $pluginVersion)->first();
         if ($pluginVersion == null) {
             return Redirect::to('/plugins')->with('error', 'Unknown plugin version Id');
         }
@@ -134,16 +147,26 @@ class PluginController extends BaseController {
             Redirect::to('/plugins')->with('error', 'You do not have permission to update plugins');
         }
 
-        $pluginConfig = PluginConfig::firstOrNew(array('plugin_id' => $plugin->id, 'name'=> Input::get('name')));
+        $pluginConfig = new PluginConfig(array('name'=> Input::get('name')));
+
+        Validator::extend('uniqueConfig', function($attribute, $value, $params) {
+            foreach (Plugin::all() as $plugin) {
+                if ($plugin->configs()->where('name', '=', $value)->first() != null) {
+                    return false;
+                }
+            }
+            return true;
+        }, "The version has already been taken.");
 
         $validator = Validator::make(
             array('name'=>$pluginConfig->name,
                 'description'=>Input::get('description'),
                 'directory'=>Input::get('directory')),
-            array('name'=>'required|min:3|max:100|unique:plugin_configs,name,NULL,id,plugin_id,'.$plugin->id,
+            array('name'=>'required|min:3|max:100|uniqueConfig',
                 'description'=>'max:255',
                 'directory'=>'required|max:255')
         );
+        Validator::getPresenceVerifier()->setConnection("mongodb");
 
         $messages = $validator->messages();
 
@@ -153,16 +176,18 @@ class PluginController extends BaseController {
             $pluginConfig->description = Input::get('description');
             $pluginConfig->directory = Input::get('directory');
             $pluginConfig->plugin_id = $plugin->id;
-            $pluginConfig->save();
+            //$pluginConfig->save();
+            $plugin->configs()->save($pluginConfig);
 
             return Redirect::to('/plugins')->with('open'.$plugin->id, 'successConfigAdd')->with('success', 'Added config '.$pluginConfig->name.' to plugin '.$plugin->name);
         }
     }
 
-    public function deleteConfig(Plugin $plugin = null, PluginConfig $pluginConfig = null) {
+    public function deleteConfig(Plugin $plugin = null, $pluginConfig = null) {
         if ($plugin == null) {
             return Redirect::to('/plugins')->with('error', 'Unknown plugin Id');
         }
+        $pluginConfig = $plugin->configs()->where("_id", "=", $pluginConfig)->first();
         if ($pluginConfig == null) {
             return Redirect::to('/plugins')->with('error', 'Unknown plugin config Id');
         }
@@ -192,6 +217,7 @@ class PluginController extends BaseController {
                 'description'=>'max:255',
                 'directory'=>'required|max:255')
         );
+        Validator::getPresenceVerifier()->setConnection("mongodb");
 
         $messages = $validator->messages();
 

@@ -1,13 +1,8 @@
 <?php
 
-class WorldVersion extends Eloquent {
+class WorldVersion extends Moloquent  {
 
-    /**
-     * The database table used by the model.
-     *
-     * @var string
-     */
-    protected $table = 'world_versions';
+    protected $connection = 'mongodb';
 
     /**
      * The attributes that are mass assignable.
@@ -16,8 +11,20 @@ class WorldVersion extends Eloquent {
      */
     protected $fillable = ['version', 'description'];
 
-    public function plugin() {
-        return $this->belongsTo('World');
+    public static function boot() {
+        parent::boot();
+
+        WorldVersion::deleting(function($worldVersion) {
+            foreach(ServerType::all() as $serverType) {
+                foreach($serverType->worlds()->all() as $serverTypeWorld) {
+                    if ($serverTypeWorld->worldVersion()->id == $worldVersion->id) {
+                        $serverTypeWorld->delete();
+                    }
+                }
+            }
+
+            return true;
+        });
     }
 
 }

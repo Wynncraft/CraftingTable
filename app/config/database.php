@@ -83,6 +83,16 @@ return array(
 			'prefix'   => '',
 		),
 
+		'mongodb' => array(
+			'driver'   => 'mongodb',
+			'host'     => $_ENV['mongodb_hosts'],
+			'port'     => 27017,
+			'username' => $_ENV['mongodb_username'],
+			'password' => $_ENV['mongodb_password'],
+			'database' => $_ENV['mongodb_database'],
+			'options'  => array('replicaSet' => $_ENV['mongodb_replicaSetName'])
+		),
+
 	),
 
 	/*

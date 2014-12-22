@@ -3,6 +3,15 @@
 @section('content')
 @include('navbars.topnav', array('navBarPage'=>'worlds'))
 
+<script>
+    function ConfirmDeleteWorld(worldName){
+        return confirm("Are you sure you want to delete the world "+worldName+"?");
+    }
+    function ConfirmDeleteVersion(version){
+        return confirm("Are you sure you want to delete the world version "+version+"?");
+    }
+</script>
+
 @if(Session::has('error'))
     <div class="alert alert-danger alert-dismissible">
         <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
@@ -128,12 +137,7 @@
                                     </div>
                                     @foreach($world->versions()->get() as $version)
                                         <div class="tab-pane" id="version{{ $version->id }}">
-                                             <script>
-                                                function ConfirmDeleteVersion(){
-                                                    return confirm("Are you sure you want to delete the world version {{ $version->version }}?");
-                                                }
-                                             </script>
-                                            {{ Form::open(array('action' => array('WorldController@deleteVersion', $world->id, $version->id), 'class' => 'form-horizontal', 'method' => 'DELETE', 'onsubmit' => 'return ConfirmDeleteVersion()')) }}
+                                            {{ Form::open(array('action' => array('WorldController@deleteVersion', $world->id, $version->id), 'class' => 'form-horizontal', 'method' => 'DELETE', 'onsubmit' => 'return ConfirmDeleteVersion("'.$version->version.'")')) }}
                                                 <div style="margin-bottom: 25px" class="input-group">
                                                     {{ Form::label('version-label', 'World Version') }}
                                                     {{ Form::text('version', $version->version, array('class'=>'form-control', 'placeholder' => 'i.e 1.2.5', 'disabled')) }}
@@ -190,13 +194,8 @@
                                         </div>
                                     @endif
                                 {{ Form::close() }}
-                                <script>
-                                    function ConfirmDelete(){
-                                        return confirm("Are you sure you want to delete the world {{{ $world->name }}}?");
-                                    }
-                                </script>
                                 @if(Auth::user()->can('delete_world'))
-                                    {{ Form::open(array('action' => array('WorldController@deleteWorld', $world->id), 'class' => 'form-horizontal', 'method'=>'DELETE', 'onsubmit' => 'return ConfirmDelete()')) }}
+                                    {{ Form::open(array('action' => array('WorldController@deleteWorld', $world->id), 'class' => 'form-horizontal', 'method'=>'DELETE', 'onsubmit' => 'return ConfirmDeleteWorld("'.$world->name.'")')) }}
                                         <div style="margin-top:10px" class="form-group">
                                             <div class="col-md-12">
                                                 {{ Form::submit('Delete', array('class'=>'btn btn-danger')) }}

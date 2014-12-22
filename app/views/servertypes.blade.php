@@ -17,13 +17,13 @@
 
             $.getJSON('plugins/'+$(this).val()+'/versions/json', function(data) {
                 for (var i = 0; i < data.length; i++) {
-                    pluginVersionSelect.append('<option value='+data[i].id+'>'+data[i].version+'</option>');
+                    pluginVersionSelect.append('<option value='+data[i]._id+'>'+data[i].version+'</option>');
                 }
             });
 
             $.getJSON('plugins/'+$(this).val()+'/configs/json', function(data) {
                 for (var i = 0; i < data.length; i++) {
-                    pluginConfigSelect.append('<option value='+data[i].id+'>'+data[i].name+'</option>');
+                    pluginConfigSelect.append('<option value='+data[i]._id+'>'+data[i].name+'</option>');
                 }
             });
         });
@@ -36,7 +36,7 @@
 
             $.getJSON('worlds/'+$(this).val()+'/versions/json', function(data) {
                 for (var i = 0; i < data.length; i++) {
-                    worldVersionSelect.append('<option value='+data[i].id+'>'+data[i].version+'</option>');
+                    worldVersionSelect.append('<option value='+data[i]._id+'>'+data[i].version+'</option>');
                 }
             });
         });

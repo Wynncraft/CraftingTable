@@ -16,6 +16,7 @@ class NetworkController extends BaseController {
             array('name'=>'required|min:3|max:100|unique:networks',
                 'description'=>'max:255')
         );
+        Validator::getPresenceVerifier()->setConnection("mongodb");
 
         if ($validator->fails()) {
             return Redirect::to('/')->with('errorAdd', $validator->messages());
@@ -45,6 +46,7 @@ class NetworkController extends BaseController {
             array('name'=>'required|min:3|max:100|unique:networks,name,'.$network->id,
                 'description'=>'max:255')
         );
+        Validator::getPresenceVerifier()->setConnection("mongodb");
 
         $messages = $validator->messages();
 
@@ -99,17 +101,18 @@ class NetworkController extends BaseController {
             array('servertype'=>'required|checkType',
                 'amount'=>'required|Integer|Min:1')
         );
+        Validator::getPresenceVerifier()->setConnection("mongodb");
 
         if ($validator->fails()) {
             return Redirect::to('/')->with('open'.$network->id, 'errorAddServerType')->with('errorAddServerType'.$network->id, $validator->messages());
         } else {
             $servertype = ServerType::find(Input::get('servertype'));
             $defaultServerType = null;
-            $networkServerType = NetworkServerType::firstOrNew(array('network_id'=>$network->id, 'server_type_id'=>$servertype->id));
+            $networkServerType = new NetworkServerType(array('network_id'=>$network->id, 'server_type_id'=>$servertype->id));
 
-            Validator::extend('servertypeExists', function($attribute, $value, $parameters) {
+            Validator::extend('servertypeExists', function($attribute, $value, $parameters) use($network) {
 
-                if ($value->exists == true) {
+                if ($network->servertypes()->where('server_type_id', '=', $value->server_type_id)->first() != null) {
                     return false;
                 }
 
@@ -137,7 +140,9 @@ class NetworkController extends BaseController {
                 array('serverType'=>$networkServerType,
                     'networkDefaultServerType'=>$network),
                 array('serverType'=>'servertypeExists',
-                    'networkDefaultServerType'=>'typeDefault'));
+                    'networkDefaultServerType'=>'typeDefault')
+            );
+            Validator::getPresenceVerifier()->setConnection("mongodb");
 
             if ($validator->fails()) {
                 return Redirect::to('/')->with('open'.$network->id, 'errorAddServerType')->with('errorAddServerType'.$network->id, $validator->messages());
@@ -149,17 +154,19 @@ class NetworkController extends BaseController {
                 $networkServerType->defaultServerType = true;
             }
 
-            $networkServerType->save();
+            //$networkServerType->save();
+            $network->servertypes()->save($networkServerType);
 
             return Redirect::to('/')->with('open'.$network->id, 'successServerTypeAdd')->with('success', 'Added the server type '.$servertype->name.' to the network '.$network->name);
         }
     }
 
-    public function deleteServerType(Network $network = null, NetworkServerType $networkServerType = null) {
+    public function deleteServerType(Network $network = null, $networkServerType = null) {
         if ($network == null) {
             return Redirect::to('/')->with('error', 'Unknown network Id');
         }
 
+        $networkServerType = $network->servertypes()->where("_id", "=", $networkServerType)->first();
         if ($networkServerType == null) {
             return Redirect::to('/')->with('error', 'Unknown server type Id');
         }
@@ -196,16 +203,17 @@ class NetworkController extends BaseController {
             array('node'=>Input::get('node')),
             array('node'=>'required|checkType')
         );
+        Validator::getPresenceVerifier()->setConnection("mongodb");
 
         if ($validator->fails()) {
             return Redirect::to('/')->with('open'.$network->id, 'errorAddNode')->with('errorAddNode'.$network->id, $validator->messages());
         } else {
             $node = Node::find(Input::get('node'));
-            $networkNode = NetworkNode::firstOrNew(array('network_id'=>$network->id, 'node_id'=>$node->id));
+            $networkNode = new NetworkNode(array('network_id'=>$network->id, 'node_id'=>$node->id));
 
-            Validator::extend('nodeExists', function($attribute, $value, $parameters) {
+            Validator::extend('nodeExists', function($attribute, $value, $parameters) use($network) {
 
-                if ($value->exists == true) {
+                if ($network->nodes()->where('node_id', '=', $value->node_id)->first() != null) {
                     return false;
                 }
 
@@ -217,6 +225,7 @@ class NetworkController extends BaseController {
                 array('node'=>$networkNode),
                 array('node'=>'nodeExists')
             );
+            Validator::getPresenceVerifier()->setConnection("mongodb");
 
             if ($validator->fails()) {
                 return Redirect::to('/')->with('open'.$network->id, 'errorAddNode')->with('errorAddNode'.$network->id, $validator->messages());
@@ -230,6 +239,7 @@ class NetworkController extends BaseController {
                     array('bungeetype'=>'required'),
                     array('required'=>'Unknown bungee type id')
                 );
+                Validator::getPresenceVerifier()->setConnection("mongodb");
 
                 if ($validator->fails()) {
                     return Redirect::to('/')->with('open'.$network->id, 'errorAddNode')->with('errorAddNode'.$network->id, $validator->messages());
@@ -239,12 +249,27 @@ class NetworkController extends BaseController {
 
                 $nodePublicAddress = null;
 
-                foreach ($node->publicaddresses()->get() as $address) {
-                    $testNetworkNode = NetworkNode::firstOrNew(array('node_id'=>$node->id, 'node_public_address_id'=>$address->id));
-
-                    if ($testNetworkNode->exists == false) {
-                        $nodePublicAddress = $address;
-                        break;
+                if ($node->publicaddresses()->count() > 0) {
+                    Log::info("Has addresses");
+                    $usedAddressIds = array();
+                    foreach (Network::all() as $testNetwork) {
+                        Log::info("loop network ".$testNetwork->name);
+                        $testNetworkNode = $testNetwork->nodes()->where("node_id", "=", $node->id)->first();
+                        if ($testNetworkNode != null) {
+                            Log::info("loop node ".$testNetworkNode->node()->name);
+                            if ($testNetworkNode->node_public_address_id != null) {
+                                Log::info("Adding address ".$testNetworkNode->node_public_address_id);
+                                $usedAddressIds[] = $testNetworkNode->node_public_address_id;
+                            }
+                        }
+                    }
+                    foreach ($node->publicaddresses()->all() as $address) {
+                        Log::info("Loop node address ".$address);
+                        if (in_array($address->id, $usedAddressIds) == false) {
+                            Log::info("Found free ".$address);
+                            $nodePublicAddress = $address;
+                            break;
+                        }
                     }
                 }
 
@@ -253,25 +278,28 @@ class NetworkController extends BaseController {
                     array('address'=>'required'),
                     array('required'=>'No public address available on node '.$node->name)
                 );
+                Validator::getPresenceVerifier()->setConnection("mongodb");
 
                 if ($validator->fails()) {
                     return Redirect::to('/')->with('open'.$network->id, 'errorAddNode')->with('errorAddNode'.$network->id, $validator->messages());
                 } else {
-                    $networkNode->node_publicAddress_id = $nodePublicAddress->id;
+                    $networkNode->node_public_address_id = $nodePublicAddress->id;
                 }
             }
 
-            $networkNode->save();
+            //$networkNode->save();
+            $network->nodes()->save($networkNode);
 
             return Redirect::to('/')->with('open'.$network->id, 'errorAddNode')->with('success', 'Added the node '.$node->name.' to the network '.$network->name);
         }
     }
 
-    public function deleteNode(Network $network = null, NetworkNode $networkNode = null) {
+    public function deleteNode(Network $network = null, $networkNode = null) {
         if ($network == null) {
             return Redirect::to('/')->with('error', 'Unknown network Id');
         }
 
+        $networkNode = $network->nodes()->where("_id", "=", $networkNode)->first();
         if ($networkNode == null) {
             return Redirect::to('/')->with('error', 'Unknown node Id');
         }

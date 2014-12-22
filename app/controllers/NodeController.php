@@ -54,6 +54,7 @@ class NodeController extends BaseController {
                 'ram'=>'required|Integer|Min:1024'),
             array('checkip'=>'Invalid IP address')
         );
+        Validator::getPresenceVerifier()->setConnection("mongodb");
 
         if ($validator->fails()) {
             return Redirect::to('/nodes')->with('errorAdd', $validator->messages());
@@ -81,6 +82,7 @@ class NodeController extends BaseController {
             array('name'=>'required|min:3|max:100|unique:nodes,id,'.$node->id,
                 'ram'=>'required|Integer|Min:1024')
         );
+        Validator::getPresenceVerifier()->setConnection("mongodb");
 
         if ($validator->fails()) {
             return Redirect::to('/nodes')->with('open'.$node->id, 'errorEdit')->with('errorEdit'.$node->id, $validator->messages());
@@ -143,28 +145,39 @@ class NodeController extends BaseController {
             return true;
         }, 'Invalid IP Address');
 
+        Validator::extend('uniqueip', function($attribute, $value, $params) {
+            foreach (Node::all() as $node) {
+                if ($node->publicaddresses()->where('publicAddress', '=', $value)->first() != null) {
+                    return false;
+                }
+            }
+            return true;
+        }, "The public address has already been taken.");
+
         $validator = Validator::make(
             array('publicAddress'=>Input::get('publicAddress')),
-            array('publicAddress'=>'required|unique:node_public_addresses|checkip')
+            array('publicAddress'=>'required|uniqueip|checkip')
         );
+        Validator::getPresenceVerifier()->setConnection("mongodb");
 
         if ($validator->fails()) {
             return Redirect::to('/nodes')->with('open'.$node->id, 'errorIP')->with('errorIP'.$node->id, $validator->messages());
         } else {
 
-            $nodePAddress = NodePublicAddress::firstOrNew(array('node_id'=>$node->id, 'publicAddress'=>Input::get('publicAddress')));
-            $nodePAddress->publicAddress = Input::get('publicAddress');
-            $nodePAddress->save();
+            $nodePAddress = new NodePublicAddress(array('publicAddress'=>Input::get('publicAddress')));
+            //$nodePAddress->save();
+            $node->publicaddresses()->save($nodePAddress);
 
             return Redirect::to('/nodes')->with('open'.$node->id, 'successAddIP')->with('success', 'Added the public address '.$nodePAddress->publicAddress.' to node '.$node->name);
         }
     }
 
-    public function deletePAddress(Node $node = null, NodePublicAddress $address = null) {
+    public function deletePAddress(Node $node = null, $address = null) {
         if ($node == null) {
             return Redirect::to('/nodes')->with('error', 'Unknown node Id');
         }
 
+        $address = $node->publicaddresses()->where("_id", "=", $address)->first();
         if ($address == null) {
             return Redirect::to('/nodes')->with('error', 'Unknown address Id');
         }

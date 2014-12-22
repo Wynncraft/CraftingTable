@@ -1,13 +1,8 @@
 <?php
 
-class PluginVersion extends Eloquent {
+class PluginVersion extends Moloquent  {
 
-    /**
-     * The database table used by the model.
-     *
-     * @var string
-     */
-    protected $table = 'plugin_versions';
+    protected $connection = 'mongodb';
 
     /**
      * The attributes that are mass assignable.
@@ -16,8 +11,20 @@ class PluginVersion extends Eloquent {
      */
     protected $fillable = ['version', 'description'];
 
-    public function plugin() {
-        return $this->belongsTo('Plugin');
+    public static function boot() {
+        parent::boot();
+
+        PluginVersion::deleting(function($pluginVersion) {
+            foreach(ServerType::all() as $serverType) {
+                foreach($serverType->plugins()->all() as $serverTypePlugin) {
+                    if ($serverTypePlugin->pluginVersion()->id == $pluginVersion->id) {
+                        $serverTypePlugin->delete();
+                    }
+                }
+            }
+
+            return true;
+        });
     }
 
 }

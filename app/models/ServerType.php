@@ -2,6 +2,8 @@
 
 class ServerType extends PluginHolder {
 
+    protected $connection = 'mongodb';
+
     /**
      * The database table used by the model.
      *
@@ -16,6 +18,25 @@ class ServerType extends PluginHolder {
      */
     protected $fillable = ['name', 'description'];
 
+    public static function boot() {
+        parent::boot();
+
+        ServerType::deleting(function($servertype) {
+            foreach(Network::all() as $network) {
+                foreach ($network->servertypes()->all() as $networkServerType) {
+                    if ($networkServerType->servertype()->id == $servertype->id) {
+                        $networkServerType->delete();
+                    }
+                }
+                foreach($network->servers() as $server) {
+                    $server->delete();
+                }
+            }
+
+            return true;
+        });
+    }
+
     /**
      * Worlds
      *
@@ -23,7 +44,7 @@ class ServerType extends PluginHolder {
      */
     public function worlds()
     {
-        return $this->hasMany('ServerTypeWorld', 'servertype_id');
+        return $this->embedsMany('ServerTypeWorld');
     }
 
     /**

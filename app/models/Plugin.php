@@ -1,6 +1,8 @@
 <?php
 
-class Plugin extends Eloquent {
+class Plugin extends Moloquent  {
+
+    protected $connection = 'mongodb';
 
     /**
      * The database table used by the model.
@@ -16,11 +18,27 @@ class Plugin extends Eloquent {
      */
     protected $fillable = ['name', 'description'];
 
+    public static function boot() {
+        parent::boot();
+
+        Plugin::deleting(function($plugin) {
+            foreach(ServerType::all() as $serverType) {
+                foreach($serverType->plugins()->all() as $serverTypePlugin) {
+                    if ($serverTypePlugin->plugin()->id == $plugin->id) {
+                        $serverTypePlugin->delete();
+                    }
+                }
+            }
+
+            return true;
+        });
+    }
+
     public function versions() {
-        return $this->hasMany('PluginVersion', 'plugin_id');
+        return $this->embedsMany('PluginVersion');
     }
 
     public function configs() {
-        return $this->hasMany('PluginConfig', 'plugin_id');
+        return $this->embedsMany('PluginConfig');
     }
 }

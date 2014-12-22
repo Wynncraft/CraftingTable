@@ -28,6 +28,7 @@ class ServerTypeController extends BaseController {
                 'players'=>'required|Integer|Min:1',
                 'memory'=>'required|Integer|Min:1024')
         );
+        Validator::getPresenceVerifier()->setConnection("mongodb");
 
         if ($validator->fails()) {
             return Redirect::to('/servertypes')->with('errorAdd', $validator->messages());
@@ -63,6 +64,7 @@ class ServerTypeController extends BaseController {
                 'players'=>'required|Integer|Min:1',
                 'memory'=>'required|Integer|Min:1024')
         );
+        Validator::getPresenceVerifier()->setConnection("mongodb");
 
         if ($validator->fails()) {
             return Redirect::to('/servertypes')->with('open'.$serverType->id, 'errorEdit')->with('errorEdit'.$serverType->id, $validator->messages());
@@ -132,7 +134,7 @@ class ServerTypeController extends BaseController {
                 return false;
             }
 
-            $pluginVersion = $plugin->versions()->where('id', '=', $value)->first();
+            $pluginVersion = $plugin->versions()->where('_id', '=', $value)->first();
 
             if ($pluginVersion == null) {
                 return false;
@@ -147,6 +149,7 @@ class ServerTypeController extends BaseController {
             array('plugin'=>'required|checkPlugin|checkType',
                 'pluginVersion'=>'required|checkVersion')
         );
+        Validator::getPresenceVerifier()->setConnection("mongodb");
 
 
         if ($validator->fails()) {
@@ -155,11 +158,11 @@ class ServerTypeController extends BaseController {
             $plugin = Plugin::find(Input::get('plugin'));
             $pluginVersion = $plugin->versions()->where('id', '=', Input::get('pluginVersion'))->first();
 
-            $serverTypePlugin = PluginHolderPlugin::firstOrNew(array('pluginholder_id'=>$serverType->id, 'pluginholder_type'=>'ServerType','plugin_id'=>$plugin->id));
+            $serverTypePlugin = new PluginHolderPlugin(array('plugin_id'=>$plugin->id));
 
-            Validator::extend('pluginExists', function($attribute, $value, $parameters) {
+            Validator::extend('pluginExists', function($attribute, $value, $parameters) use ($serverType) {
 
-                if ($value->exists == true) {
+                if ($serverType->plugins()->where('plugin_id', '=', $value->plugin_id)->first() != null) {
                     return false;
                 }
 
@@ -168,7 +171,9 @@ class ServerTypeController extends BaseController {
 
             $validator = Validator::make(
                 array('serverTypePlugin'=>$serverTypePlugin),
-                array('serverTypePlugin'=>'pluginExists'));
+                array('serverTypePlugin'=>'pluginExists')
+            );
+            Validator::getPresenceVerifier()->setConnection("mongodb");
 
             if ($validator->fails()) {
                 return Redirect::to('/servertypes')->with('open'.$serverType->id, 'errorAddPlugin')->with('errorAddPlugin'.$serverType->id, $validator->messages());
@@ -183,17 +188,19 @@ class ServerTypeController extends BaseController {
                 }
             }
 
-            $serverTypePlugin->save();
+            //$serverTypePlugin->save();
+            $serverType->plugins()->save($serverTypePlugin);
 
             return Redirect::to('/servertypes')->with('open'.$serverType->id, 'successPluginAdd')->with('success', 'Added the plugin '.$plugin->name.' to the server type '.$serverType->name);
         }
     }
 
-    public function deleteServerTypePlugin(ServerType $serverType = null, ServerTypePlugin $serverTypePlugin = null) {
+    public function deleteServerTypePlugin(ServerType $serverType = null, $serverTypePlugin = null) {
         if ($serverType == null) {
             return Redirect::to('/servertypes')->with('error', 'Unknown server type Id');
         }
 
+        $serverTypePlugin = $serverType->plugins()->where("_id", "=", $serverTypePlugin)->first();
         if ($serverTypePlugin == null) {
             return Redirect::to('/servertypes')->with('error', 'Unknown server plugin Id');
         }
@@ -248,6 +255,7 @@ class ServerTypeController extends BaseController {
             array('world'=>'required|checkWorld',
                 'worldVersion'=>'required|checkVersion')
         );
+        Validator::getPresenceVerifier()->setConnection("mongodb");
 
 
         if ($validator->fails()) {
@@ -257,11 +265,11 @@ class ServerTypeController extends BaseController {
             $defaultWorld = null;
             $worldVersion = $world->versions()->where('id', '=', Input::get('worldVersion'))->first();
 
-            $serverTypeWorld = ServerTypeWorld::firstOrNew(array('servertype_id'=>$serverType->id, 'world_id'=>$world->id));
+            $serverTypeWorld = new ServerTypeWorld(array('world_id'=>$world->id));
 
-            Validator::extend('worldExists', function($attribute, $value, $parameters) {
+            Validator::extend('worldExists', function($attribute, $value, $parameters) use ($serverType) {
 
-                if ($value->exists == true) {
+                if ($serverType->worlds()->where('world_id', '=', $value->world_id)->first() != null) {
                     return false;
                 }
 
@@ -289,7 +297,9 @@ class ServerTypeController extends BaseController {
                 array('serverTypeWorld'=>$serverTypeWorld,
                     'serverTypeDefaultWorld'=>$serverType),
                 array('serverTypeWorld'=>'worldExists',
-                    'serverTypeDefaultWorld'=>'worldDefault'));
+                    'serverTypeDefaultWorld'=>'worldDefault')
+            );
+            Validator::getPresenceVerifier()->setConnection("mongodb");
 
             if ($validator->fails()) {
                 return Redirect::to('/servertypes')->with('open'.$serverType->id, 'errorAddWorld')->with('errorAddWorld'.$serverType->id, $validator->messages());
@@ -301,17 +311,19 @@ class ServerTypeController extends BaseController {
                 $serverTypeWorld->defaultWorld = true;
             }
 
-            $serverTypeWorld->save();
+            //$serverTypeWorld->save();
+            $serverType->worlds()->save($serverTypeWorld);
 
             return Redirect::to('/servertypes')->with('open'.$serverType->id, 'successWorldAdd')->with('success', 'Added the world '.$world->name.' to the server type '.$serverType->name);
         }
     }
 
-    public function deleteServerTypeWorld(ServerType $serverType = null, ServerTypeWorld $serverTypeWorld = null) {
+    public function deleteServerTypeWorld(ServerType $serverType = null, $serverTypeWorld = null) {
         if ($serverType == null) {
             return Redirect::to('/servertypes')->with('error', 'Unknown server type Id');
         }
 
+        $serverTypeWorld = $serverType->worlds()->where("_id", "=", $serverTypeWorld)->first();
         if ($serverTypeWorld == null) {
             return Redirect::to('/servertypes')->with('error', 'Unknown server world Id');
         }

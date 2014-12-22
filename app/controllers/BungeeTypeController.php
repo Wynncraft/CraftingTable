@@ -26,6 +26,7 @@ class BungeeTypeController extends BaseController {
                 'description'=>'max:255',
                 'memory'=>'required|Integer|Min:1024')
         );
+        Validator::getPresenceVerifier()->setConnection("mongodb");
 
         if ($validator->fails()) {
             return Redirect::to('/bungeetypes')->with('errorAdd', $validator->messages());
@@ -58,6 +59,7 @@ class BungeeTypeController extends BaseController {
                 'description'=>'max:255',
                 'memory'=>'required|Integer|Min:1024')
         );
+        Validator::getPresenceVerifier()->setConnection("mongodb");
 
         if ($validator->fails()) {
             return Redirect::to('/bungeetypes')->with('open'.$bungeeType->id, 'errorEdit')->with('errorEdit'.$bungeeType->id, $validator->messages());
@@ -126,7 +128,7 @@ class BungeeTypeController extends BaseController {
                 return false;
             }
 
-            $pluginVersion = $plugin->versions()->where('id', '=', $value)->first();
+            $pluginVersion = $plugin->versions()->where('_id', '=', $value)->first();
 
             if ($pluginVersion == null) {
                 return false;
@@ -141,19 +143,20 @@ class BungeeTypeController extends BaseController {
             array('plugin'=>'required|checkPlugin|checkType',
                 'pluginVersion'=>'required|checkVersion')
         );
+        Validator::getPresenceVerifier()->setConnection("mongodb");
 
 
         if ($validator->fails()) {
             return Redirect::to('/bungeetypes')->with('open'.$bungeeType->id, 'errorAddPlugin')->with('errorAddPlugin'.$bungeeType->id, $validator->messages());
         } else {
             $plugin = Plugin::find(Input::get('plugin'));
-            $pluginVersion = $plugin->versions()->where('id', '=', Input::get('pluginVersion'))->first();
+            $pluginVersion = $plugin->versions()->where('_id', '=', Input::get('pluginVersion'))->first();
 
-            $bungeeTypePlugin = PluginHolderPlugin::firstOrNew(array('pluginholder_id'=>$bungeeType->id, 'pluginholder_type'=>'BungeeType', 'plugin_id'=>$plugin->id));
+            $bungeeTypePlugin = new PluginHolderPlugin(array('plugin_id'=>$plugin->id));
 
-            Validator::extend('pluginExists', function($attribute, $value, $parameters) {
+            Validator::extend('pluginExists', function($attribute, $value, $parameters) use($bungeeType) {
 
-                if ($value->exists == true) {
+                if ($bungeeType->plugins()->where('plugin_id', '=', $value->plugin_id)->first() != null) {
                     return false;
                 }
 
@@ -162,7 +165,9 @@ class BungeeTypeController extends BaseController {
 
             $validator = Validator::make(
                 array('bungeeTypePlugin'=>$bungeeTypePlugin),
-                array('bungeeTypePlugin'=>'pluginExists'));
+                array('bungeeTypePlugin'=>'pluginExists')
+            );
+            Validator::getPresenceVerifier()->setConnection("mongodb");
 
             if ($validator->fails()) {
                 return Redirect::to('/bungeetypes')->with('open'.$bungeeType->id, 'errorAddPlugin')->with('errorAddPlugin'.$bungeeType->id, $validator->messages());
@@ -171,13 +176,14 @@ class BungeeTypeController extends BaseController {
             $bungeeTypePlugin->pluginversion_id = $pluginVersion->id;
 
             if (Input::has('pluginConfig')) {
-                $pluginConfig = $plugin->configs()->where('id', '=', Input::get('pluginConfig'))->first();
+                $pluginConfig = $plugin->configs()->where('_id', '=', Input::get('pluginConfig'))->first();
                 if ($pluginConfig != null) {
                     $bungeeTypePlugin->pluginconfig_id = $pluginConfig->id;
                 }
             }
 
-            $bungeeTypePlugin->save();
+            //$bungeeTypePlugin->save();
+            $bungeeType->plugins()->save($bungeeTypePlugin);
 
             return Redirect::to('/bungeetypes')->with('open'.$bungeeType->id, 'successPluginAdd')->with('success', 'Added the plugin '.$plugin->name.' to the bungee type '.$bungeeType->name);
         }

@@ -1,7 +1,9 @@
 <?php
 
-class PluginHolderPlugin extends Eloquent
+class PluginHolderPlugin extends Moloquent
 {
+
+    protected $connection = 'mongodb';
 
     /**
      * The database table used by the model.
@@ -15,22 +17,20 @@ class PluginHolderPlugin extends Eloquent
      *
      * @var array
      */
-    protected $fillable = ['pluginholder_id', 'pluginholder_type', 'plugin_id', 'pluginversion_id', 'pluginconfig_id'];
+    protected $fillable = ['plugin_id', 'pluginversion_id', 'pluginconfig_id'];
 
     public function plugin() {
-        return $this->hasOne('Plugin', 'id', 'plugin_id')->first();
+        return $this->hasOne('Plugin', '_id', 'plugin_id')->first();
     }
 
     public function pluginVersion() {
-        return $this->hasOne('PluginVersion', 'id', 'pluginversion_id')->first();
+        $pluginVersion = $this->plugin()->versions()->where('id', '=', $this->pluginversion_id)->first();
+        return $pluginVersion;
     }
 
     public function pluginConfig() {
-        return $this->hasOne('PluginConfig', 'id', 'pluginconfig_id')->first();
-    }
-
-    public function pluginholder() {
-        return $this->belongsTo('PluginHolder', 'id', 'pluginholder_id');
+        $pluginConfig = $this->plugin()->configs()->where('id', '=', $this->pluginconfig_id)->first();
+        return $pluginConfig;
     }
 
 }

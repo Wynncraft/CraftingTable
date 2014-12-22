@@ -3,6 +3,15 @@
 @section('content')
 @include('navbars.topnav', array('navBarPage'=>'nodes'))
 
+<script>
+    function ConfirmDeleteNode(node){
+        return confirm("Are you sure you want to delete the node "+node+"?");
+    }
+    function ConfirmDeleteAddress(address){
+        return confirm("Are you sure you want to delete the public address "+address+"?");
+    }
+</script>
+
 @if(Session::has('error'))
     <div class="alert alert-danger alert-dismissible">
         <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
@@ -110,7 +119,7 @@
                                     <tbody>
                                         @foreach($node->publicaddresses()->get() as $publicaddress)
                                             <tr>
-                                                {{ Form::open(array('action' => array('NodeController@deletePAddress', $node->id, $publicaddress->id), 'class' => 'form-horizontal', 'method' => 'DELETE')) }}
+                                                {{ Form::open(array('action' => array('NodeController@deletePAddress', $node->id, $publicaddress->id), 'class' => 'form-horizontal', 'method' => 'DELETE', 'onsubmit' => 'return ConfirmDeleteAddress("'.$publicaddress->publicAddress.'")')) }}
                                                     <td>{{ $publicaddress->publicAddress }}</td>
                                                     <td>{{ Form::submit('Remove Address', array('class'=>'btn btn-danger')) }}</td>
                                                 {{ Form::close() }}
@@ -166,13 +175,8 @@
                                         </div>
                                     @endif
                                 {{ Form::close() }}
-                                    <script>
-                                        function ConfirmDelete(){
-                                            return confirm("Are you sure you want to delete the node {{{ $node->name }}}?");
-                                        }
-                                    </script>
                                 @if(Auth::user()->can('delete_node'))
-                                    {{ Form::open(array('action' => array('NodeController@deleteNode', $node->id), 'class' => 'form-horizontal', 'method'=>'DELETE', 'onsubmit' => 'return ConfirmDelete()')) }}
+                                    {{ Form::open(array('action' => array('NodeController@deleteNode', $node->id), 'class' => 'form-horizontal', 'method'=>'DELETE', 'onsubmit' => 'return ConfirmDeleteNode("'.$node->name.'")')) }}
                                         <div style="margin-top:10px" class="form-group">
                                             <div class="col-md-12">
                                                 {{ Form::submit('Delete', array('class'=>'btn btn-danger')) }}

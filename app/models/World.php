@@ -1,6 +1,8 @@
 <?php
 
-class World extends Eloquent {
+class World extends Moloquent  {
+
+    protected $connection = 'mongodb';
 
     /**
      * The database table used by the model.
@@ -16,8 +18,24 @@ class World extends Eloquent {
      */
     protected $fillable = ['name', 'description'];
 
+    public static function boot() {
+        parent::boot();
+
+        World::deleting(function($world) {
+            foreach(ServerType::all() as $serverType) {
+                foreach($serverType->worlds()->all() as $serverTypeWorld) {
+                    if ($serverTypeWorld->world()->id == $world->id) {
+                        $serverTypeWorld->delete();
+                    }
+                }
+            }
+
+            return true;
+        });
+    }
+
     public function versions() {
-        return $this->hasMany('WorldVersion', 'world_id');
+        return $this->embedsMany('WorldVersion');
     }
 
 

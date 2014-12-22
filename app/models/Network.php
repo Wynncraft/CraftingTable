@@ -1,6 +1,8 @@
 <?php
 
-class Network extends Eloquent {
+class Network extends Moloquent {
+
+    protected $connection = 'mongodb';
 
     /**
      * The database table used by the model.
@@ -23,7 +25,7 @@ class Network extends Eloquent {
      */
     public function nodes()
     {
-        return $this->hasMany('NetworkNode', 'network_id');
+        return $this->embedsMany('NetworkNode');
     }
 
     /**
@@ -33,7 +35,30 @@ class Network extends Eloquent {
      */
     public function servertypes()
     {
-        return $this->hasMany('NetworkServerType', 'network_id');
+        return $this->embedsMany('NetworkServerType');
+    }
+
+    public function servers() {
+        return $this->hasMany('Server');
+    }
+
+    public function bungees() {
+        return $this->hasMany('Bungee');
+    }
+
+    public static function boot() {
+        parent::boot();
+
+        Network::deleting(function($network) {
+            foreach($network->servers() as $server) {
+                $server->delete();
+            }
+            foreach($network->bungees() as $bungee) {
+                $bungee->delete();
+            }
+
+            return true;
+        });
     }
 
     /**
@@ -43,6 +68,24 @@ class Network extends Eloquent {
      */
     public function defaultServerType() {
         return $this->servertypes()->where('defaultServerType', '=', '1')->first();
+    }
+
+    public function getTotalRam() {
+        $usableRam = 0;
+        $nodes = $this->nodes()->get()->all();
+        foreach ($nodes as $node) {
+            $usableRam += $node->node()->ram;
+        }
+        return $usableRam;
+    }
+
+    public function getTotalSlots() {
+        $slots = 0;
+        $servertypes = $this->servertypes()->get()->all();
+        foreach($servertypes as $servertype) {
+            $slots += $servertype->servertype()->players*$servertype->amount;
+        }
+        return $slots;
     }
 
     public function overProvisioned() {

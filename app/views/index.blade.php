@@ -131,11 +131,11 @@
                                 <div class="row">
                                     <div class="col-xs-3">
                                         <h4 class="text-center">Online Players</h4>
-                                        <p class="text-center"><span class="text-muted">0 / 0</span></p>
+                                        <p class="text-center"><span class="text-muted">0 / {{ $network->getTotalSlots() }}</span></p>
                                     </div>
                                     <div class="col-xs-3">
                                         <h4 class="text-center">Memory Usage</h4>
-                                        <p class="text-center"><span class="text-muted">0 MB / 0 MB</span></p>
+                                        <p class="text-center"><span class="text-muted">0 MB / {{ $network->getTotalRam() }} MB</span></p>
                                     </div>
                                     <div class="col-xs-3">
                                         <h4 class="text-center">Something else</h4>
@@ -271,7 +271,7 @@
                                                 {{ Form::open(array('action' => array('NetworkController@deleteNode', $network->id, $node->id), 'class' => 'form-horizontal', 'method' => 'DELETE', 'onsubmit' => 'return ConfirmDeleteNode("'.$node->node()->name.'")')) }}
                                                     <td>{{{ $node->node()->name }}}</td>
                                                     <td>{{{ $node->bungeetype() != null ? $node->bungeetype()->name : '' }}}</td>
-                                                    <td>{{{ $node->publicaddress() != null ? $node->publicaddress()->publicAddress: '' }}}</td>
+                                                    <td>{{{ $node->publicaddress() != null ? $node->publicaddress()->publicAddress : '' }}}</td>
                                                     <td>{{ Form::submit('Remove Node', array('class'=>'btn btn-danger')) }}</td>
                                                 {{ Form::close() }}
                                             </tr>

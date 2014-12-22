@@ -1,28 +1,19 @@
 <?php
 
-class NetworkServerType extends Eloquent
+class NetworkServerType extends Moloquent
 {
 
-    /**
-     * The database table used by the model.
-     *
-     * @var string
-     */
-    protected $table = 'network_servertypes';
+    protected $connection = 'mongodb';
 
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
-    protected $fillable = ['network_id', 'server_type_id'];
+    protected $fillable = ['server_type_id'];
 
     public function servertype() {
-        return $this->hasOne('ServerType', 'id', 'server_type_id')->first();
-    }
-
-    public function network() {
-        return $this->belongsTo('Network', 'id', 'network_id');
+        return $this->hasOne('ServerType', '_id', 'server_type_id')->first();
     }
 
 }

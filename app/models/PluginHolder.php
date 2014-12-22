@@ -1,6 +1,8 @@
 <?php
 
-class PluginHolder extends Eloquent {
+class PluginHolder extends Moloquent  {
+
+    protected $connection = 'mongodb';
 
     /**
      * Plugins
@@ -9,7 +11,7 @@ class PluginHolder extends Eloquent {
      */
     public function plugins()
     {
-        return $this->morphMany('PluginHolderPlugin', 'pluginholder');
+        return $this->embedsMany('PluginHolderPlugin');
     }
 
 }
