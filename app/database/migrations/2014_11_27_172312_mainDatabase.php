@@ -13,35 +13,41 @@ class MainDatabase extends Migration {
 	{
 
 		Schema::connection('mongodb')->create('worlds', function($collection) {
-			$collection->index('name');
 			$collection->unique('name');
 		});
 
 		Schema::connection('mongodb')->create('plugins', function($collection) {
-			$collection->index('name');
 			$collection->unique('name');
 		});
 
 		Schema::connection('mongodb')->create('servertypes', function($collection) {
-			$collection->index('name');
 			$collection->unique('name');
 		});
 
 		Schema::connection('mongodb')->create('bungeetypes', function($collection) {
-			$collection->index('name');
 			$collection->unique('name');
 		});
 
 		Schema::connection('mongodb')->create('nodes', function($collection) {
-			$collection->index('name');
 			$collection->unique('name');
-			$collection->index('privateAddress');
 			$collection->unique('privateAddress');
 		});
 
 		Schema::connection('mongodb')->create('networks', function($collection) {
-			$collection->index('name');
 			$collection->unique('name');
+		});
+
+		Schema::connection('mongodb')->create('servers', function($collection) {
+			$collection->index('network_id');
+			$collection->index('server_type_id');
+			$collection->index('node_id');
+			$collection->index('number');
+		});
+
+		Schema::connection('mongodb')->create('bungees', function($collection) {
+			$collection->index('network_id');
+			$collection->index('bungee_type_id');
+			$collection->index('node_id');
 		});
 
 	}
@@ -53,6 +59,8 @@ class MainDatabase extends Migration {
 	 */
 	public function down()
 	{
+		Schema::connection('mongodb')->drop('servers');
+		Schema::connection('mongodb')->drop('bungees');
 		Schema::connection('mongodb')->drop('networks');
 		Schema::connection('mongodb')->drop('nodes');
 		Schema::connection('mongodb')->drop('bungeetypes');
