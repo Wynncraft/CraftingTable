@@ -75,11 +75,36 @@ class Network extends Moloquent {
         $nodes = $this->nodes()->get()->all();
         foreach ($nodes as $node) {
             $usableRam += $node->node()->ram;
+            if ($node->bungeetype() != null) {
+                $usableRam -= $node->bungeetype()->ram;
+            }
         }
         return $usableRam;
     }
 
-    public function getTotalSlots() {
+    public function getUsedRam() {
+        $usedRam = 0;
+        $servers = $this->servers();
+        $bungees = $this->bungees();
+        foreach ($servers as $server) {
+            $usedRam += $server->servertype()->ram;
+        }
+        foreach ($bungees as $bungee) {
+            $usedRam += $bungee->bungeetype()->ram;
+        }
+        return $usedRam;
+    }
+
+    public function getOnlinePlayers() {
+        $players = 0;
+        $servers = $this->servers();
+        foreach ($servers as $server) {
+            $players += $server->players;
+        }
+        return $players;
+    }
+
+    public function getTotalPlayers() {
         $slots = 0;
         $servertypes = $this->servertypes()->get()->all();
         foreach($servertypes as $servertype) {

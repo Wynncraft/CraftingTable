@@ -131,11 +131,11 @@
                                 <div class="row">
                                     <div class="col-xs-3">
                                         <h4 class="text-center">Online Players</h4>
-                                        <p class="text-center"><span class="text-muted">0 / {{ $network->getTotalSlots() }}</span></p>
+                                        <p class="text-center"><span class="text-muted">{{ $network->getOnlinePlayers() }} / {{ $network->getTotalPlayers() }}</span></p>
                                     </div>
                                     <div class="col-xs-3">
                                         <h4 class="text-center">Memory Usage</h4>
-                                        <p class="text-center"><span class="text-muted">0 MB / {{ $network->getTotalRam() }} MB</span></p>
+                                        <p class="text-center"><span class="text-muted">{{ $network->getUsedRam() }} MB / {{ $network->getTotalRam() }} MB</span></p>
                                     </div>
                                     <div class="col-xs-3">
                                         <h4 class="text-center">Something else</h4>
