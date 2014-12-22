@@ -90,11 +90,9 @@ class PluginController extends BaseController {
 
         $pluginVersion = new PluginVersion(array('version'=> Input::get('version')));
 
-        Validator::extend('uniqueVersion', function($attribute, $value, $params) {
-            foreach (Plugin::all() as $plugin) {
-                if ($plugin->versions()->where('version', '=', $value)->first() != null) {
-                    return false;
-                }
+        Validator::extend('uniqueVersion', function ($attribute, $value, $params) use ($plugin) {
+            if ($plugin->versions()->where('version', '=', $value)->first() != null) {
+                return false;
             }
             return true;
         }, "The version has already been taken.");
@@ -149,14 +147,12 @@ class PluginController extends BaseController {
 
         $pluginConfig = new PluginConfig(array('name'=> Input::get('name')));
 
-        Validator::extend('uniqueConfig', function($attribute, $value, $params) {
-            foreach (Plugin::all() as $plugin) {
-                if ($plugin->configs()->where('name', '=', $value)->first() != null) {
-                    return false;
-                }
+        Validator::extend('uniqueConfig', function ($attribute, $value, $params) use ($plugin) {
+            if ($plugin->configs()->where('name', '=', $value)->first() != null) {
+                return false;
             }
             return true;
-        }, "The version has already been taken.");
+        }, "The config has already been taken.");
 
         $validator = Validator::make(
             array('name'=>$pluginConfig->name,

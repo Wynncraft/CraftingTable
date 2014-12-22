@@ -76,11 +76,9 @@ class WorldController extends BaseController
 
         $worldVersion= new WorldVersion(array('version'=> Input::get('version')));
 
-        Validator::extend('uniqueVersion', function($attribute, $value, $params) {
-            foreach (World::all() as $world) {
-                if ($world->versions()->where('version', '=', $value)->first() != null) {
-                    return false;
-                }
+        Validator::extend('uniqueVersion', function($attribute, $value, $params) use($world) {
+            if ($world->versions()->where('version', '=', $value)->first() != null) {
+                return false;
             }
             return true;
         }, "The version has already been taken.");

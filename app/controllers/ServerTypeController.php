@@ -309,6 +309,8 @@ class ServerTypeController extends BaseController {
 
             if (Input::has('default') == true) {
                 $serverTypeWorld->defaultWorld = true;
+            } else {
+                $serverTypeWorld->defaultWorld = false;
             }
 
             //$serverTypeWorld->save();
