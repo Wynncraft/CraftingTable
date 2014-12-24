@@ -20,7 +20,7 @@ class Bungee extends Moloquent  {
     }
 
     public function publicAddress() {
-        $publicAddress = $this->node()->publicaddresses()->where('_id', '=', $this->publicAddress)->first();
+        $publicAddress = $this->node()->publicaddresses()->where('_id', '=', $this->node_public_address_id)->first();
         return $publicAddress;
     }
 
