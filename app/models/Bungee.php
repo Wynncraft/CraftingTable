@@ -24,8 +24,8 @@ class Bungee extends Moloquent  {
         return $publicAddress;
     }
 
-    public function servertype() {
-        return $this->hasOne('ServerType', '_id', 'server_type_id')->first();
+    public function bungeetype() {
+        return $this->hasOne('BungeeType', '_id', 'bungee_type_id')->first();
     }
 
 }
