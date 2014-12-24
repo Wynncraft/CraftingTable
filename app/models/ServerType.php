@@ -28,7 +28,7 @@ class ServerType extends PluginHolder {
                         $networkServerType->delete();
                     }
                 }
-                foreach($network->servers() as $server) {
+                foreach($network->servers()->get()->all() as $server) {
                     $server->delete();
                 }
             }

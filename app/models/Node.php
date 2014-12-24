@@ -28,12 +28,12 @@ class Node extends Moloquent  {
                         $networkNode->delete();
                     }
                 }
-                foreach($network->servers() as $server) {
+                foreach($network->servers()->get()->all() as $server) {
                     if ($server->node()->id == $node->id) {
                         $server->delete();
                     }
                 }
-                foreach($network->bungees() as $bungee) {
+                foreach($network->bungees()->get()->all() as $bungee) {
                     if ($bungee->node()->id == $node->id) {
                         $bungee->delete();
                     }

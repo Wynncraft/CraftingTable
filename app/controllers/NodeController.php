@@ -79,7 +79,7 @@ class NodeController extends BaseController {
         $validator = Validator::make(
             array('name'=>Input::get('name'),
                 'ram'=>Input::get('ram')),
-            array('name'=>'required|min:3|max:100|unique:nodes,id,'.$node->id,
+            array('name'=>'required|min:3|max:100|unique:nodes,name,'.$node->id,
                 'ram'=>'required|Integer|Min:1024')
         );
         Validator::getPresenceVerifier()->setConnection("mongodb");
@@ -91,7 +91,7 @@ class NodeController extends BaseController {
             $node->ram = Input::get('ram');
 
             $node->save();
-            return Redirect::to('/nodes')->with('open'.$node->id, 'successEdit')->with('success', 'Updated the node '.$node->name.' ('.$node->address.')');
+            return Redirect::to('/nodes')->with('open'.$node->id, 'successEdit')->with('success', 'Updated the node '.$node->name.' ('.$node->privateAddress.')');
 
         }
 

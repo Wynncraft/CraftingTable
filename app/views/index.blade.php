@@ -134,12 +134,12 @@
                                         <p class="text-center"><span class="text-muted">{{ $network->getOnlinePlayers() }} / {{ $network->getTotalPlayers() }}</span></p>
                                     </div>
                                     <div class="col-xs-3">
-                                        <h4 class="text-center">Memory Usage</h4>
-                                        <p class="text-center"><span class="text-muted">{{ $network->getUsedRam() }} MB / {{ $network->getTotalRam() }} MB</span></p>
+                                        <h4 class="text-center">Server Memory Usage</h4>
+                                        <p class="text-center"><span class="text-muted">{{ $network->getUsedServerRam() }} MB / {{ $network->getTotalServerRam() }} MB</span></p>
                                     </div>
                                     <div class="col-xs-3">
-                                        <h4 class="text-center">Something else</h4>
-                                        <p class="text-center"><span class="text-muted">something</span></p>
+                                        <h4 class="text-center">Bungee Memory Usage</h4>
+                                        <p class="text-center"><span class="text-muted">{{ $network->getUsedBungeeRam() }} MB / {{ $network->getTotalBungeeRam() }} MB</span></p>
                                     </div>
                                     <div class="col-xs-3">
                                         <h4 class="text-center">Something else</h4>
@@ -152,14 +152,21 @@
                                         <table class="table table-striped table-bordered table-hover">
                                             <thread>
                                                 <tr>
-                                                    <td>Bungee Number</td>
+                                                    <td>Bungee Type</td>
                                                     <td>Node</td>
                                                     <td>Public IP Address</td>
                                                     <td>Manage</td>
                                                 </tr>
                                             </thread>
                                             <tbody>
-
+                                                @foreach($network->bungees()->get()->all() as $bungee)
+                                                    <tr>
+                                                        <td>{{ $bungee->bungeetype()->name }}</td>
+                                                        <td>{{ $bungee->node()->name }}</td>
+                                                        <td>{{ $bungee->publicaddress()->publicAddress }}</td>
+                                                        <td>Button</td>
+                                                    </tr>
+                                                @endforeach
                                             </tbody>
                                         </table>
 
@@ -175,7 +182,15 @@
                                                 </tr>
                                             </thread>
                                             <tbody>
-
+                                                @foreach($network->servers()->get()->all() as $server)
+                                                    <tr>
+                                                        <td>{{{ $server->servertype()->name }}}</td>
+                                                        <td>{{{ $server->number }}}</td>
+                                                        <td>{{{ $server->node()->name }}}</td>
+                                                        <td>{{{ $server->port }}}</td>
+                                                        <td>Button</td>
+                                                    </tr>
+                                                @endforeach
                                             </tbody>
                                         </table>
                                     </div>

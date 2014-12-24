@@ -152,6 +152,8 @@ class NetworkController extends BaseController {
 
             if (Input::has('default') == true) {
                 $networkServerType->defaultServerType = true;
+            } else {
+                $networkServerType->defaultServerType = false;
             }
 
             //$networkServerType->save();
@@ -234,9 +236,18 @@ class NetworkController extends BaseController {
             if (Input::get('bungeetype') != -1) {
                 $bungeetype = BungeeType::find(Input::get('bungeetype'))->first();
 
+                Validator::extend('checkRam', function($attribute, $value, $parameters) use($node) {
+
+                    if ($node->ram < $value->ram) {
+                        return false;
+                    }
+
+                    return true;
+                }, 'Not enough ram on the node '.$node->name.' to have the bungee type '.$bungeetype->name);
+
                 $validator = Validator::make(
                     array('bungeetype'=>$bungeetype),
-                    array('bungeetype'=>'required'),
+                    array('bungeetype'=>'required|checkRam'),
                     array('required'=>'Unknown bungee type id')
                 );
                 Validator::getPresenceVerifier()->setConnection("mongodb");
