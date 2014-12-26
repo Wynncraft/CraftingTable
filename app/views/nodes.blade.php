@@ -161,7 +161,7 @@
                                     </div>
                                     <div style="margin-bottom: 25px" class="input-group {{ Session::has('errorEdit'.$node->id) && Session::get('errorEdit'.$node->id)->get('address') != null ? 'has-error' : '' }}">
                                         {{ Form::label('privateAddress-label', 'Private IP Address') }}
-                                        {{ Form::text('privateAddress', $node->address, array('class'=>'form-control', 'placeholder' => '172.16.0.1', 'disabled')) }}
+                                        {{ Form::text('privateAddress', $node->privateAddress, array('class'=>'form-control', 'placeholder' => '172.16.0.1', 'disabled')) }}
                                     </div>
                                     <div style="margin-bottom: 25px" class="input-group {{ Session::has('errorEdit'.$node->id) && Session::get('errorEdit'.$node->id)->get('ram') != null ? 'has-error' : '' }}">
                                         {{ Form::label('ram-label', 'Memory (MB)') }}
