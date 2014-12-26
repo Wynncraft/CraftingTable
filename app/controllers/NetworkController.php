@@ -156,6 +156,12 @@ class NetworkController extends BaseController {
                 $networkServerType->defaultServerType = false;
             }
 
+            if (Input::has('manualStart') == true) {
+                $networkServerType->manualStart = true;
+            } else {
+                $networkServerType->manualStart = false;
+            }
+
             //$networkServerType->save();
             $network->servertypes()->save($networkServerType);
 

@@ -217,6 +217,7 @@
                                             <td>Server Type Name</td>
                                             <td>Amount</td>
                                             <td>Default</td>
+                                            <td>Manual Start</td>
                                         </tr>
                                     </thread>
                                     <tbody>
@@ -226,6 +227,7 @@
                                                     <td>{{{ $servertype->servertype()->name }}}</td>
                                                     <td>{{{ $servertype->amount }}}</td>
                                                     <td>{{ $servertype->defaultServerType ? 'Yes' : 'No' }}</td>
+                                                    <td>{{ $servertype->manualStart ? 'Yes' : 'No' }}</td>
                                                     <td>{{ Form::submit('Remove Server Type', array('class'=>'btn btn-danger')) }}</td>
                                                 {{ Form::close() }}
                                             </tr>
@@ -242,13 +244,19 @@
                                             @endforeach
                                         </select>
                                     </div>
-                                    <div style="margin-top:10px" class="input-group">
+                                    <div style="margin-bottom: 25px" class="input-group">
                                         {{ Form::label('amount-label', 'Server Type Amount') }}
                                         {{ Form::number('amount', 1, array('class' => 'form-control', 'min' => 1)) }}
                                     </div>
                                     <div style="margin-bottom: 25px" class="input-group">
                                         {{ Form::label('default-label', 'Default Server Type') }}
-                                        {{ Form::checkbox('default', '1', false, array('class'=>'form-control')) }}
+                                        <br />
+                                        {{ Form::checkbox('default', '1', false, array()) }}
+                                    </div>
+                                    <div style="margin-bottom: 25px" class="input-group">
+                                        {{ Form::label('manualStart-label', 'Manual Start') }}
+                                        <br />
+                                        {{ Form::checkbox('manualStart', '1', false, array()) }}
                                     </div>
                                     <div style="margin-top:10px" class="form-group">
                                         <div class="col-md-12">
