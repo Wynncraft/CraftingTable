@@ -186,7 +186,7 @@
                                                     <tr>
                                                         <td>{{{ $server->servertype()->name }}}</td>
                                                         <td>{{{ $server->number }}}</td>
-                                                        <td>{{{ $server->node()->name }}}</td>
+                                                        <td>{{{ $server->node() != null ? $server->node()->name : '' }}}</td>
                                                         <td>{{{ $server->port }}}</td>
                                                         <td>Button</td>
                                                     </tr>
