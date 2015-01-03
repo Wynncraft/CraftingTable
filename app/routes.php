@@ -69,7 +69,11 @@ Route::group(array('before' => 'auth'), function() {
 	Route::delete('/networks/{network}', array('uses' => 'NetworkController@deleteNetwork'));
 
 	Route::post('/networks/{network}/servertype', array('uses' => 'NetworkController@postServerType'));
+	Route::put('/networks/{network}/servertype', array('uses' => 'NetworkController@putServerType'));
 	Route::delete('/networks/{network}/servertype/{networkservertype}', array('uses' => 'NetworkController@deleteServerType'));
+
+	Route::post('/networks/{network}/bungeetype', array('uses' => 'NetworkController@postBungeeType'));
+	Route::put('/networks/{network}/bungeetype', array('uses' => 'NetworkController@putBungeeType'));
 
 	Route::post('/networks/{network}/node', array('uses' => 'NetworkController@postNode'));
 	Route::delete('/networks/{network}/node/{networknode}', array('uses' => 'NetworkController@deleteNode'));
@@ -89,8 +93,10 @@ Route::group(array('before' => 'auth'), function() {
 	Route::put('/servertypes/{servertype}', array('uses' => 'ServerTypeController@putServerType'));
 	Route::delete('/servertypes/{servertype}', array('uses' => 'ServerTypeController@deleteServerType'));
 	Route::post('/servertypes/{servertype}/plugin', array('uses' => 'ServerTypeController@postServerTypePlugin'));
+	Route::put('/servertypes/{servertype}/plugin', array('uses' => 'ServerTypeController@putServerTypePlugin'));
 	Route::delete('/servertypes/{servertype}/plugin/{servertypeplugin}', array('uses' => 'ServerTypeController@deleteServerTypePlugin'));
 	Route::post('/servertypes/{servertype}/world', array('uses' => 'ServerTypeController@postServerTypeWorld'));
+	Route::put('/servertypes/{servertype}/world', array('uses' => 'ServerTypeController@putServerTypeWorld'));
 	Route::delete('/servertypes/{servertype}/world/{servertypeworld}', array('uses' => 'ServerTypeController@deleteServerTypeWorld'));
 });
 
@@ -106,6 +112,7 @@ Route::group(array('before' => 'auth'), function() {
 	Route::put('/bungeetypes/{bungeetype}', array('uses' => 'BungeeTypeController@putBungeeType'));
 	Route::delete('/bungeetypes/{bungeetype}', array('uses' => 'BungeeTypeController@deleteBungeeType'));
 	Route::post('/bungeetypes/{bungeetype}/plugin', array('uses' => 'BungeeTypeController@postBungeeTypePlugin'));
+	Route::put('/bungeetypes/{bungeetype}/plugin', array('uses' => 'BungeeTypeController@putBungeeTypePlugin'));
 	Route::delete('/bungeetypes/{bungeetype}/plugin/{bungeetypeplugin}', array('uses' => 'BungeeTypeController@deleteBungeeTypePlugin'));
 });
 
@@ -143,8 +150,8 @@ Route::group(array('before' => 'auth'), function() {
 	});*/
 
 	Route::get('/worlds/json', 'WorldController@getWorldsJson');
-	Route::get('/worlds/{world}/json', 'WorldController@getWorldJson');
-	Route::get('/worlds/{world}/versions/json', 'WorldController@getWorldVersionsJson');
+	//Route::get('/worlds/{world}/json', 'WorldController@getWorldJson');
+	//Route::get('/worlds/{world}/versions/json', 'WorldController@getWorldVersionsJson');
 
 	Route::get('/worlds', 'WorldController@getWorlds');
 	Route::post('/worlds/add', array('uses' => 'WorldController@postWorld'));

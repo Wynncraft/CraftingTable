@@ -121,27 +121,9 @@ class BungeeTypeController extends BaseController {
             return true;
         }, 'Please select a plugin for bungees.');
 
-        Validator::extend('checkVersion', function($attribute, $value, $parameters) {
-            $plugin = Plugin::find(Input::get('plugin'));
-
-            if ($plugin == null) {
-                return false;
-            }
-
-            $pluginVersion = $plugin->versions()->where('_id', '=', $value)->first();
-
-            if ($pluginVersion == null) {
-                return false;
-            }
-
-            return true;
-        }, 'Please select a valid plugin version');
-
         $validator = Validator::make(
-            array('plugin'=>Input::get('plugin'),
-                'pluginVersion'=>Input::get('pluginVersion')),
-            array('plugin'=>'required|checkPlugin|checkType',
-                'pluginVersion'=>'required|checkVersion')
+            array('plugin'=>Input::get('plugin')),
+            array('plugin'=>'required|checkPlugin|checkType')
         );
         Validator::getPresenceVerifier()->setConnection("mongodb");
 
@@ -150,7 +132,6 @@ class BungeeTypeController extends BaseController {
             return Redirect::to('/bungeetypes')->with('open'.$bungeeType->id, 'errorAddPlugin')->with('errorAddPlugin'.$bungeeType->id, $validator->messages());
         } else {
             $plugin = Plugin::find(Input::get('plugin'));
-            $pluginVersion = $plugin->versions()->where('_id', '=', Input::get('pluginVersion'))->first();
 
             $bungeeTypePlugin = new PluginHolderPlugin(array('plugin_id'=>$plugin->id));
 
@@ -173,20 +154,69 @@ class BungeeTypeController extends BaseController {
                 return Redirect::to('/bungeetypes')->with('open'.$bungeeType->id, 'errorAddPlugin')->with('errorAddPlugin'.$bungeeType->id, $validator->messages());
             }
 
-            $bungeeTypePlugin->pluginversion_id = $pluginVersion->id;
-
-            if (Input::has('pluginConfig')) {
-                $pluginConfig = $plugin->configs()->where('_id', '=', Input::get('pluginConfig'))->first();
-                if ($pluginConfig != null) {
-                    $bungeeTypePlugin->pluginconfig_id = $pluginConfig->id;
-                }
-            }
-
             //$bungeeTypePlugin->save();
             $bungeeType->plugins()->save($bungeeTypePlugin);
 
             return Redirect::to('/bungeetypes')->with('open'.$bungeeType->id, 'successPluginAdd')->with('success', 'Added the plugin '.$plugin->name.' to the bungee type '.$bungeeType->name);
         }
+    }
+
+    public function putBungeeTypePlugin(BungeeType $bungeeType = null) {
+        if ($bungeeType == null) {
+            return Redirect::to('/bungeetypes')->with('error', 'Unknown bungee type Id');
+        }
+
+        if (Auth::user()->can('update_bungeetypes') == false) {
+            Redirect::to('/bungeetypes')->with('error', 'You do not have permission to update bungee types');
+        }
+
+        foreach ($bungeeType->plugins()->get() as $plugin) {
+            $versionId = Input::get($bungeeType->id.'pluginVersion'.$plugin->id);
+            $configId = Input::get($bungeeType->id.'pluginConfig'.$plugin->id);
+
+            Validator::extend('versionExists', function($attribute, $value, $parameters) use($plugin) {
+                foreach ($plugin->plugin()->versions()->get() as $version) {
+                    if ($version->id == $value) {
+                        return true;
+                    }
+                }
+
+                return false;
+            }, 'Please select a valid version for plugin '.$plugin->plugin()->name);
+
+            Validator::extend('configExists', function($attribute, $value, $parameters) use($plugin) {
+                if ($value == -1) {
+                    return true;
+                }
+                foreach ($plugin->plugin()->configs()->get() as $config) {
+                    if ($config->id == $value) {
+                        return true;
+                    }
+                }
+
+                return false;
+            }, 'Please select a valid config for plugin '.$plugin->plugin()->name);
+
+            $validator = Validator::make(
+                array('pluginVersion'=>$versionId,
+                    'pluginConfig'=>$configId),
+                array('pluginVersion'=>'versionExists',
+                    'pluginConfig'=>'configExists')
+            );
+
+            if ($validator->fails()) {
+                return Redirect::to('/bungeetypes')->with('open'.$bungeeType->id, 'errorSaveWorld')->with('errorSavePlugin'.$bungeeType->id, $validator->messages());
+            }
+
+            $plugin->pluginversion_id = $versionId;
+            if ($configId != -1) {
+                $plugin->pluginconfig_id = $configId;
+            }
+
+            $plugin->save();
+        }
+
+        return Redirect::to('/bungeetypes')->with('open'.$bungeeType->id, 'successWorldAdd')->with('success', 'Saved the plugins for the bungee type '.$bungeeType->name);
     }
 
     public function deleteBungeeTypePlugin(BungeeType $bungeeType = null, BungeeTypePlugin $bungeeTypePlugin = null) {

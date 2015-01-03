@@ -133,27 +133,67 @@
                                         </div>
                                     </div>
                                 @endif
-                                <table style="margin-top: 10px" class="table table-bordered" data-toggle="table">
-                                    <thread>
-                                        <tr>
-                                            <th>Plugin Name</th>
-                                            <th>Plugin Version</th>
-                                            <th>Plugin Config</th>
-                                        </tr>
-                                    </thread>
-                                    <tbody>
+                                    @if(Session::has('errorSavePlugin'.$bungeeType->id))
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <div class="alert alert-danger alert-dismissible">
+                                                    <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                                    <ul>
+                                                        @foreach(Session::get('errorSavePlugin'.$bungeeType->id)->all() as $errorMessage)
+                                                            <li>{{{ $errorMessage  }}}</li>
+                                                        @endforeach
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endif
+                                    {{ Form::open(array('action' => array('BungeeTypeController@putBungeeTypePlugin', $bungeeType->id), 'class' => 'form-horizontal', 'method' => 'PUT')) }}
+                                    <table style="margin-top: 10px" class="table table-bordered" data-toggle="table">
+                                        <thread>
+                                            <tr>
+                                                <th>Plugin Name</th>
+                                                <th>Plugin Version</th>
+                                                <th>Plugin Config</th>
+                                            </tr>
+                                        </thread>
+                                        <tbody>
                                         @foreach($bungeeType->plugins()->get() as $plugin)
                                             <tr>
-                                                {{ Form::open(array('action' => array('BungeeTypeController@deleteBungeeTypePlugin', $bungeeType->id, $plugin->id), 'class' => 'form-horizontal', 'method' => 'DELETE', 'onsubmit' => 'return ConfirmDeletePlugin("'.$plugin->plugin()->name.'")')) }}
-                                                    <td>{{{ $plugin->plugin()->name }}}</td>
-                                                    <td>{{{ $plugin->pluginVersion()->version }}}</td>
-                                                    <td>{{{ $plugin->pluginConfig() != null ? $plugin->pluginConfig()->name : '' }}}</td>
-                                                    <td>{{ Form::submit('Remove Plugin', array('class'=>'btn btn-danger')) }}</td>
-                                                {{ Form::close() }}
+                                                <td>{{ Form::text($bungeeType->id.'name'.$plugin->id, $plugin->plugin()->name, array('class'=>'form-control', 'disabled')) }}</td>
+                                                <td>
+                                                    <select name="{{$bungeeType->id}}pluginVersion{{$plugin->id}}" id="{{$bungeeType->id}}pluginVersion{{$plugin->id}}">
+                                                        <option selected value="-1">Please select a plugin version</option>
+                                                        @foreach($plugin->plugin()->versions()->get() as $pluginVersion)
+                                                            @if($plugin->pluginVersion() != null && $plugin->pluginVersion()->id == $pluginVersion->id)
+                                                                <option selected value="{{ $pluginVersion->id }}">{{{ $pluginVersion->version }}}</option>
+                                                            @else
+                                                                <option value="{{ $pluginVersion->id }}">{{{ $pluginVersion->version }}}</option>
+                                                            @endif
+                                                        @endforeach
+                                                    </select>
+                                                </td>
+                                                <td>
+                                                    <select name="{{$bungeeType->id}}pluginConfig{{$plugin->id}}" id="{{$bungeeType->id}}pluginConfig{{$plugin->id}}">
+                                                        <option selected value="-1">Please select a plugin config</option>
+                                                        @foreach($plugin->plugin()->configs()->get() as $pluginconfig)
+                                                            @if($plugin->pluginConfig() != null && $plugin->pluginConfig()->id == $pluginconfig->id)
+                                                                <option selected value="{{ $pluginconfig->id }}">{{{ $pluginconfig->name }}}</option>
+                                                            @else
+                                                                <option value="{{ $pluginconfig->id }}">{{{ $pluginconfig->name }}}</option>
+                                                            @endif
+                                                        @endforeach
+                                                    </select>
+                                                </td>
                                             </tr>
                                         @endforeach
-                                    </tbody>
-                                </table>
+                                        </tbody>
+                                    </table>
+                                    <div style="margin-top:10px" class="form-group">
+                                        <div class="col-md-12">
+                                            {{ Form::submit('Save Plugins', array('class'=>'btn btn-success')) }}
+                                        </div>
+                                    </div>
+                                    {{ Form::close() }}
                                 {{ Form::open(array('action' => array('BungeeTypeController@postBungeeTypePlugin', $bungeeType->id), 'class' => 'form-horizontal', 'method' => 'POST')) }}
                                     <div style="margin-bottom: 25px" class="input-group">
                                         {{ Form::label('plugin-label', 'Plugin Name') }}
@@ -166,6 +206,8 @@
                                             @endforeach
                                         </select>
                                     </div>
+                                    {{--
+                                    <!--
                                     <div style="margin-bottom: 25px" class="input-group">
                                         {{ Form::label('pluginVersion-label', 'Plugin Version') }}
                                         <select name='pluginVersion' class="form-control" id="pluginVersionList{{$bungeeType->id}}">
@@ -176,6 +218,8 @@
                                         <select name='pluginConfig' class="form-control" id="pluginConfigList{{$bungeeType->id}}">
                                         </select>
                                     </div>
+                                    -->
+                                    --}}
                                     <div style="margin-top:10px" class="form-group">
                                         <div class="col-md-12">
                                             {{ Form::submit('Add Plugin', array('class'=>'btn btn-primary')) }}

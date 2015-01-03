@@ -17,9 +17,9 @@ class NetworkNode extends Moloquent
         return $publicAddress;
     }
 
-    public function bungeetype() {
+    /*public function bungeetype() {
         return $this->hasOne('BungeeType', '_id', 'bungee_type_id')->first();
-    }
+    }*/
 
     public function node() {
         return $this->hasOne('Node', '_id', 'node_id')->first();

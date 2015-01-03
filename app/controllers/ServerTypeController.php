@@ -127,27 +127,9 @@ class ServerTypeController extends BaseController {
             return true;
         }, 'Please select a plugin for servers.');
 
-        Validator::extend('checkVersion', function($attribute, $value, $parameters) {
-            $plugin = Plugin::find(Input::get('plugin'));
-
-            if ($plugin == null) {
-                return false;
-            }
-
-            $pluginVersion = $plugin->versions()->where('_id', '=', $value)->first();
-
-            if ($pluginVersion == null) {
-                return false;
-            }
-
-            return true;
-        }, 'Please select a valid plugin version');
-
         $validator = Validator::make(
-            array('plugin'=>Input::get('plugin'),
-                'pluginVersion'=>Input::get('pluginVersion')),
-            array('plugin'=>'required|checkPlugin|checkType',
-                'pluginVersion'=>'required|checkVersion')
+            array('plugin'=>Input::get('plugin')),
+            array('plugin'=>'required|checkPlugin|checkType')
         );
         Validator::getPresenceVerifier()->setConnection("mongodb");
 
@@ -156,7 +138,6 @@ class ServerTypeController extends BaseController {
             return Redirect::to('/servertypes')->with('open'.$serverType->id, 'errorAddPlugin')->with('errorAddPlugin'.$serverType->id, $validator->messages());
         } else {
             $plugin = Plugin::find(Input::get('plugin'));
-            $pluginVersion = $plugin->versions()->where('id', '=', Input::get('pluginVersion'))->first();
 
             $serverTypePlugin = new PluginHolderPlugin(array('plugin_id'=>$plugin->id));
 
@@ -179,20 +160,69 @@ class ServerTypeController extends BaseController {
                 return Redirect::to('/servertypes')->with('open'.$serverType->id, 'errorAddPlugin')->with('errorAddPlugin'.$serverType->id, $validator->messages());
             }
 
-            $serverTypePlugin->pluginversion_id = $pluginVersion->id;
-
-            if (Input::has('pluginConfig')) {
-                $pluginConfig = $plugin->configs()->where('id', '=', Input::get('pluginConfig'))->first();
-                if ($pluginConfig != null) {
-                    $serverTypePlugin->pluginconfig_id = $pluginConfig->id;
-                }
-            }
-
             //$serverTypePlugin->save();
             $serverType->plugins()->save($serverTypePlugin);
 
             return Redirect::to('/servertypes')->with('open'.$serverType->id, 'successPluginAdd')->with('success', 'Added the plugin '.$plugin->name.' to the server type '.$serverType->name);
         }
+    }
+
+    public function putServerTypePlugin(ServerType $serverType = null) {
+        if ($serverType == null) {
+            return Redirect::to('/servertypes')->with('error', 'Unknown server type Id');
+        }
+
+        if (Auth::user()->can('update_servertype') == false) {
+            Redirect::to('/servertypes')->with('error', 'You do not have permission to update server types');
+        }
+
+        foreach ($serverType->plugins()->get() as $plugin) {
+            $versionId = Input::get($serverType->id.'pluginVersion'.$plugin->id);
+            $configId = Input::get($serverType->id.'pluginConfig'.$plugin->id);
+
+            Validator::extend('versionExists', function($attribute, $value, $parameters) use($plugin) {
+                foreach ($plugin->plugin()->versions()->get() as $version) {
+                    if ($version->id == $value) {
+                        return true;
+                    }
+                }
+
+                return false;
+            }, 'Please select a valid version for plugin '.$plugin->plugin()->name);
+
+            Validator::extend('configExists', function($attribute, $value, $parameters) use($plugin) {
+                if ($value == -1) {
+                    return true;
+                }
+                foreach ($plugin->plugin()->configs()->get() as $config) {
+                    if ($config->id == $value) {
+                        return true;
+                    }
+                }
+
+                return false;
+            }, 'Please select a valid config for plugin '.$plugin->plugin()->name);
+
+            $validator = Validator::make(
+                array('pluginVersion'=>$versionId,
+                    'pluginConfig'=>$configId),
+                array('pluginVersion'=>'versionExists',
+                    'pluginConfig'=>'configExists')
+            );
+
+            if ($validator->fails()) {
+                return Redirect::to('/servertypes')->with('open'.$serverType->id, 'errorSaveWorld')->with('errorSavePlugin'.$serverType->id, $validator->messages());
+            }
+
+            $plugin->pluginversion_id = $versionId;
+            if ($configId != -1) {
+                $plugin->pluginconfig_id = $configId;
+            }
+
+            $plugin->save();
+        }
+
+        return Redirect::to('/servertypes')->with('open'.$serverType->id, 'successWorldAdd')->with('success', 'Saved the plugins for the server type '.$serverType->name);
     }
 
     public function deleteServerTypePlugin(ServerType $serverType = null, $serverTypePlugin = null) {
@@ -233,27 +263,9 @@ class ServerTypeController extends BaseController {
             return true;
         }, 'Please select a valid world');
 
-        Validator::extend('checkVersion', function($attribute, $value, $parameters) {
-            $world = World::find(Input::get('world'));
-
-            if ($world == null) {
-                return false;
-            }
-
-            $worldVersion = $world->versions()->where('id', '=', $value)->first();
-
-            if ($worldVersion == null) {
-                return false;
-            }
-
-            return true;
-        }, 'Please select a valid world version');
-
         $validator = Validator::make(
-            array('world'=>Input::get('world'),
-                'worldVersion'=>Input::get('worldVersion')),
-            array('world'=>'required|checkWorld',
-                'worldVersion'=>'required|checkVersion')
+            array('world'=>Input::get('world')),
+            array('world'=>'required|checkWorld')
         );
         Validator::getPresenceVerifier()->setConnection("mongodb");
 
@@ -263,7 +275,6 @@ class ServerTypeController extends BaseController {
         } else {
             $world = World::find(Input::get('world'));
             $defaultWorld = null;
-            $worldVersion = $world->versions()->where('id', '=', Input::get('worldVersion'))->first();
 
             $serverTypeWorld = new ServerTypeWorld(array('world_id'=>$world->id));
 
@@ -276,28 +287,9 @@ class ServerTypeController extends BaseController {
                 return true;
             }, 'The world '.$world->name.' is already added');
 
-            if ($serverType->defaultWorld() != null) {
-                $defaultWorld = $serverType->defaultWorld()->world()->name;
-            }
-
-            Validator::extend('worldDefault', function($attribute, $value, $parameters) {
-
-                if (Input::has('default') == false) {
-                    return true;
-                }
-
-                if ($value->defaultWorld() != null) {
-                    return false;
-                }
-
-                return true;
-            }, 'There is already a default world '.$defaultWorld);
-
             $validator = Validator::make(
-                array('serverTypeWorld'=>$serverTypeWorld,
-                    'serverTypeDefaultWorld'=>$serverType),
-                array('serverTypeWorld'=>'worldExists',
-                    'serverTypeDefaultWorld'=>'worldDefault')
+                array('serverTypeWorld'=>$serverTypeWorld),
+                array('serverTypeWorld'=>'worldExists')
             );
             Validator::getPresenceVerifier()->setConnection("mongodb");
 
@@ -305,19 +297,74 @@ class ServerTypeController extends BaseController {
                 return Redirect::to('/servertypes')->with('open'.$serverType->id, 'errorAddWorld')->with('errorAddWorld'.$serverType->id, $validator->messages());
             }
 
-            $serverTypeWorld->worldversion_id = $worldVersion->id;
-
-            if (Input::has('default') == true) {
-                $serverTypeWorld->defaultWorld = true;
-            } else {
-                $serverTypeWorld->defaultWorld = false;
-            }
-
-            //$serverTypeWorld->save();
+            $serverTypeWorld->defaultWorld = false;
             $serverType->worlds()->save($serverTypeWorld);
 
             return Redirect::to('/servertypes')->with('open'.$serverType->id, 'successWorldAdd')->with('success', 'Added the world '.$world->name.' to the server type '.$serverType->name);
         }
+    }
+
+    public function putServerTypeWorld(ServerType $serverType = null) {
+        if ($serverType == null) {
+            return Redirect::to('/servertypes')->with('error', 'Unknown server type Id');
+        }
+
+        if (Auth::user()->can('update_servertype') == false) {
+            Redirect::to('/servertypes')->with('error', 'You do not have permission to update server types');
+        }
+
+        foreach ($serverType->worlds()->get() as $world) {
+            $versionId = Input::get($serverType->id.'worldVersion'.$world->id);
+            $default = false;
+            if (Input::has($serverType->id . 'default' . $world->id)) {
+                $default = true;
+            }
+
+
+            Validator::extend('versionExists', function($attribute, $value, $parameters) use($world) {
+                foreach ($world->world()->versions()->get() as $version) {
+                    if ($version->id == $value) {
+                        return true;
+                    }
+                }
+
+                return false;
+            }, 'Please select a valid version for world '.$world->world()->name);
+
+            Validator::extend('multiDefault', function($attribute, $value, $parameters) use($world, $serverType) {
+                $isDefault = 0;
+
+                foreach ($serverType->worlds()->get() as $testWorld) {
+                    if (Input::has($serverType->id . 'default' . $testWorld->id)) {
+                        $isDefault += 1;
+                    }
+                }
+
+                if ($isDefault > 1) {
+                    return false;
+                }
+
+                return true;
+            }, 'Please select only one default world.');
+
+            $validator = Validator::make(
+                array('worldVersion'=>$versionId,
+                    'default'=>$default),
+                array('worldVersion'=>'versionExists',
+                    'default'=>'multiDefault')
+            );
+
+            if ($validator->fails()) {
+                return Redirect::to('/servertypes')->with('open'.$serverType->id, 'errorSaveWorld')->with('errorSaveWorld'.$serverType->id, $validator->messages());
+            }
+
+            $world->defaultWorld = $default;
+            $world->worldversion_id = $versionId;
+
+            $world->save();
+        }
+
+        return Redirect::to('/servertypes')->with('open'.$serverType->id, 'successWorldAdd')->with('success', 'Saved the worlds for the server type '.$serverType->name);
     }
 
     public function deleteServerTypeWorld(ServerType $serverType = null, $serverTypeWorld = null) {

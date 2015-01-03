@@ -122,7 +122,8 @@
                         @endif
                         <ul class="nav nav-tabs">
                             <li role="presentation" class="active"><a href="#stats{{ $network->id }}" data-toggle="tab">Stats</a></li>
-                            <li role="presentation"><a href="#servertypes{{ $network->id }}" data-toggle="tab" style="{{ Session::has('errorAddServerType'.$network->id) == true ? 'color:red; font-weight:bold;' : ''}}">Server Types</a></li>
+                            <li role="presentation"><a href="#servertypes{{ $network->id }}" data-toggle="tab" style="{{ Session::has('errorAddServerType'.$network->id) == true || Session::has('errorUpdateServerType'.$network->id) == true ? 'color:red; font-weight:bold;' : ''}}">Server Types</a></li>
+                            <li role="presentation"><a href="#bungeetypes{{ $network->id }}" data-toggle="tab" style="{{ Session::has('errorAddBungeeType'.$network->id) == true || Session::has('errorUpdateBungeeType'.$network->id) == true ? 'color:red; font-weight:bold;' : ''}}">Bungee Types</a></li>
                             <li role="presentation"><a href="#nodes{{ $network->id }}" data-toggle="tab" style="{{ Session::has('errorAddNode'.$network->id) == true ? 'color:red; font-weight:bold;' : ''}}">Nodes</a></li>
                             <li role="presentation"><a href="#edit{{ $network->id }}" data-toggle="tab" style="{{ Session::has('errorEdit'.$network->id) == true ? 'color:red; font-weight:bold;' : ''}}">Edit</a></li>
                         </ul>
@@ -134,12 +135,12 @@
                                         <p class="text-center"><span class="text-muted">{{ $network->getOnlinePlayers() }} / {{ $network->getTotalPlayers() }}</span></p>
                                     </div>
                                     <div class="col-xs-3">
-                                        <h4 class="text-center">Server Memory Usage</h4>
-                                        <p class="text-center"><span class="text-muted">{{ $network->getUsedServerRam() }} MB / {{ $network->getTotalServerRam() }} MB</span></p>
+                                        <h4 class="text-center">Memory Usage</h4>
+                                        <p class="text-center"><span class="text-muted">{{ $network->getUsedRam() }} MB / {{ $network->getTotalRam() }} MB</span></p>
                                     </div>
                                     <div class="col-xs-3">
-                                        <h4 class="text-center">Bungee Memory Usage</h4>
-                                        <p class="text-center"><span class="text-muted">{{ $network->getUsedBungeeRam() }} MB / {{ $network->getTotalBungeeRam() }} MB</span></p>
+                                        <h4 class="text-center">Something else</h4>
+                                        <p class="text-center"><span class="text-muted">something</span></p>
                                     </div>
                                     <div class="col-xs-3">
                                         <h4 class="text-center">Something else</h4>
@@ -152,10 +153,10 @@
                                         <table class="table table-striped table-bordered table-hover">
                                             <thread>
                                                 <tr>
-                                                    <td>Bungee Type</td>
-                                                    <td>Node</td>
-                                                    <td>Public IP Address</td>
-                                                    <td>Manage</td>
+                                                    <th>Bungee Type</th>
+                                                    <th>Node</th>
+                                                    <th>Public IP Address</th>
+                                                    <th>Manage</th>
                                                 </tr>
                                             </thread>
                                             <tbody>
@@ -174,11 +175,11 @@
                                         <table class="table table-striped table-bordered table-hover">
                                             <thread>
                                                 <tr>
-                                                    <td>Server Type</td>
-                                                    <td>Server Number</td>
-                                                    <td>Node</td>
-                                                    <td>Port</td>
-                                                    <td>Manage</td>
+                                                    <th>Server Type</th>
+                                                    <th>Server Number</th>
+                                                    <th>Node</th>
+                                                    <th>Port</th>
+                                                    <th>Manage</th>
                                                 </tr>
                                             </thread>
                                             <tbody>
@@ -211,29 +212,47 @@
                                         </div>
                                     </div>
                                 @endif
-                                <table style="margin-top: 10px" class="table table-striped table-bordered table-hover">
-                                    <thread>
-                                        <tr>
-                                            <td>Server Type Name</td>
-                                            <td>Amount</td>
-                                            <td>Default</td>
-                                            <td>Manual Start</td>
-                                        </tr>
-                                    </thread>
-                                    <tbody>
-                                        @foreach($network->servertypes()->get() as $servertype)
+                                    @if(Session::has('errorUpdateServerType'.$network->id))
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <div class="alert alert-danger alert-dismissible">
+                                                    <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                                    <ul>
+                                                        @foreach(Session::get('errorUpdateServerType'.$network->id)->all() as $errorMessage)
+                                                            <li>{{ $errorMessage  }}</li>
+                                                        @endforeach
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endif
+                                {{ Form::open(array('action' => array('NetworkController@putServerType', $network->id), 'class' => 'form-horizontal', 'method' => 'PUT')) }}
+                                    <table style="margin-top: 10px" class="table table-bordered">
+                                        <thread>
                                             <tr>
-                                                {{ Form::open(array('action' => array('NetworkController@deleteServerType', $network->id, $servertype->id), 'class' => 'form-horizontal', 'method' => 'DELETE', 'onsubmit' => 'return ConfirmDeleteServerType("'.$servertype->servertype()->name.'")')) }}
-                                                    <td>{{{ $servertype->servertype()->name }}}</td>
-                                                    <td>{{{ $servertype->amount }}}</td>
-                                                    <td>{{ $servertype->defaultServerType ? 'Yes' : 'No' }}</td>
-                                                    <td>{{ $servertype->manualStart ? 'Yes' : 'No' }}</td>
-                                                    <td>{{ Form::submit('Remove Server Type', array('class'=>'btn btn-danger')) }}</td>
-                                                {{ Form::close() }}
+                                                <th>Server Type Name</th>
+                                                <th>Amount</th>
+                                                <th>Default</th>
+                                                <th>Manual Start</th>
                                             </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
+                                        </thread>
+                                        <tbody>
+                                            @foreach($network->servertypes()->get() as $servertype)
+                                                <tr>
+                                                    <td>{{ Form::text($network->id.'name'.$servertype->id, $servertype->servertype()->name, array('class'=>'form-control', 'disabled')) }}</td>
+                                                    <td>{{ Form::number($network->id.'amount'.$servertype->id, $servertype->amount, array('class'=>'form-control', 'min'=>0)) }}</td>
+                                                    <td>{{ Form::checkbox($network->id.'default'.$servertype->id, '1', $servertype->defaultServerType, array('class'=>'form-control')) }}</td>
+                                                    <td>{{ Form::checkbox($network->id.'manual'.$servertype->id, '1', $servertype->manualStart, array('class'=>'form-control')) }}</td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                    <div style="margin-top:10px" class="form-group">
+                                        <div class="col-md-12">
+                                            {{ Form::submit('Save Server Types', array('class'=>'btn btn-success')) }}
+                                        </div>
+                                    </div>
+                                {{ Form::close() }}
                                 {{ Form::open(array('action' => array('NetworkController@postServerType', $network->id), 'class' => 'form-horizontal', 'method' => 'POST')) }}
                                     <div style="margin-bottom: 25px" class="input-group">
                                         {{ Form::label('servertype-label', 'Server Type Name') }}
@@ -244,6 +263,8 @@
                                             @endforeach
                                         </select>
                                     </div>
+                                    {{--
+                                    <!--
                                     <div style="margin-bottom: 25px" class="input-group">
                                         {{ Form::label('amount-label', 'Server Type Amount') }}
                                         {{ Form::number('amount', 1, array('class' => 'form-control', 'min' => 1)) }}
@@ -258,12 +279,85 @@
                                         <br />
                                         {{ Form::checkbox('manualStart', '1', false, array()) }}
                                     </div>
+                                    -->
+                                    --}}
                                     <div style="margin-top:10px" class="form-group">
                                         <div class="col-md-12">
                                             {{ Form::submit('Add Server Type', array('class'=>'btn btn-primary')) }}
                                         </div>
                                     </div>
                                 {{ Form::close() }}
+                            </div>
+                            <div class="tab-pane" id="bungeetypes{{ $network->id }}">
+                                @if(Session::has('errorAddBungeeType'.$network->id))
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <div class="alert alert-danger alert-dismissible">
+                                                <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                                <ul>
+                                                    @foreach(Session::get('errorAddBungeeType'.$network->id)->all() as $errorMessage)
+                                                        <li>{{ $errorMessage  }}</li>
+                                                    @endforeach
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
+                                @if(Session::has('errorUpdateBungeeType'.$network->id))
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <div class="alert alert-danger alert-dismissible">
+                                                <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                                <ul>
+                                                    @foreach(Session::get('errorUpdateBungeeType'.$network->id)->all() as $errorMessage)
+                                                        <li>{{ $errorMessage  }}</li>
+                                                    @endforeach
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
+
+                                    {{ Form::open(array('action' => array('NetworkController@putBungeeType', $network->id), 'class' => 'form-horizontal', 'method' => 'PUT')) }}
+                                    <table style="margin-top: 10px" class="table table-bordered">
+                                        <thread>
+                                            <tr>
+                                                <th>Bungee Type Name</th>
+                                                <th>IP Addresses</th>
+                                            </tr>
+                                        </thread>
+                                        <tbody>
+                                        @foreach($network->bungeetypes()->get() as $bungeetype)
+                                            <tr>
+                                                <td>{{ Form::text($network->id.'name'.$bungeetype->id, $bungeetype->bungeetype()->name, array('class'=>'form-control', 'disabled')) }}</td>
+                                                <td></td>
+                                            </tr>
+                                        @endforeach
+                                        </tbody>
+                                    </table>
+                                    <div style="margin-top:10px" class="form-group">
+                                        <div class="col-md-12">
+                                            {{ Form::submit('Save Bungee Types', array('class'=>'btn btn-success')) }}
+                                        </div>
+                                    </div>
+                                    {{ Form::close() }}
+
+                                    {{ Form::open(array('action' => array('NetworkController@postBungeeType', $network->id), 'class' => 'form-horizontal', 'method' => 'POST')) }}
+                                    <div style="margin-bottom: 25px" class="input-group">
+                                        {{ Form::label('bungeetype-label', 'Bungee Type Name') }}
+                                        <select name='bungeetype' class="form-control" id="bungeetypeList">
+                                            <option selected value="-1">Please select a bungee type</option>
+                                            @foreach(BungeeType::all() as $bungeetype)
+                                                <option value="{{ $bungeetype->id }}">{{{ $bungeetype->name }}}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div style="margin-top:10px" class="form-group">
+                                        <div class="col-md-12">
+                                            {{ Form::submit('Add Bungee Type', array('class'=>'btn btn-primary')) }}
+                                        </div>
+                                    </div>
+                                    {{ Form::close() }}
                             </div>
                             <div class="tab-pane" id="nodes{{ $network->id }}">
                                 @if(Session::has('errorAddNode'.$network->id))
@@ -283,20 +377,13 @@
                                 <table style="margin-top: 10px" class="table table-striped table-bordered table-hover">
                                     <thread>
                                         <tr>
-                                            <td>Node Name</td>
-                                            <td>Bungee Name</td>
-                                            <td>Public IP Address</td>
+                                            <th>Node Name</th>
                                         </tr>
                                     </thread>
                                     <tbody>
                                         @foreach($network->nodes()->get() as $node)
                                             <tr>
-                                                {{ Form::open(array('action' => array('NetworkController@deleteNode', $network->id, $node->id), 'class' => 'form-horizontal', 'method' => 'DELETE', 'onsubmit' => 'return ConfirmDeleteNode("'.$node->node()->name.'")')) }}
-                                                    <td>{{{ $node->node()->name }}}</td>
-                                                    <td>{{{ $node->bungeetype() != null ? $node->bungeetype()->name : '' }}}</td>
-                                                    <td>{{{ $node->publicaddress() != null ? $node->publicaddress()->publicAddress : '' }}}</td>
-                                                    <td>{{ Form::submit('Remove Node', array('class'=>'btn btn-danger')) }}</td>
-                                                {{ Form::close() }}
+                                                <td>{{{ $node->node()->name }}}</td>
                                             </tr>
                                         @endforeach
                                     </tbody>

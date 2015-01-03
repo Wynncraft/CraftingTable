@@ -3,10 +3,7 @@
 class WorldController extends BaseController
 {
 
-    public function getWorldsJson() {
-        /*if (Auth::user()->can('read_world') == false) {
-            Redirect::to('/')->with('error', 'You do not have permission to view the worlds page');
-        }*/
+    /*public function getWorldsJson() {
         return World::all();
     }
 
@@ -14,9 +11,6 @@ class WorldController extends BaseController
         if ($world == null) {
             return Response::json(array(), 404);
         }
-        /*if (Auth::user()->can('read_world') == false) {
-            Redirect::to('/')->with('error', 'You do not have permission to view the worlds page');
-        }*/
 
         return $world;
     }
@@ -25,12 +19,9 @@ class WorldController extends BaseController
         if ($world == null) {
             return Response::json(array(), 404);
         }
-        /*if (Auth::user()->can('read_world') == false) {
-            Redirect::to('/')->with('error', 'You do not have permission to view the worlds page');
-        }*/
 
         return $world->versions()->get();
-    }
+    }*/
 
     public function getWorlds()
     {

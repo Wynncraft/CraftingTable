@@ -28,7 +28,7 @@
             });
         });
 
-        var worldSelect = $('.worldList');
+        /*var worldSelect = $('.worldList');
 
         worldSelect.change(function(event) {
             var worldVersionSelect = $('#worldVersionList'+event.target.id);
@@ -39,7 +39,7 @@
                     worldVersionSelect.append('<option value='+data[i]._id+'>'+data[i].version+'</option>');
                 }
             });
-        });
+        });*/
     });
 
     function ConfirmDeletePlugin(plugin){
@@ -146,8 +146,8 @@
                             </div>
                         @endif
                         <ul class="nav nav-tabs">
-                            <li role="presentation" class="active"><a href="#plugins{{ $serverType->id }}" data-toggle="tab" style="{{ Session::has('errorAddPlugin'.$serverType->id) == true ? 'color:red; font-weight:bold;' : ''}}">Plugins</a></li>
-                            <li role="presentation"><a href="#worlds{{ $serverType->id }}" data-toggle="tab" style="{{ Session::has('errorAddWorld'.$serverType->id) == true ? 'color:red; font-weight:bold;' : ''}}">Worlds</a></li>
+                            <li role="presentation" class="active"><a href="#plugins{{ $serverType->id }}" data-toggle="tab" style="{{ Session::has('errorAddPlugin'.$serverType->id) == true || Session::has('errorSavePlugin'.$serverType->id) == true ? 'color:red; font-weight:bold;' : ''}}">Plugins</a></li>
+                            <li role="presentation"><a href="#worlds{{ $serverType->id }}" data-toggle="tab" style="{{ Session::has('errorAddWorld'.$serverType->id) == true || Session::has('errorSaveWorld'.$serverType->id) == true ? 'color:red; font-weight:bold;' : ''}}">Worlds</a></li>
                             <li role="presentation"><a href="#edit{{ $serverType->id }}" data-toggle="tab" style="{{ Session::has('errorEdit'.$serverType->id) == true ? 'color:red; font-weight:bold;' : ''}}">Edit</a></li>
                         </ul>
                         <div class="tab-content">
@@ -166,27 +166,67 @@
                                         </div>
                                     </div>
                                 @endif
-                                <table style="margin-top: 10px" class="table table-bordered" data-toggle="table">
-                                    <thread>
-                                        <tr>
-                                            <th>Plugin Name</th>
-                                            <th>Plugin Version</th>
-                                            <th>Plugin Config</th>
-                                        </tr>
-                                    </thread>
-                                    <tbody>
-                                        @foreach($serverType->plugins()->get() as $plugin)
+                                    @if(Session::has('errorSavePlugin'.$serverType->id))
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <div class="alert alert-danger alert-dismissible">
+                                                    <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                                    <ul>
+                                                        @foreach(Session::get('errorSavePlugin'.$serverType->id)->all() as $errorMessage)
+                                                            <li>{{{ $errorMessage  }}}</li>
+                                                        @endforeach
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endif
+                                {{ Form::open(array('action' => array('ServerTypeController@putServerTypePlugin', $serverType->id), 'class' => 'form-horizontal', 'method' => 'PUT')) }}
+                                    <table style="margin-top: 10px" class="table table-bordered" data-toggle="table">
+                                        <thread>
                                             <tr>
-                                                {{ Form::open(array('action' => array('ServerTypeController@deleteServerTypePlugin', $serverType->id, $plugin->id), 'class' => 'form-horizontal', 'method' => 'DELETE', 'onsubmit' => 'return ConfirmDeletePlugin("'.$plugin->plugin()->name.'")')) }}
-                                                    <td>{{{ $plugin->plugin()->name }}}</td>
-                                                    <td>{{{ $plugin->pluginVersion()->version }}}</td>
-                                                    <td>{{{ $plugin->pluginConfig() != null ? $plugin->pluginConfig()->name : '' }}}</td>
-                                                    <td>{{ Form::submit('Remove Plugin', array('class'=>'btn btn-danger')) }}</td>
-                                                {{ Form::close() }}
+                                                <th>Plugin Name</th>
+                                                <th>Plugin Version</th>
+                                                <th>Plugin Config</th>
                                             </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
+                                        </thread>
+                                        <tbody>
+                                            @foreach($serverType->plugins()->get() as $plugin)
+                                                <tr>
+                                                    <td>{{ Form::text($serverType->id.'name'.$plugin->id, $plugin->plugin()->name, array('class'=>'form-control', 'disabled')) }}</td>
+                                                    <td>
+                                                        <select name="{{$serverType->id}}pluginVersion{{$plugin->id}}" id="{{$serverType->id}}pluginVersion{{$plugin->id}}">
+                                                            <option selected value="-1">Please select a plugin version</option>
+                                                            @foreach($plugin->plugin()->versions()->get() as $pluginVersion)
+                                                                @if($plugin->pluginVersion() != null && $plugin->pluginVersion()->id == $pluginVersion->id)
+                                                                    <option selected value="{{ $pluginVersion->id }}">{{{ $pluginVersion->version }}}</option>
+                                                                @else
+                                                                    <option value="{{ $pluginVersion->id }}">{{{ $pluginVersion->version }}}</option>
+                                                                @endif
+                                                            @endforeach
+                                                        </select>
+                                                    </td>
+                                                    <td>
+                                                        <select name="{{$serverType->id}}pluginConfig{{$plugin->id}}" id="{{$serverType->id}}pluginConfig{{$plugin->id}}">
+                                                            <option selected value="-1">Please select a plugin config</option>
+                                                            @foreach($plugin->plugin()->configs()->get() as $pluginconfig)
+                                                                @if($plugin->pluginConfig() != null && $plugin->pluginConfig()->id == $pluginconfig->id)
+                                                                    <option selected value="{{ $pluginconfig->id }}">{{{ $pluginconfig->name }}}</option>
+                                                                @else
+                                                                    <option value="{{ $pluginconfig->id }}">{{{ $pluginconfig->name }}}</option>
+                                                                @endif
+                                                            @endforeach
+                                                        </select>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                    <div style="margin-top:10px" class="form-group">
+                                        <div class="col-md-12">
+                                            {{ Form::submit('Save Plugins', array('class'=>'btn btn-success')) }}
+                                        </div>
+                                    </div>
+                                {{ Form::close() }}
                                 {{ Form::open(array('action' => array('ServerTypeController@postServerTypePlugin', $serverType->id), 'class' => 'form-horizontal', 'method' => 'POST')) }}
                                     <div style="margin-bottom: 25px" class="input-group">
                                         {{ Form::label('plugin-label', 'Plugin Name') }}
@@ -199,6 +239,8 @@
                                             @endforeach
                                         </select>
                                     </div>
+                                    {{--
+                                    <!--
                                     <div style="margin-bottom: 25px" class="input-group">
                                         {{ Form::label('pluginVersion-label', 'Plugin Version') }}
                                         <select name='pluginVersion' class="form-control" id="pluginVersionList{{$serverType->id}}">
@@ -209,6 +251,8 @@
                                         <select name='pluginConfig' class="form-control" id="pluginConfigList{{$serverType->id}}">
                                         </select>
                                     </div>
+                                    -->
+                                    --}}
                                     <div style="margin-top:10px" class="form-group">
                                         <div class="col-md-12">
                                             {{ Form::submit('Add Plugin', array('class'=>'btn btn-primary')) }}
@@ -224,59 +268,117 @@
                                                 <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
                                                 <ul>
                                                     @foreach(Session::get('errorAddWorld'.$serverType->id)->all() as $errorMessage)
-                                                        <li>{{ $errorMessage  }}</li>
+                                                        <li>{{{ $errorMessage  }}}</li>
                                                     @endforeach
                                                 </ul>
                                             </div>
                                         </div>
                                     </div>
                                 @endif
+                                    @if(Session::has('errorSaveWorld'.$serverType->id))
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <div class="alert alert-danger alert-dismissible">
+                                                    <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                                    <ul>
+                                                        @foreach(Session::get('errorSaveWorld'.$serverType->id)->all() as $errorMessage)
+                                                            <li>{{{ $errorMessage  }}}</li>
+                                                        @endforeach
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endif
+                                {{ Form::open(array('action' => array('ServerTypeController@putServerTypeWorld', $serverType->id), 'class' => 'form-horizontal', 'method' => 'PUT')) }}
+                                    <table style="margin-top: 10px" class="table table-bordered" data-toggle="table">
+                                        <thread>
+                                            <tr>
+                                                <th>World Name</th>
+                                                <th>World Version</th>
+                                                <th>Default</th>
+                                            </tr>
+                                        </thread>
+                                        <tbody>
+                                        @foreach($serverType->worlds()->get() as $world)
+                                            <tr>
+                                                <td>{{ Form::text($serverType->id.'name'.$world->id, $world->world()->name, array('class'=>'form-control', 'disabled')) }}</td>
+                                                <td>
+                                                    <select name="{{$serverType->id}}worldVersion{{$world->id}}" id="{{$serverType->id}}worldVersion{{$world->id}}">
+                                                        <option selected value="-1">Please select a world version</option>
+                                                        @foreach($world->world()->versions()->get() as $worldVersion)
+                                                            @if($world->worldVersion() != null && $world->worldVersion()->id == $worldVersion->id)
+                                                                <option selected value="{{ $worldVersion->id }}">{{{ $worldVersion->version }}}</option>
+                                                            @else
+                                                                <option value="{{ $worldVersion->id }}">{{{ $worldVersion->version }}}</option>
+                                                            @endif
+                                                        @endforeach
+                                                    </select>
+                                                </td>
+                                                <td>{{ Form::checkbox($serverType->id.'default'.$world->id, '1', $world->defaultWorld, array('class'=>'form-control')) }}</td>
+                                            </tr>
+                                        @endforeach
+                                        </tbody>
+                                    </table>
+                                    <div style="margin-top:10px" class="form-group">
+                                        <div class="col-md-12">
+                                            {{ Form::submit('Save Worlds', array('class'=>'btn btn-success')) }}
+                                        </div>
+                                    </div>
+                                {{ Form::close() }}
+                                    {{--
+                                    <!--
                                 <table style="margin-top: 10px" class="table table-bordered" data-toggle="table">
-                                                                    <thread>
-                                                                        <tr>
-                                                                            <th>World Name</th>
-                                                                            <th>World Version</th>
-                                                                            <th>Default</th>
-                                                                        </tr>
-                                                                    </thread>
-                                                                    <tbody>
-                                                                        @foreach($serverType->worlds()->get() as $world)
-                                                                            <tr>
-                                                                                {{ Form::open(array('action' => array('ServerTypeController@deleteServerTypeWorld', $serverType->id, $world->id), 'class' => 'form-horizontal', 'method' => 'DELETE', 'onsubmit' => 'return ConfirmDeleteWorld("'.$world->world()->name.'")')) }}
-                                                                                    <td>{{{ $world->world()->name }}}</td>
-                                                                                    <td>{{{ $world->worldVersion()->version }}}</td>
-                                                                                    <td>{{ $world->defaultWorld == true ? 'Yes' : 'No' }}</td>
-                                                                                    <td>{{ Form::submit('Remove World', array('class'=>'btn btn-danger')) }}</td>
-                                                                                {{ Form::close() }}
-                                                                            </tr>
-                                                                        @endforeach
-                                                                    </tbody>
-                                                                </table>
-                                                                {{ Form::open(array('action' => array('ServerTypeController@postServerTypeWorld', $serverType->id), 'class' => 'form-horizontal', 'method' => 'POST')) }}
-                                                                    <div style="margin-bottom: 25px" class="input-group">
-                                                                        {{ Form::label('plugin-label', 'World Name') }}
-                                                                        <select name='world' class="form-control worldList" id="{{$serverType->id}}">
-                                                                            <option selected value="-1">Please select a world</option>
-                                                                            @foreach(World::all() as $world)
-                                                                                <option value="{{ $world->id }}">{{{ $world->name }}}</option>
-                                                                            @endforeach
-                                                                        </select>
-                                                                    </div>
-                                                                    <div style="margin-bottom: 25px" class="input-group">
-                                                                        {{ Form::label('worldVersion-label', 'World Version') }}
-                                                                        <select name='worldVersion' class="form-control" id="worldVersionList{{$serverType->id}}">
-                                                                        </select>
-                                                                    </div>
-                                                                    <div style="margin-bottom: 25px" class="input-group">
-                                                                        {{ Form::label('default-label', 'Default World') }}
-                                                                        {{ Form::checkbox('default', '1', false, array('class'=>'form-control')) }}
-                                                                    </div>
-                                                                    <div style="margin-top:10px" class="form-group">
-                                                                        <div class="col-md-12">
-                                                                            {{ Form::submit('Add World', array('class'=>'btn btn-primary')) }}
-                                                                        </div>
-                                                                    </div>
-                                                                {{ Form::close() }}
+                                    <thread>
+                                        <tr>
+                                            <th>World Name</th>
+                                            <th>World Version</th>
+                                            <th>Default</th>
+                                        </tr>
+                                    </thread>
+                                    <tbody>
+                                    @foreach($serverType->worlds()->get() as $world)
+                                        <tr>
+                                            {{ Form::open(array('action' => array('ServerTypeController@deleteServerTypeWorld', $serverType->id, $world->id), 'class' => 'form-horizontal', 'method' => 'DELETE', 'onsubmit' => 'return ConfirmDeleteWorld("'.$world->world()->name.'")')) }}
+                                            <td>{{{ $world->world()->name }}}</td>
+                                            <td>{{{ $world->worldVersion()->version }}}</td>
+                                            <td>{{ $world->defaultWorld == true ? 'Yes' : 'No' }}</td>
+                                            <td>{{ Form::submit('Remove World', array('class'=>'btn btn-danger')) }}</td>
+                                            {{ Form::close() }}
+                                        </tr>
+                                    @endforeach
+                                    </tbody>
+                                </table>
+                                    -->
+                                    --}}
+                                    {{ Form::open(array('action' => array('ServerTypeController@postServerTypeWorld', $serverType->id), 'class' => 'form-horizontal', 'method' => 'POST')) }}
+                                    <div style="margin-bottom: 25px" class="input-group">
+                                        {{ Form::label('plugin-label', 'World Name') }}
+                                        <select name='world' class="form-control worldList" id="{{$serverType->id}}">
+                                            <option selected value="-1">Please select a world</option>
+                                            @foreach(World::all() as $world)
+                                                <option value="{{ $world->id }}">{{{ $world->name }}}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    {{--
+                                    <!--
+                                    <div style="margin-bottom: 25px" class="input-group">
+                                        {{ Form::label('worldVersion-label', 'World Version') }}
+                                        <select name='worldVersion' class="form-control" id="worldVersionList{{$serverType->id}}">
+                                        </select>
+                                    </div>
+                                    <div style="margin-bottom: 25px" class="input-group">
+                                        {{ Form::label('default-label', 'Default World') }}
+                                        {{ Form::checkbox('default', '1', false, array('class'=>'form-control')) }}
+                                    </div>
+                                    -->
+                                    --}}
+                                    <div style="margin-top:10px" class="form-group">
+                                        <div class="col-md-12">
+                                            {{ Form::submit('Add World', array('class'=>'btn btn-primary')) }}
+                                        </div>
+                                    </div>
+                                    {{ Form::close() }}
                             </div>
                             <div class="tab-pane" id="edit{{ $serverType->id }}">
                                 @if(Session::has('errorEdit'.$serverType->id))

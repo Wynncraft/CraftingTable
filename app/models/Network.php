@@ -38,6 +38,16 @@ class Network extends Moloquent {
         return $this->embedsMany('NetworkServerType');
     }
 
+    /**
+     * Bungee Types
+     *
+     * @return object
+     */
+    public function bungeetypes()
+    {
+        return $this->embedsMany('NetworkBungeeType');
+    }
+
     public function servers() {
         return $this->hasMany('Server');
     }
@@ -70,19 +80,7 @@ class Network extends Moloquent {
         return $this->servertypes()->where('defaultServerType', '=', '1')->first();
     }
 
-    public function getTotalServerRam() {
-        $usableRam = 0;
-        $nodes = $this->nodes()->get()->all();
-        foreach ($nodes as $node) {
-            $usableRam += $node->node()->ram;
-            if ($node->bungeetype() != null) {
-                $usableRam -= $node->bungeetype()->ram;
-            }
-        }
-        return $usableRam;
-    }
-
-    public function getTotalBungeeRam() {
+    public function getTotalRam() {
         $usableRam = 0;
         $nodes = $this->nodes()->get()->all();
         foreach ($nodes as $node) {
@@ -91,17 +89,12 @@ class Network extends Moloquent {
         return $usableRam;
     }
 
-    public function getUsedServerRam() {
+    public function getUsedRam() {
         $usedRam = 0;
         $servers = $this->servers()->get()->all();
         foreach ($servers as $server) {
             $usedRam += $server->servertype()->ram;
         }
-        return $usedRam;
-    }
-
-    public function getUsedBungeeRam() {
-        $usedRam = 0;
         $bungees = $this->bungees()->get()->all();
         foreach ($bungees as $bungee) {
             $usedRam += $bungee->bungeetype()->ram;
@@ -130,13 +123,17 @@ class Network extends Moloquent {
     public function overProvisioned() {
         $overProvisioned = false;
 
-        $usableRam = $this->getTotalServerRam();
+        $usableRam = $this->getTotalRam();
         $provisionedRam = 0;
 
 
         $servertypes = $this->servertypes()->get()->all();
         foreach ($servertypes as $servertype) {
             $provisionedRam += $servertype->amount * $servertype->servertype()->ram;
+        }
+        $bungeetypes = $this->bungeetypes()->get()->all();
+        foreach ($bungeetypes as $bungeetype) {
+            $provisionedRam += $bungeetype->bungeetype()->ram;
         }
 
         if ($provisionedRam > $usableRam) {
@@ -150,12 +147,9 @@ class Network extends Moloquent {
     public function hasBungee() {
         $hasBungee = false;
 
-        $nodes = $this->nodes()->get()->all();
-        foreach ($nodes as $node) {
-            if ($node->bungeetype() != null) {
-                $hasBungee = true;
-                break;
-            }
+        foreach ($this->bungeetypes()->get() as $bungeetye) {
+            $hasBungee = true;
+            break;
         }
 
         return $hasBungee;
