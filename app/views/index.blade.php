@@ -8,6 +8,10 @@
             return confirm("Are you sure you want to delete the server type "+servertype+"?");
     }
 
+    function ConfirmDeleteBungeeType(bungeetype){
+        return confirm("Are you sure you want to delete the bungee type "+bungeetype+"?");
+    }
+
     function ConfirmDeleteNode(node){
             return confirm("Are you sure you want to delete the node "+node+"?");
     }
@@ -244,7 +248,7 @@
                                                     <td>{{ Form::number($network->id.'amount'.$servertype->id, $servertype->amount, array('class'=>'form-control', 'min'=>0)) }}</td>
                                                     <td>{{ Form::checkbox($network->id.'default'.$servertype->id, '1', $servertype->defaultServerType, array('class'=>'form-control')) }}</td>
                                                     <td>{{ Form::checkbox($network->id.'manual'.$servertype->id, '1', $servertype->manualStart, array('class'=>'form-control')) }}</td>
-                                                    <td><a href="{{ action("NetworkController@deleteServerType", [$network->id, $servertype->id]) }}" class="btn btn-danger"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a></td>
+                                                    <td><a href="{{ action("NetworkController@deleteServerType", [$network->id, $servertype->id]) }}" class="btn btn-danger" onclick="return ConfirmDeleteServerType('{{ $servertype->servertype()->name }}')"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a></td>
                                                 </tr>
                                             @endforeach
                                         </tbody>
@@ -350,7 +354,7 @@
                                                         @endforeach
                                                     </ul>
                                                 </td>
-                                                <td><a href="{{ action("NetworkController@deleteBungeeType", [$network->id, $bungeetype->id]) }}" class="btn btn-danger"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a></td>
+                                                <td><a href="{{ action("NetworkController@deleteBungeeType", [$network->id, $bungeetype->id]) }}" class="btn btn-danger" onclick="return ConfirmDeleteBungeeType('{{ $bungeetype->bungeetype()->name }}')"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a></td>
                                             </tr>
                                         @endforeach
                                         </tbody>
@@ -405,7 +409,7 @@
                                         @foreach($network->nodes()->get() as $node)
                                             <tr>
                                                 <td>{{{ $node->node()->name }}}</td>
-                                                <td><a href="{{ action("NetworkController@deleteNode", [$network->id, $node->id]) }}" class="btn btn-danger"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a></td>
+                                                <td><a href="{{ action("NetworkController@deleteNode", [$network->id, $node->id]) }}" class="btn btn-danger" onclick="return ConfirmDeleteNode('{{ $node->node()->name }}')"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a></td>
                                             </tr>
                                         @endforeach
                                     </tbody>

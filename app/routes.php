@@ -127,9 +127,9 @@ Route::group(array('before' => 'auth'), function() {
 	});*/
 
 	Route::get('/plugins/json', 'PluginController@getPluginsJson');
-	Route::get('/plugins/{plugin}/json', 'PluginController@getPluginJson');
-	Route::get('/plugins/{plugin}/versions/json', 'PluginController@getPluginVersionsJson');
-	Route::get('/plugins/{plugin}/configs/json', 'PluginController@getPluginConfigsJson');
+	//Route::get('/plugins/{plugin}/json', 'PluginController@getPluginJson');
+	//Route::get('/plugins/{plugin}/versions/json', 'PluginController@getPluginVersionsJson');
+	//Route::get('/plugins/{plugin}/configs/json', 'PluginController@getPluginConfigsJson');
 
 	Route::get('/plugins', 'PluginController@getPlugins');
 	Route::post('/plugins/add', array('uses' => 'PluginController@postPlugin'));

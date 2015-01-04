@@ -77,7 +77,7 @@ class Network extends Moloquent {
      * @return object
      */
     public function defaultServerType() {
-        return $this->servertypes()->where('defaultServerType', '=', '1')->first();
+        return $this->servertypes()->where('defaultServerType', '=', true)->first();
     }
 
     public function getTotalRam() {

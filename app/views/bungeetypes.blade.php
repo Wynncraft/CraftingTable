@@ -4,31 +4,6 @@
 @include('navbars.topnav', array('navBarPage'=>'bungeetypes'))
 
 <script>
-    $(document).ready(function(){
-        var pluginSelect = $('.pluginList');
-
-        pluginSelect.change(function(event) {
-            console.log('id '+event.target.id);
-            var pluginVersionSelect = $('#pluginVersionList'+event.target.id);
-            var pluginConfigSelect = $('#pluginConfigList'+event.target.id);
-
-            pluginVersionSelect.find('option').remove();
-            pluginConfigSelect.find('option').remove();
-
-            $.getJSON('plugins/'+$(this).val()+'/versions/json', function(data) {
-                for (var i = 0; i < data.length; i++) {
-                    pluginVersionSelect.append('<option value='+data[i]._id+'>'+data[i].version+'</option>');
-                }
-            });
-
-            $.getJSON('plugins/'+$(this).val()+'/configs/json', function(data) {
-                for (var i = 0; i < data.length; i++) {
-                    pluginConfigSelect.append('<option value='+data[i]._id+'>'+data[i].name+'</option>');
-                }
-            });
-        });
-    });
-
     function ConfirmDeletePlugin(plugin){
         return confirm("Are you sure you want to delete the plugin "+plugin+"?");
     }
@@ -185,7 +160,7 @@
                                                         @endforeach
                                                     </select>
                                                 </td>
-                                                <td><a href="{{ action("BungeeTypeController@deleteBungeeTypePlugin", [$bungeeType->id, $plugin->id]) }}" class="btn btn-danger"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a></td>
+                                                <td><a href="{{ action("BungeeTypeController@deleteBungeeTypePlugin", [$bungeeType->id, $plugin->id]) }}" class="btn btn-danger" onclick="return ConfirmDeletePlugin('{{ $plugin->plugin()->name }}')"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a></td>
                                             </tr>
                                         @endforeach
                                         </tbody>
