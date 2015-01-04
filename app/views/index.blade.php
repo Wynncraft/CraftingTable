@@ -330,7 +330,23 @@
                                             <tr>
                                                 <td>{{ Form::text($network->id.'name'.$bungeetype->id, $bungeetype->bungeetype()->name, array('class'=>'form-control', 'disabled')) }}</td>
                                                 <td>{{ Form::number($network->id.'amount'.$bungeetype->id, $bungeetype->amount, array('class'=>'form-control', 'min'=>0)) }}</td>
-                                                <td></td>
+                                                <td>
+                                                    <ul>
+                                                        @foreach($bungeetype->nodes() as $nodeId)
+                                                            <li>{{ Node::find($nodeId)->name }}
+                                                                <ul>
+                                                                    @foreach($bungeetype->addresses()->where('node_id', '=', $nodeId) as $addressInfo)
+                                                                        @foreach ($addressInfo->node()->publicaddresses()->get() as $publicAddress)
+                                                                            @if($addressInfo->node_public_address_id == $publicAddress->id)
+                                                                                <li>{{ $publicAddress->publicAddress }}</li>
+                                                                            @endif
+                                                                        @endforeach
+                                                                    @endforeach
+                                                                </ul>
+                                                            </li>
+                                                        @endforeach
+                                                    </ul>
+                                                </td>
                                             </tr>
                                         @endforeach
                                         </tbody>

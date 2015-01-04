@@ -303,11 +303,9 @@ class NetworkController extends BaseController {
                         $addressTaken = false;
 
                         foreach ($network->bungeetypes()->get() as $testType) {
-                            foreach ($testType->addresses()->get() as $testAddress) {
-                               //Log::info('Test Address '.$testAddress->id.' Node '. $testAddress->node(). ' Public Address '.$testAddress->node_public_address_id);
-                               if ($address->id."" == $testAddress->node_public_address_id) {
-                                   $addressTaken = true;
-                               }
+                            if ($testType->addresses()->where('node_public_address_id', '=', $address->id)->count() >= 1) {
+                                $addressTaken = true;
+                                break;
                             }
                         }
 

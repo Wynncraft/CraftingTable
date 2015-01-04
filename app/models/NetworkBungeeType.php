@@ -20,4 +20,17 @@ class NetworkBungeeType extends Moloquent
         return $this->embedsMany('NetworkBungeeTypeAddress');
     }
 
+    public function nodes() {
+        $nodes = array();
+
+        foreach ($this->addresses()->get() as $addressInfo) {
+            if (in_array($addressInfo->node()->id, $nodes)) {
+                continue;
+            }
+            $nodes[] = $addressInfo->node()->id;
+        }
+
+        return $nodes;
+    }
+
 }

@@ -23,6 +23,13 @@ class Node extends Moloquent  {
 
         Node::deleting(function($node) {
             foreach(Network::all() as $network) {
+                foreach ($network->bungeetypes()->all() as $bungeeType) {
+                    foreach ($bungeeType->addresses()->where('node_id', '=', $node->id)->get() as $address) {
+                        $address->delete();
+                        $bungeeType->amount -= 1;
+                        $bungeeType->save();
+                    }
+                }
                 foreach($network->nodes()->all() as $networkNode) {
                     if ($networkNode->node()->id == $node->id) {
                         $networkNode->delete();

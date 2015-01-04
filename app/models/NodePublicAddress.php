@@ -20,12 +20,10 @@ class NodePublicAddress extends Moloquent
             foreach (Network::all() as $network) {
                 Log::info("Loop network " . $network->name);
                 foreach ($network->bungeetypes()->all() as $bungeeType) {
-                    foreach ($bungeeType->addresses() as $address) {
-                        if ($address->node_public_address_id == $publicAddress->id) {
-                            $address->delete();
-                            $bungeeType->amount -= 1;
-                            $bungeeType->save();
-                        }
+                    foreach ($bungeeType->addresses()->where('node_public_address_id', '=', $publicAddress->id)->get() as $address) {
+                        $address->delete();
+                        $bungeeType->amount -= 1;
+                        $bungeeType->save();
                     }
                 }
                 foreach ($network->bungees() as $bungee) {
