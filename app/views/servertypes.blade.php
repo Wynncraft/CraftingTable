@@ -187,6 +187,7 @@
                                                 <th>Plugin Name</th>
                                                 <th>Plugin Version</th>
                                                 <th>Plugin Config</th>
+                                                <th>Remove</th>
                                             </tr>
                                         </thread>
                                         <tbody>
@@ -217,6 +218,7 @@
                                                             @endforeach
                                                         </select>
                                                     </td>
+                                                    <td><a href="{{ action("ServerTypeController@deleteServerTypePlugin", [$serverType->id, $plugin->id]) }}" class="btn btn-danger"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a></td>
                                                 </tr>
                                             @endforeach
                                         </tbody>
@@ -296,6 +298,7 @@
                                                 <th>World Name</th>
                                                 <th>World Version</th>
                                                 <th>Default</th>
+                                                <th>Remove</th>
                                             </tr>
                                         </thread>
                                         <tbody>
@@ -315,6 +318,7 @@
                                                     </select>
                                                 </td>
                                                 <td>{{ Form::checkbox($serverType->id.'default'.$world->id, '1', $world->defaultWorld, array('class'=>'form-control')) }}</td>
+                                                <td><a href="{{ action("ServerTypeController@deleteServerTypeWorld", [$serverType->id, $world->id]) }}" class="btn btn-danger"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a></td>
                                             </tr>
                                         @endforeach
                                         </tbody>

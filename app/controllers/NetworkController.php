@@ -333,6 +333,25 @@ class NetworkController extends BaseController {
         return Redirect::to('/')->with('open'.$network->id, 'successUpdateServerType')->with('success', 'Updated server types for the network '.$network->name);
     }
 
+    public function deleteBungeeType(Network $network = null, $networkBungeeType = null) {
+        if ($network == null) {
+            return Redirect::to('/')->with('error', 'Unknown network Id');
+        }
+
+        $networkBungeeType = $network->bungeetypes()->where("_id", "=", $networkBungeeType)->first();
+        if ($networkBungeeType == null) {
+            return Redirect::to('/')->with('error', 'Unknown bungee type Id');
+        }
+
+        if (Auth::user()->can('update_network') == false) {
+            Redirect::to('/')->with('error', 'You do not have permission to update networks');
+        }
+
+        $networkBungeeType->delete();
+
+        return Redirect::to('/')->with('open'.$network->id, 'successServerTypeDelete')->with('success', 'Deleted bungee type '.$networkBungeeType->bungeetype()->name.' from '.$network->name);
+    }
+
     public function postNode(Network $network = null) {
         if ($network == null) {
             return Redirect::to('/')->with('error', 'Unknown network Id');
@@ -352,9 +371,19 @@ class NetworkController extends BaseController {
             return true;
         }, 'Please select a valid node');
 
+        Validator::extend('otherNetworks', function($attribute, $value, $parameters) {
+            foreach (Network::all() as $network) {
+                if ($network->nodes()->where('node_id', '=', $value)->count() >= 1) {
+                    return false;
+                }
+            }
+
+            return true;
+        }, 'Node is already added to another network.');
+
         $validator = Validator::make(
             array('node'=>Input::get('node')),
-            array('node'=>'required|nodeExists')
+            array('node'=>'required|nodeExists|otherNetworks')
         );
         Validator::getPresenceVerifier()->setConnection("mongodb");
 

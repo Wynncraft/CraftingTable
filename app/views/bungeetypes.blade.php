@@ -154,6 +154,7 @@
                                                 <th>Plugin Name</th>
                                                 <th>Plugin Version</th>
                                                 <th>Plugin Config</th>
+                                                <th>Remove</th>
                                             </tr>
                                         </thread>
                                         <tbody>
@@ -184,6 +185,7 @@
                                                         @endforeach
                                                     </select>
                                                 </td>
+                                                <td><a href="{{ action("BungeeTypeController@deleteBungeeTypePlugin", [$bungeeType->id, $plugin->id]) }}" class="btn btn-danger"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a></td>
                                             </tr>
                                         @endforeach
                                         </tbody>

@@ -219,13 +219,14 @@ class BungeeTypeController extends BaseController {
         return Redirect::to('/bungeetypes')->with('open'.$bungeeType->id, 'successWorldAdd')->with('success', 'Saved the plugins for the bungee type '.$bungeeType->name);
     }
 
-    public function deleteBungeeTypePlugin(BungeeType $bungeeType = null, BungeeTypePlugin $bungeeTypePlugin = null) {
+    public function deleteBungeeTypePlugin(BungeeType $bungeeType = null, $bungeeTypePlugin = null) {
         if ($bungeeType == null) {
             return Redirect::to('/bungeetypes')->with('error', 'Unknown bungee type Id');
         }
 
+        $bungeeTypePlugin = $bungeeType->plugins()->where("_id", "=", $bungeeTypePlugin)->first();
         if ($bungeeTypePlugin == null) {
-            return Redirect::to('/bungeetypes')->with('error', 'Unknown server plugin Id');
+            return Redirect::to('/bungeetypes')->with('error', 'Unknown bungee plugin Id');
         }
 
         if (Auth::user()->can('update_bungeetypes') == false) {

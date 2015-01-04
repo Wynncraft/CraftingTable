@@ -234,6 +234,7 @@
                                                 <th>Amount</th>
                                                 <th>Default</th>
                                                 <th>Manual Start</th>
+                                                <th>Remove</th>
                                             </tr>
                                         </thread>
                                         <tbody>
@@ -243,6 +244,7 @@
                                                     <td>{{ Form::number($network->id.'amount'.$servertype->id, $servertype->amount, array('class'=>'form-control', 'min'=>0)) }}</td>
                                                     <td>{{ Form::checkbox($network->id.'default'.$servertype->id, '1', $servertype->defaultServerType, array('class'=>'form-control')) }}</td>
                                                     <td>{{ Form::checkbox($network->id.'manual'.$servertype->id, '1', $servertype->manualStart, array('class'=>'form-control')) }}</td>
+                                                    <td><a href="{{ action("NetworkController@deleteServerType", [$network->id, $servertype->id]) }}" class="btn btn-danger"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a></td>
                                                 </tr>
                                             @endforeach
                                         </tbody>
@@ -323,6 +325,7 @@
                                                 <th>Bungee Type Name</th>
                                                 <th>Amount</th>
                                                 <th>IP Addresses</th>
+                                                <th>Remove</th>
                                             </tr>
                                         </thread>
                                         <tbody>
@@ -347,6 +350,7 @@
                                                         @endforeach
                                                     </ul>
                                                 </td>
+                                                <td><a href="{{ action("NetworkController@deleteBungeeType", [$network->id, $bungeetype->id]) }}" class="btn btn-danger"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a></td>
                                             </tr>
                                         @endforeach
                                         </tbody>
@@ -394,12 +398,14 @@
                                     <thread>
                                         <tr>
                                             <th>Node Name</th>
+                                            <th>Remove</th>
                                         </tr>
                                     </thread>
                                     <tbody>
                                         @foreach($network->nodes()->get() as $node)
                                             <tr>
                                                 <td>{{{ $node->node()->name }}}</td>
+                                                <td><a href="{{ action("NetworkController@deleteNode", [$network->id, $node->id]) }}" class="btn btn-danger"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a></td>
                                             </tr>
                                         @endforeach
                                     </tbody>
@@ -411,16 +417,6 @@
                                             <option selected value="-1">Please select a node</option>
                                             @foreach(Node::all() as $node)
                                                 <option value="{{ $node->id }}">{{{ $node->name }}}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-
-                                    <div style="margin-bottom: 25px" class="input-group">
-                                        {{ Form::label('bungeetype-label', 'Optional Bungee Type') }}
-                                        <select name='bungeetype' class="form-control" id="servertypeList">
-                                            <option selected value="-1">Please select a bungee type</option>
-                                            @foreach(BungeeType::all() as $bungee)
-                                                <option value="{{ $bungee->id }}">{{{ $bungee->name }}}</option>
                                             @endforeach
                                         </select>
                                     </div>
