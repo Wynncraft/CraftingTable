@@ -26,7 +26,8 @@ class Node extends Moloquent  {
                 foreach ($network->bungeetypes()->all() as $bungeeType) {
                     foreach ($bungeeType->addresses()->where('node_id', '=', $node->id)->get() as $address) {
                         $address->delete();
-                        $bungeeType->amount -= 1;
+                        $amount = $bungeeType->amount - 1;
+                        $bungeeType->amount = $amount."";
                         $bungeeType->save();
                     }
                 }

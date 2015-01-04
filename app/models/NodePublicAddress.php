@@ -12,8 +12,7 @@ class NodePublicAddress extends Moloquent
      */
     protected $fillable = ['publicAddress'];
 
-    public static function boot()
-    {
+    public static function boot() {
         parent::boot();
 
         NodePublicAddress::deleting(function ($publicAddress) {
@@ -22,7 +21,8 @@ class NodePublicAddress extends Moloquent
                 foreach ($network->bungeetypes()->all() as $bungeeType) {
                     foreach ($bungeeType->addresses()->where('node_public_address_id', '=', $publicAddress->id)->get() as $address) {
                         $address->delete();
-                        $bungeeType->amount -= 1;
+                        $amount = $bungeeType->amount - 1;
+                        $bungeeType->amount = $amount."";
                         $bungeeType->save();
                     }
                 }
