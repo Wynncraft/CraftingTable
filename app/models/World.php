@@ -23,10 +23,8 @@ class World extends Moloquent  {
 
         World::deleting(function($world) {
             foreach(ServerType::all() as $serverType) {
-                foreach($serverType->worlds()->all() as $serverTypeWorld) {
-                    if ($serverTypeWorld->world()->id == $world->id) {
-                        $serverTypeWorld->delete();
-                    }
+                foreach($serverType->worlds()->where('world_id', '=', $world->id)->get() as $serverTypeWorld) {
+                    $serverTypeWorld->delete();
                 }
             }
 

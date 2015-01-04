@@ -23,10 +23,8 @@ class ServerType extends PluginHolder {
 
         ServerType::deleting(function($servertype) {
             foreach(Network::all() as $network) {
-                foreach ($network->servertypes()->all() as $networkServerType) {
-                    if ($networkServerType->servertype()->id == $servertype->id) {
-                        $networkServerType->delete();
-                    }
+                foreach ($network->servertypes()->where('server_type_id', '=', $servertype->id)->get() as $networkServerType) {
+                    $networkServerType->delete();
                 }
                 foreach($network->servers()->get()->all() as $server) {
                     $server->delete();

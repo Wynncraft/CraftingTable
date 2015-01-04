@@ -32,12 +32,12 @@ class NetworkNode extends Moloquent
         });
     }
 
-    public function publicaddress() {
+    /*public function publicaddress() {
         $publicAddress = $this->node()->publicaddresses()->where('id', '=', $this->node_public_address_id)->first();
         return $publicAddress;
     }
 
-    /*public function bungeetype() {
+    public function bungeetype() {
         return $this->hasOne('BungeeType', '_id', 'bungee_type_id')->first();
     }*/
 

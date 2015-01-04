@@ -16,10 +16,9 @@ class WorldVersion extends Moloquent  {
 
         WorldVersion::deleting(function($worldVersion) {
             foreach(ServerType::all() as $serverType) {
-                foreach($serverType->worlds()->all() as $serverTypeWorld) {
-                    if ($serverTypeWorld->worldVersion()->id == $worldVersion->id) {
-                        $serverTypeWorld->delete();
-                    }
+                foreach($serverType->worlds()->where('worldversion_id', '=', $worldVersion->id)->get() as $serverTypeWorld) {
+                    $serverTypeWorld->worldversion_id = null;
+                    $serverTypeWorld->save();
                 }
             }
 

@@ -23,14 +23,8 @@ class BungeeType extends PluginHolder {
 
         BungeeType::deleting(function($bungeetype) {
             foreach(Network::all() as $network) {
-                foreach ($network->nodes()->all() as $networkNode) {
-                    if ($networkNode->bungeetype() != null) {
-                        if ($networkNode->bungeetype()->id == $bungeetype->id) {
-                            $networkNode->bungee_type_id = null;
-                            $networkNode->node_public_address_id = null;
-                            $networkNode->save();
-                        }
-                    }
+                foreach ($network->bungeetypes()->where('bungee_type_id', '=', $bungeetype->id)->get() as $bungeeType) {
+                    $bungeeType->delete();
                 }
                 foreach($network->bungees() as $bungee) {
                     $bungee->delete();

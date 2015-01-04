@@ -23,10 +23,8 @@ class Plugin extends Moloquent  {
 
         Plugin::deleting(function($plugin) {
             foreach(ServerType::all() as $serverType) {
-                foreach($serverType->plugins()->all() as $serverTypePlugin) {
-                    if ($serverTypePlugin->plugin()->id == $plugin->id) {
-                        $serverTypePlugin->delete();
-                    }
+                foreach($serverType->plugins()->where('plugin_id', '=', $plugin->id)->get() as $serverTypePlugin) {
+                    $serverTypePlugin->delete();
                 }
             }
 

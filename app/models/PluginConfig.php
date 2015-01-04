@@ -16,10 +16,9 @@ class PluginConfig extends Moloquent  {
 
         PluginConfig::deleting(function($pluginConfig) {
             foreach(ServerType::all() as $serverType) {
-                foreach($serverType->plugins()->all() as $serverTypePlugin) {
-                    if ($serverTypePlugin->pluginConfig()->id == $pluginConfig->id) {
-                        $serverTypePlugin->delete();
-                    }
+                foreach($serverType->plugins()->where('pluginconfig_id', '=', $pluginConfig->id) as $serverTypePlugin) {
+                    $serverTypePlugin->pluginconfig_id = null;
+                    $serverTypePlugin->save();
                 }
             }
 

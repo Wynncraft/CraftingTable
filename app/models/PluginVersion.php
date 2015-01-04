@@ -16,10 +16,9 @@ class PluginVersion extends Moloquent  {
 
         PluginVersion::deleting(function($pluginVersion) {
             foreach(ServerType::all() as $serverType) {
-                foreach($serverType->plugins()->all() as $serverTypePlugin) {
-                    if ($serverTypePlugin->pluginVersion()->id == $pluginVersion->id) {
-                        $serverTypePlugin->delete();
-                    }
+                foreach($serverType->plugins()->where('pluginversion_id', '=', $pluginVersion->id) as $serverTypePlugin) {
+                    $serverTypePlugin->pluginversion_id = null;
+                    $serverTypePlugin->save();
                 }
             }
 
