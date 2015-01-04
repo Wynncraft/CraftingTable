@@ -262,11 +262,77 @@ class NetworkController extends BaseController {
                 return Redirect::to('/')->with('open'.$network->id, 'errorAddBungeeType')->with('errorAddBungeeType'.$network->id, $validator->messages());
             }
 
-            //$networkServerType->save();
+            $networkBungeeType->amount = "0";
             $network->bungeetypes()->save($networkBungeeType);
 
             return Redirect::to('/')->with('open'.$network->id, 'successBungeeTypeAdd')->with('success', 'Added the bungee type '.$bungeeType->name.' to the network '.$network->name);
         }
+    }
+
+    public function putBungeeType(Network $network = null) {
+        if ($network == null) {
+            return Redirect::to('/')->with('error', 'Unknown network Id');
+        }
+
+        if (Auth::user()->can('update_network') == false) {
+            return Redirect::to('/')->with('error', 'You do not have permissions to edit networks');
+        }
+
+        foreach ($network->bungeetypes()->get() as $bungeeType) {
+            $amount = Input::get($network->id.'amount'.$bungeeType->id);
+
+            if ($bungeeType->amount == $amount) {
+                continue;
+            }
+
+            if ($bungeeType->amount > $amount) {
+                $toDelete = $bungeeType->amount - $amount;
+                foreach ($bungeeType->addresses()->get() as $address) {
+                    if ($toDelete == 0) {
+                        break;
+                    }
+                    $address->delete();
+                    $toDelete -= 1;
+                }
+            } else if ($bungeeType->amount < $amount) {
+                $toAdd = $amount - $bungeeType->amount;
+
+                $found = array();
+                foreach ($network->nodes()->get() as $node) {
+                    foreach($node->node()->publicaddresses()->get() as $address) {
+                        $addressTaken = false;
+
+                        foreach ($network->bungeetypes()->get() as $testType) {
+                            foreach ($testType->addresses()->get() as $testAddress) {
+                               //Log::info('Test Address '.$testAddress->id.' Node '. $testAddress->node(). ' Public Address '.$testAddress->node_public_address_id);
+                               if ($address->id."" == $testAddress->node_public_address_id) {
+                                   $addressTaken = true;
+                               }
+                            }
+                        }
+
+                        if ($addressTaken == false) {
+                            $found[] = new NetworkBungeeTypeAddress(array("node_id" => $node->node()->id, "node_public_address_id" => $address->id));
+                        }
+                    }
+                }
+
+                //Log::info('Found addresses '.count($found). ' '.implode($found));
+
+                if (count($found) < $toAdd) {
+                    return Redirect::to('/')->with('open'.$network->id, 'errorUpdateBungeeType')->with('errorUpdateBungeeType'.$network->id, 'Not enough public addresses for '.$amount.' '.$bungeeType->bungeetype()->name.'(s)');
+                }
+
+                for ($i = 0; $i < $toAdd; $i++) {
+                    $bungeeType->addresses()->save($found[$i]);
+                }
+            }
+
+            $bungeeType->amount = $amount;
+            $bungeeType->save();
+        }
+
+        return Redirect::to('/')->with('open'.$network->id, 'successUpdateServerType')->with('success', 'Updated server types for the network '.$network->name);
     }
 
     public function postNode(Network $network = null) {

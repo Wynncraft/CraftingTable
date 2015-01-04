@@ -16,4 +16,8 @@ class NetworkBungeeType extends Moloquent
         return $this->hasOne('BungeeType', '_id', 'bungee_type_id')->first();
     }
 
+    public function addresses() {
+        return $this->embedsMany('NetworkBungeeTypeAddress');
+    }
+
 }

@@ -309,9 +309,7 @@
                                             <div class="alert alert-danger alert-dismissible">
                                                 <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
                                                 <ul>
-                                                    @foreach(Session::get('errorUpdateBungeeType'.$network->id)->all() as $errorMessage)
-                                                        <li>{{ $errorMessage  }}</li>
-                                                    @endforeach
+                                                    <li>{{ Session::get('errorUpdateBungeeType'.$network->id) }}</li>
                                                 </ul>
                                             </div>
                                         </div>
@@ -323,6 +321,7 @@
                                         <thread>
                                             <tr>
                                                 <th>Bungee Type Name</th>
+                                                <th>Amount</th>
                                                 <th>IP Addresses</th>
                                             </tr>
                                         </thread>
@@ -330,6 +329,7 @@
                                         @foreach($network->bungeetypes()->get() as $bungeetype)
                                             <tr>
                                                 <td>{{ Form::text($network->id.'name'.$bungeetype->id, $bungeetype->bungeetype()->name, array('class'=>'form-control', 'disabled')) }}</td>
+                                                <td>{{ Form::number($network->id.'amount'.$bungeetype->id, $bungeetype->amount, array('class'=>'form-control', 'min'=>0)) }}</td>
                                                 <td></td>
                                             </tr>
                                         @endforeach

@@ -133,7 +133,7 @@ class Network extends Moloquent {
         }
         $bungeetypes = $this->bungeetypes()->get()->all();
         foreach ($bungeetypes as $bungeetype) {
-            $provisionedRam += $bungeetype->bungeetype()->ram;
+            $provisionedRam += $bungeetype->amount * $bungeetype->bungeetype()->ram;
         }
 
         if ($provisionedRam > $usableRam) {
@@ -147,9 +147,8 @@ class Network extends Moloquent {
     public function hasBungee() {
         $hasBungee = false;
 
-        foreach ($this->bungeetypes()->get() as $bungeetye) {
+        if ($this->bungeetypes()->count() > 0) {
             $hasBungee = true;
-            break;
         }
 
         return $hasBungee;
