@@ -209,7 +209,7 @@ class PluginController extends BaseController {
             array('name'=>Input::get('name'),
                 'description'=>Input::get('description'),
                 'directory'=>Input::get('directory')),
-            array('name'=>'required|min:3|max:100|unique:plugins,name,'.$plugin->id,
+            array('name'=>'required|min:3|max:100|unique:plugins,'.$plugin->id,
                 'description'=>'max:255',
                 'directory'=>'required|max:255')
         );

@@ -43,7 +43,7 @@ class NetworkController extends BaseController {
         $validator = Validator::make(
             array('name'=>Input::get('name'),
                 'description'=>Input::get('description')),
-            array('name'=>'required|min:3|max:100|unique:networks,name,'.$network->id,
+            array('name'=>'required|min:3|max:100|unique:networks,'.$network->id,
                 'description'=>'max:255')
         );
         Validator::getPresenceVerifier()->setConnection("mongodb");

@@ -79,7 +79,7 @@ class NodeController extends BaseController {
         $validator = Validator::make(
             array('name'=>Input::get('name'),
                 'ram'=>Input::get('ram')),
-            array('name'=>'required|min:3|max:100|unique:nodes,name,'.$node->id,
+            array('name'=>'required|min:3|max:100|unique:nodes,'.$node->id,
                 'ram'=>'required|Integer|Min:1024')
         );
         Validator::getPresenceVerifier()->setConnection("mongodb");

@@ -59,7 +59,7 @@ class ServerTypeController extends BaseController {
                 'description'=>Input::get('description'),
                 'players'=>Input::get('players'),
                 'memory'=>Input::get('ram')),
-            array('name'=>'required|min:3|max:100|unique:servertypes,name,'.$serverType->id,
+            array('name'=>'required|min:3|max:100|unique:servertypes,'.$serverType->id,
                 'description'=>'max:255',
                 'players'=>'required|Integer|Min:1',
                 'memory'=>'required|Integer|Min:1024')

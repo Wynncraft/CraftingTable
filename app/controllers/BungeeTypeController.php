@@ -55,7 +55,7 @@ class BungeeTypeController extends BaseController {
             array('name'=>Input::get('name'),
                 'description'=>Input::get('description'),
                 'memory'=>Input::get('ram')),
-            array('name'=>'required|min:3|max:100|unique:bungeetypes,name,'.$bungeeType->id,
+            array('name'=>'required|min:3|max:100|unique:bungeetypes,'.$bungeeType->id,
                 'description'=>'max:255',
                 'memory'=>'required|Integer|Min:1024')
         );

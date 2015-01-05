@@ -126,7 +126,7 @@ class WorldController extends BaseController
             array('name'=>Input::get('name'),
                 'description'=>Input::get('description'),
                 'directory'=>Input::get('directory')),
-            array('name'=>'required|min:3|max:100|unique:worlds,name,'.$world->id,
+            array('name'=>'required|min:3|max:100|unique:worlds,'.$world->id,
                 'description'=>'max:255',
                 'directory'=>'required|max:255')
         );
