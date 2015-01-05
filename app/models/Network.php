@@ -126,7 +126,7 @@ class Network extends Moloquent {
         $usableRam = $this->getTotalRam();
         $provisionedRam = 0;
 
-        $bungeetypes = $this->bungeetypes()->get()->all();
+        /*$bungeetypes = $this->bungeetypes()->get()->all();
         foreach ($bungeetypes as $bungeetype) {
             $provisionedRam += $bungeetype->amount * $bungeetype->bungeetype()->ram;
         }
@@ -136,6 +136,41 @@ class Network extends Moloquent {
         }
 
         if ($provisionedRam > $usableRam) {
+            $overProvisioned = true;
+        }*/
+        $nodes = array();
+
+        foreach ($this->nodes()->get() as $node) {
+            $nodes[$node->node()->id.""] = $node->node()->ram;
+        }
+
+        $bungeetypes = $this->bungeetypes()->get()->all();
+        $setBungees = 0;
+        $totalBungees = 0;
+        foreach ($bungeetypes as $bungeetype) {
+            $totalBungees += $bungeetype->amount;
+            foreach ($bungeetype->addresses()->get() as $address) {
+                if ($nodes[$address->node()->id.""] >= $bungeetype->bungeetype()->ram) {
+                    $nodes[$address->node()->id.""] -= $bungeetype->bungeetype()->ram;
+                    $setBungees += 1;
+                }
+            }
+        }
+
+        $servertypes = $this->servertypes()->get()->all();
+        $setServers = 0;
+        $totalServers = 0;
+        foreach ($servertypes as $servertype) {
+            $totalServers += $servertype->amount;
+            foreach ($nodes as $key => $value) {
+                if ($value >= $servertype->servertype()->ram) {
+                    $nodes[$key] -= $servertype->servertype()->ram;
+                    $setServers += 1;
+                }
+            }
+        }
+
+        if ($setBungees < $totalBungees || $setServers < $totalServers) {
             $overProvisioned = true;
         }
 

@@ -319,6 +319,21 @@ class NetworkController extends BaseController {
 
                 $found = array();
                 foreach ($network->nodes()->get() as $node) {
+                    $ram = $node->node()->ram;
+                    foreach ($network->bungeetypes()->get() as $testType) {
+                        foreach ($testType->addresses()->where('node_id', '=', $node->node()->id)->get() as $testType2) {
+                            Log::info("Minus Ram ".$testType->bungeetype()->ram * $testType->amount);
+                            $ram -= $testType->bungeetype()->ram * $testType->amount;
+                        }
+                    }
+
+                    $ram -= $bungeeType->bungeetype()->ram;
+                    Log::info("Ram ".$ram);
+
+                    if ($ram < 0) {
+                        continue;
+                    }
+
                     foreach($node->node()->publicaddresses()->get() as $address) {
                         $addressTaken = false;
 

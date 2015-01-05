@@ -24,6 +24,7 @@ class NetworkNode extends Moloquent
                         $amount = $bungeeType->amount - 1;
                         $bungeeType->amount = $amount."";
                         $bungeeType->save();
+                        $network->save();
                     }
                 }
             }
