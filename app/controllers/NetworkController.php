@@ -250,7 +250,7 @@ class NetworkController extends BaseController {
                 }
 
                 return true;
-            }, 'The server type '.$bungeeType->name.' is already added');
+            }, 'The bungee type '.$bungeeType->name.' is already added');
 
             $validator = Validator::make(
                 array('bungeeType'=>$networkBungeeType),
@@ -263,6 +263,7 @@ class NetworkController extends BaseController {
             }
 
             $networkBungeeType->amount = "0";
+            $networkBungeeType->addresses = array();
             $network->bungeetypes()->save($networkBungeeType);
 
             return Redirect::to('/')->with('open'.$network->id, 'successBungeeTypeAdd')->with('success', 'Added the bungee type '.$bungeeType->name.' to the network '.$network->name);
@@ -287,13 +288,32 @@ class NetworkController extends BaseController {
 
             if ($bungeeType->amount > $amount) {
                 $toDelete = $bungeeType->amount - $amount;
-                foreach ($bungeeType->addresses()->get() as $address) {
+                Log::info("Deleting ".$toDelete);
+                /*foreach ($bungeeType->addresses()->get() as $address) {
                     if ($toDelete == 0) {
                         break;
                     }
-                    $address->delete();
+                    //$address->delete();
+                    $toDelete -= 1;
+                }*/
+                $addresses = json_decode($bungeeType->addresses, true);
+                Log::info("Before ".json_encode($addresses));
+                for ($i = 0; $i < count($addresses); $i++) {
+                    if ($toDelete == 0) {
+                        break;
+                    }
+                    Log::info($addresses[$i]);
+                    unset($addresses[$i]);
+                    Log::info("After ".count($addresses));
                     $toDelete -= 1;
                 }
+                $addresses = array_values($addresses);
+                Log::info("After ".count($addresses));
+                $bungeeType->addresses = null;
+                $bungeeType->addresses = $addresses;
+
+                Log::info("Bungee Addrs ".$bungeeType->addresses);
+                Log::info("Bungee Embeded Addrs ".$bungeeType->addresses()->get());
             } else if ($bungeeType->amount < $amount) {
                 $toAdd = $amount - $bungeeType->amount;
 
@@ -328,9 +348,12 @@ class NetworkController extends BaseController {
 
             $bungeeType->amount = $amount;
             $bungeeType->save();
+
+            Log::info("Bungee Addrs2 ".$bungeeType->addresses);
+            Log::info("Bungee Embeded Addrs2 ".$bungeeType->addresses()->get());
         }
 
-        return Redirect::to('/')->with('open'.$network->id, 'successUpdateServerType')->with('success', 'Updated server types for the network '.$network->name);
+        return Redirect::to('/')->with('open'.$network->id, 'successUpdateServerType')->with('success', 'Updated bungee types for the network '.$network->name);
     }
 
     public function deleteBungeeType(Network $network = null, $networkBungeeType = null) {

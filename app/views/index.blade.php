@@ -166,9 +166,9 @@
                                             <tbody>
                                                 @foreach($network->bungees()->get()->all() as $bungee)
                                                     <tr>
-                                                        <td>{{ $bungee->bungeetype()->name }}</td>
-                                                        <td>{{ $bungee->node()->name }}</td>
-                                                        <td>{{ $bungee->publicaddress()->publicAddress }}</td>
+                                                        <td>{{{ $bungee->bungeetype()->name }}}</td>
+                                                        <td>{{{ $bungee->node()->name }}}</td>
+                                                        <td>{{{ $bungee->publicaddress()->publicAddress }}}</td>
                                                         <td>Button</td>
                                                     </tr>
                                                 @endforeach
@@ -343,11 +343,7 @@
                                                             <li>{{ Node::find($nodeId)->name }}
                                                                 <ul>
                                                                     @foreach($bungeetype->addresses()->where('node_id', '=', $nodeId) as $addressInfo)
-                                                                        @foreach ($addressInfo->node()->publicaddresses()->get() as $publicAddress)
-                                                                            @if($addressInfo->node_public_address_id == $publicAddress->id)
-                                                                                <li>{{ $publicAddress->publicAddress }}</li>
-                                                                            @endif
-                                                                        @endforeach
+                                                                        <li>{{ $addressInfo->nodePublicAddress()->publicAddress }}</li>
                                                                     @endforeach
                                                                 </ul>
                                                             </li>

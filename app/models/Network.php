@@ -126,14 +126,13 @@ class Network extends Moloquent {
         $usableRam = $this->getTotalRam();
         $provisionedRam = 0;
 
-
-        $servertypes = $this->servertypes()->get()->all();
-        foreach ($servertypes as $servertype) {
-            $provisionedRam += $servertype->amount * $servertype->servertype()->ram;
-        }
         $bungeetypes = $this->bungeetypes()->get()->all();
         foreach ($bungeetypes as $bungeetype) {
             $provisionedRam += $bungeetype->amount * $bungeetype->bungeetype()->ram;
+        }
+        $servertypes = $this->servertypes()->get()->all();
+        foreach ($servertypes as $servertype) {
+            $provisionedRam += $servertype->amount * $servertype->servertype()->ram;
         }
 
         if ($provisionedRam > $usableRam) {

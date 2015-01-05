@@ -16,8 +16,8 @@ class NetworkBungeeTypeAddress extends Moloquent
         return $this->hasOne('Node', '_id', 'node_id')->first();
     }
 
-    /*public function nodePublicAddress() {
-        return $this->hasOne('NodePublicAddress', '_id', 'node_public_address_id')->first();
-    }*/
+    public function nodePublicAddress() {
+        return $this->node()->publicaddresses()->where('_id', '=', $this->node_public_address_id)->first();
+    }
 
 }
