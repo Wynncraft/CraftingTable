@@ -134,21 +134,17 @@
                         <div class="tab-content">
                             <div class="tab-pane active" id="stats{{ $network->id }}">
                                 <div class="row">
-                                    <div class="col-xs-3">
+                                    <div class="col-xs-4">
                                         <h4 class="text-center">Online Players</h4>
                                         <p class="text-center"><span class="text-muted">{{ $network->getOnlinePlayers() }} / {{ $network->getTotalPlayers() }}</span></p>
                                     </div>
-                                    <div class="col-xs-3">
+                                    <div class="col-xs-4">
                                         <h4 class="text-center">Memory Usage</h4>
                                         <p class="text-center"><span class="text-muted">{{ $network->getUsedRam() }} MB / {{ $network->getTotalRam() }} MB</span></p>
                                     </div>
-                                    <div class="col-xs-3">
-                                        <h4 class="text-center">Something else</h4>
-                                        <p class="text-center"><span class="text-muted">something</span></p>
-                                    </div>
-                                    <div class="col-xs-3">
-                                        <h4 class="text-center">Something else</h4>
-                                        <p class="text-center"><span class="text-muted">something</span></p>
+                                    <div class="col-xs-4">
+                                        <h4 class="text-center">Provisioned Memory</h4>
+                                        <p class="text-center"><span class="text-muted">{{ $network->getProvisionedRam() }} MB / {{ $network->getTotalRam() }} MB</span></p>
                                     </div>
                                 </div>
                                 <div class="row">
