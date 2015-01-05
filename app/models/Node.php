@@ -29,6 +29,7 @@ class Node extends Moloquent  {
                         $amount = $bungeeType->amount - 1;
                         $bungeeType->amount = $amount."";
                         $bungeeType->save();
+                        $network->save();
                     }
                 }
                 foreach($network->nodes()->all() as $networkNode) {

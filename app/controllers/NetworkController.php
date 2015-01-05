@@ -289,14 +289,14 @@ class NetworkController extends BaseController {
             if ($bungeeType->amount > $amount) {
                 $toDelete = $bungeeType->amount - $amount;
                 Log::info("Deleting ".$toDelete);
-                /*foreach ($bungeeType->addresses()->get() as $address) {
+                foreach ($bungeeType->addresses()->get() as $address) {
                     if ($toDelete == 0) {
                         break;
                     }
-                    //$address->delete();
+                    $address->delete();
                     $toDelete -= 1;
-                }*/
-                $addresses = json_decode($bungeeType->addresses, true);
+                }
+                /*$addresses = json_decode($bungeeType->addresses, true);
                 Log::info("Before ".json_encode($addresses));
                 for ($i = 0; $i < count($addresses); $i++) {
                     if ($toDelete == 0) {
@@ -309,11 +309,11 @@ class NetworkController extends BaseController {
                 }
                 $addresses = array_values($addresses);
                 Log::info("After ".count($addresses));
-                $bungeeType->addresses = null;
+                $bungeeType->addresses = [];
                 $bungeeType->addresses = $addresses;
 
                 Log::info("Bungee Addrs ".$bungeeType->addresses);
-                Log::info("Bungee Embeded Addrs ".$bungeeType->addresses()->get());
+                Log::info("Bungee Embeded Addrs ".$bungeeType->addresses()->get());*/
             } else if ($bungeeType->amount < $amount) {
                 $toAdd = $amount - $bungeeType->amount;
 
@@ -348,6 +348,9 @@ class NetworkController extends BaseController {
 
             $bungeeType->amount = $amount;
             $bungeeType->save();
+
+            $network->save();
+            //$bungeeType = $network->bungeetypes()->where('_id', '=', $bungeeType->id)->first();
 
             Log::info("Bungee Addrs2 ".$bungeeType->addresses);
             Log::info("Bungee Embeded Addrs2 ".$bungeeType->addresses()->get());
