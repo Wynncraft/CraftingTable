@@ -176,10 +176,12 @@ class Network extends Moloquent {
         $totalServers = 0;
         foreach ($servertypes as $servertype) {
             $totalServers += $servertype->amount;
-            foreach ($nodes as $key => $value) {
-                if ($value >= $servertype->servertype()->ram) {
-                    $nodes[$key] -= $servertype->servertype()->ram;
-                    $setServers += 1;
+            for ($i = 0; $i < $totalServers; $i++) {
+                foreach ($nodes as $key => $value) {
+                    if ($value >= $servertype->servertype()->ram) {
+                        $nodes[$key] -= $servertype->servertype()->ram;
+                        $setServers += 1;
+                    }
                 }
             }
         }
