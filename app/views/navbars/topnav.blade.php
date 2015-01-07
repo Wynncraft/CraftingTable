@@ -6,7 +6,7 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="{{ URL::to('/')  }}">Minestack</a>
+        <a class="navbar-brand" href="{{ URL::to('/')  }}"><img src="{{ URL::asset('img/minestack.png') }}" with="140" height="50" style="margin-top: -15px"/></a>
     </div>
     <div id="navbar" class="navbar-collapse collapse">
         <ul class="nav navbar-nav">
