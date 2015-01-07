@@ -58,6 +58,16 @@ class Network extends Moloquent {
         return $this->embedsMany('NetworkForcedHost');
     }
 
+    /**
+     * Forced Hosts
+     *
+     * @return object
+     */
+    public function manualservertypes()
+    {
+        return $this->embedsMany('NetworkManualServerType');
+    }
+
     public function servers() {
         return $this->hasMany('Server');
     }

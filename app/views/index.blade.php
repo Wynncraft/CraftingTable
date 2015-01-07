@@ -258,7 +258,7 @@
                                 {{ Form::close() }}
                                 {{ Form::open(array('action' => array('NetworkController@postServerType', $network->id), 'class' => 'form-horizontal', 'method' => 'POST')) }}
                                     <div style="margin-bottom: 25px" class="input-group">
-                                        {{ Form::label('servertype-label', 'Server Type Name') }}
+                                        {{ Form::label('servertype-label', 'Server Type') }}
                                         <select name='servertype' class="form-control" id="servertypeList">
                                             <option selected value="-1">Please select a server type</option>
                                             @foreach(ServerType::all() as $servertype)
@@ -269,6 +269,46 @@
                                     <div style="margin-top:10px" class="form-group">
                                         <div class="col-md-12">
                                             {{ Form::submit('Add Server Type', array('class'=>'btn btn-primary')) }}
+                                        </div>
+                                    </div>
+                                {{ Form::close() }}
+                                    <table style="margin-top: 10px" class="table table-bordered">
+                                        <thread>
+                                            <tr>
+                                                <th>Manual Server Type Name</th>
+                                                <th>Host Address</th>
+                                                <th>Host Port</th>
+                                                <th>Remove</th>
+                                            </tr>
+                                        </thread>
+                                        <tbody>
+                                        @foreach($network->manualservertypes()->get() as $servertype)
+                                            <tr>
+                                                <td>{{ Form::text($network->id.'name'.$servertype->id, $servertype->name, array('class'=>'form-control', 'disabled')) }}</td>
+                                                <td>{{ Form::text($network->id.'address'.$servertype->id, $servertype->address, array('class'=>'form-control', 'disabled')) }}</td>
+                                                <td>{{ Form::text($network->id.'port'.$servertype->id, $servertype->port, array('class'=>'form-control', 'disabled')) }}</td>
+                                                <td><a href="{{ action("NetworkController@deleteManualServerType", [$network->id, $servertype->id]) }}" class="btn btn-danger" onclick="return ConfirmDeleteServerType('{{ $servertype->name }}')"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a></td>
+                                            </tr>
+                                        @endforeach
+                                        </tbody>
+                                        </tbody>
+                                    </table>
+                                {{ Form::open(array('action' => array('NetworkController@postManualServerType', $network->id), 'class' => 'form-horizontal', 'method' => 'POST')) }}
+                                    <div style="margin-bottom: 25px" class="input-group">
+                                        {{ Form::label('name-label', 'Manual Server Type Name') }}
+                                        {{ Form::text('name', '', array('class'=>'form-control')) }}
+                                    </div>
+                                    <div style="margin-bottom: 25px" class="input-group">
+                                        {{ Form::label('address-label', 'Host Address') }}
+                                        {{ Form::text('address', '', array('class'=>'form-control')) }}
+                                    </div>
+                                    <div style="margin-bottom: 25px" class="input-group">
+                                        {{ Form::label('port-label', 'Host Port') }}
+                                        {{ Form::text('port', '', array('class'=>'form-control')) }}
+                                    </div>
+                                    <div style="margin-top:10px" class="form-group">
+                                        <div class="col-md-12">
+                                            {{ Form::submit('Add Manual Server Type', array('class'=>'btn btn-primary')) }}
                                         </div>
                                     </div>
                                 {{ Form::close() }}
@@ -404,10 +444,17 @@
                                                     <select name='{{ $network->id.'servertype'.$forcedhost->id }}' class="form-control" id="{{ $network->id.'servertype'.$forcedhost->id }}">
                                                         <option selected value="-1">Please select a server type</option>
                                                         @foreach($network->servertypes()->get() as $servertype)
-                                                            @if($forcedhost->servertype() != null && $forcedhost->servertype()->id == $servertype->servertype()->id)
+                                                            @if($forcedhost->server_type_id == $servertype->servertype()->id)
                                                                 <option selected value="{{ $servertype->servertype()->id }}">{{{ $servertype->servertype()->name }}}</option>
                                                             @else
                                                                 <option value="{{ $servertype->servertype()->id }}">{{{ $servertype->servertype()->name }}}</option>
+                                                            @endif
+                                                        @endforeach
+                                                        @foreach($network->manualservertypes()->get() as $servertype)
+                                                            @if($forcedhost->server_type_id == $servertype->id)
+                                                                <option selected value="{{ $servertype->id }}">{{{ $servertype->name }}}</option>
+                                                            @else
+                                                                <option value="{{ $servertype->id }}">{{{ $servertype->name }}}</option>
                                                             @endif
                                                         @endforeach
                                                     </select>

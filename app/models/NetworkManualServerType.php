@@ -1,6 +1,6 @@
 <?php
 
-class NetworkServerType extends Moloquent
+class NetworkManualServerType extends Moloquent
 {
 
     protected $connection = 'mongodb';
@@ -10,16 +10,16 @@ class NetworkServerType extends Moloquent
      *
      * @var array
      */
-    protected $fillable = ['server_type_id'];
+    protected $fillable = ['name', 'address', 'port'];
 
     public static function boot() {
         parent::boot();
 
-        NetworkServerType::deleting(function($networkservertype) {
+        NetworkManualServerType::deleting(function($networkservertype) {
 
             Log::info("Network ".$networkservertype->network);
             foreach ($networkservertype->network->forcedhosts()->get() as $forcedhost) {
-                if ($forcedhost->server_type_id == $networkservertype->servertype()->id) {
+                if ($forcedhost->server_type_id == $networkservertype->id) {
                     $forcedhost->server_type_id = null;
                     $forcedhost->save();
                 }
@@ -27,10 +27,6 @@ class NetworkServerType extends Moloquent
 
             return true;
         });
-    }
-
-    public function servertype() {
-        return $this->hasOne('ServerType', '_id', 'server_type_id')->first();
     }
 
 }

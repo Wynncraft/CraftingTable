@@ -414,7 +414,7 @@ class NetworkController extends BaseController {
 
         $validator = Validator::make(
             array('host'=>Input::get('host')),
-            array('host'=>'required|forcedHostExists')
+            array('host'=>'required||min:3|max:100|forcedHostExists')
         );
         Validator::getPresenceVerifier()->setConnection("mongodb");
 
@@ -470,6 +470,63 @@ class NetworkController extends BaseController {
         $forcedhost->delete();
 
         return Redirect::to('/')->with('open'.$network->id, 'successServerTypeDelete')->with('success', 'Deleted forced host '.$forcedhost->host.' from '.$network->name);
+    }
+
+    public function postManualServerType(Network $network = null) {
+        if ($network == null) {
+            return Redirect::to('/')->with('error', 'Unknown network Id');
+        }
+
+        if (Auth::user()->can('update_network') == false) {
+            return Redirect::to('/')->with('error', 'You do not have permissions to edit networks');
+        }
+
+        Validator::extend('manualServerTypeExists', function($attribute, $value, $parameters) use ($network) {
+            if ($network->manualservertypes()->where('name', '=', $value)->count() >= 1) {
+                return false;
+            }
+
+            return true;
+        }, 'Forced host is already added.');
+
+        $validator = Validator::make(
+            array('name'=>Input::get('name'),
+                'address'=>Input::get('address'),
+                'port'=>Input::get('port')),
+            array('name'=>'required|min:3|max:100|manualServerTypeExists',
+                'address'=>'required',
+                'port'=>'required')
+        );
+        Validator::getPresenceVerifier()->setConnection("mongodb");
+
+        if ($validator->fails()) {
+            return Redirect::to('/')->with('open'.$network->id, 'errorAddServerType')->with('errorAddServerType'.$network->id, $validator->messages());
+        }
+
+        $manualServerType = new NetworkManualServerType(array('name'=>Input::get('name'), 'address'=>Input::get('address'), 'port'=>Input::get('port')));
+
+        $network->manualservertypes()->save($manualServerType);
+
+        return Redirect::to('/')->with('open'.$network->id, 'errorAddNode')->with('success', 'Added the manual server type '.$manualServerType->name.' to the network '.$network->name);
+    }
+
+    public function deleteManualServerType(Network $network = null, $manualServerType = null) {
+        if ($network == null) {
+            return Redirect::to('/')->with('error', 'Unknown network Id');
+        }
+
+        $manualServerType = $network->manualservertypes()->where("_id", "=", $manualServerType)->first();
+        if ($manualServerType == null) {
+            return Redirect::to('/')->with('error', 'Unknown manual server type Id');
+        }
+
+        if (Auth::user()->can('update_network') == false) {
+            Redirect::to('/')->with('error', 'You do not have permission to update networks');
+        }
+
+        $manualServerType->delete();
+
+        return Redirect::to('/')->with('open'.$network->id, 'successServerTypeDelete')->with('success', 'Deleted manual server type '.$manualServerType->name.' from '.$network->name);
     }
 
     public function postNode(Network $network = null) {

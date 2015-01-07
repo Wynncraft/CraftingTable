@@ -82,6 +82,9 @@ Route::group(array('before' => 'auth'), function() {
 	Route::post('/networks/{network}/forcedhost', array('uses' => 'NetworkController@postForcedHost'));
 	Route::put('/networks/{network}/forcedhost', array('uses' => 'NetworkController@putForcedHost'));
 	Route::get('/networks/{network}/forcedhost/{networkforcedhost}', array('uses' => 'NetworkController@deleteForcedHost'));
+
+	Route::post('/networks/{network}/manualservertype', array('uses' => 'NetworkController@postManualServerType'));
+	Route::get('/networks/{network}/manualservertype/{networkmanualservertype}', array('uses' => 'NetworkController@deleteManualServerType'));
 });
 
 //auth servertypes
