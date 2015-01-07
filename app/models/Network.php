@@ -48,6 +48,16 @@ class Network extends Moloquent {
         return $this->embedsMany('NetworkBungeeType');
     }
 
+    /**
+     * Forced Hosts
+     *
+     * @return object
+     */
+    public function forcedhosts()
+    {
+        return $this->embedsMany('NetworkForcedHost');
+    }
+
     public function servers() {
         return $this->hasMany('Server');
     }

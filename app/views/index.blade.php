@@ -128,6 +128,7 @@
                             <li role="presentation" class="active"><a href="#stats{{ $network->id }}" data-toggle="tab">Stats</a></li>
                             <li role="presentation"><a href="#servertypes{{ $network->id }}" data-toggle="tab" style="{{ Session::has('errorAddServerType'.$network->id) == true || Session::has('errorUpdateServerType'.$network->id) == true ? 'color:red; font-weight:bold;' : ''}}">Server Types</a></li>
                             <li role="presentation"><a href="#bungeetypes{{ $network->id }}" data-toggle="tab" style="{{ Session::has('errorAddBungeeType'.$network->id) == true || Session::has('errorUpdateBungeeType'.$network->id) == true ? 'color:red; font-weight:bold;' : ''}}">Bungee Types</a></li>
+                            <li role="presentation"><a href="#forcedhosts{{ $network->id }}" data-toggle="tab" style="{{ Session::has('errorAddForcedHost'.$network->id) == true || Session::has('errorUpdateForcedHost'.$network->id) == true ? 'color:red; font-weight:bold;' : ''}}">Forced Hosts</a></li>
                             <li role="presentation"><a href="#nodes{{ $network->id }}" data-toggle="tab" style="{{ Session::has('errorAddNode'.$network->id) == true ? 'color:red; font-weight:bold;' : ''}}">Nodes</a></li>
                             <li role="presentation"><a href="#edit{{ $network->id }}" data-toggle="tab" style="{{ Session::has('errorEdit'.$network->id) == true ? 'color:red; font-weight:bold;' : ''}}">Edit</a></li>
                         </ul>
@@ -265,24 +266,6 @@
                                             @endforeach
                                         </select>
                                     </div>
-                                    {{--
-                                    <!--
-                                    <div style="margin-bottom: 25px" class="input-group">
-                                        {{ Form::label('amount-label', 'Server Type Amount') }}
-                                        {{ Form::number('amount', 1, array('class' => 'form-control', 'min' => 1)) }}
-                                    </div>
-                                    <div style="margin-bottom: 25px" class="input-group">
-                                        {{ Form::label('default-label', 'Default Server Type') }}
-                                        <br />
-                                        {{ Form::checkbox('default', '1', false, array()) }}
-                                    </div>
-                                    <div style="margin-bottom: 25px" class="input-group">
-                                        {{ Form::label('manualStart-label', 'Manual Start') }}
-                                        <br />
-                                        {{ Form::checkbox('manualStart', '1', false, array()) }}
-                                    </div>
-                                    -->
-                                    --}}
                                     <div style="margin-top:10px" class="form-group">
                                         <div class="col-md-12">
                                             {{ Form::submit('Add Server Type', array('class'=>'btn btn-primary')) }}
@@ -374,6 +357,85 @@
                                         </div>
                                     </div>
                                     {{ Form::close() }}
+                            </div>
+                            <div class="tab-pane" id="forcedhosts{{ $network->id }}">
+                                @if(Session::has('errorAddForcedHost'.$network->id))
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <div class="alert alert-danger alert-dismissible">
+                                                <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                                <ul>
+                                                    @foreach(Session::get('errorAddForcedHost'.$network->id)->all() as $errorMessage)
+                                                        <li>{{ $errorMessage  }}</li>
+                                                    @endforeach
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
+                                @if(Session::has('errorUpdateForcedHost'.$network->id))
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <div class="alert alert-danger alert-dismissible">
+                                                <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                                <ul>
+                                                    <li>{{ Session::get('errorUpdateForcedHost'.$network->id) }}</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
+
+                                {{ Form::open(array('action' => array('NetworkController@putForcedHost', $network->id), 'class' => 'form-horizontal', 'method' => 'PUT')) }}
+                                <table style="margin-top: 10px" class="table table-bordered">
+                                    <thread>
+                                        <tr>
+                                            <th>Forced Host</th>
+                                            <th>Server Type</th>
+                                            <th>Remove</th>
+                                        </tr>
+                                    </thread>
+                                    <tbody>
+                                    @foreach($network->forcedhosts()->get() as $forcedhost)
+                                        <tr>
+                                            <td>{{ Form::text($network->id.'host'.$forcedhost->id, $forcedhost->host, array('class'=>'form-control', 'disabled')) }}</td>
+                                            <td>
+                                                <div style="margin-bottom: 25px" class="input-group">
+                                                    <select name='{{ $network->id.'servertype'.$forcedhost->id }}' class="form-control" id="{{ $network->id.'servertype'.$forcedhost->id }}">
+                                                        <option selected value="-1">Please select a server type</option>
+                                                        @foreach($network->servertypes()->get() as $servertype)
+                                                            @if($forcedhost->servertype() != null && $forcedhost->servertype()->id == $servertype->servertype()->id)
+                                                                <option selected value="{{ $servertype->servertype()->id }}">{{{ $servertype->servertype()->name }}}</option>
+                                                            @else
+                                                                <option value="{{ $servertype->servertype()->id }}">{{{ $servertype->servertype()->name }}}</option>
+                                                            @endif
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            </td>
+                                            <td><a href="{{ action("NetworkController@deleteForcedHost", [$network->id, $forcedhost->id]) }}" class="btn btn-danger" onclick="return ConfirmDeleteForcedHost('{{ $forcedhost->host }}')"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a></td>
+                                        </tr>
+                                    @endforeach
+                                    </tbody>
+                                </table>
+                                <div style="margin-top:10px" class="form-group">
+                                    <div class="col-md-12">
+                                        {{ Form::submit('Save Forced Hosts', array('class'=>'btn btn-success')) }}
+                                    </div>
+                                </div>
+                                {{ Form::close() }}
+
+                                {{ Form::open(array('action' => array('NetworkController@postForcedHost', $network->id), 'class' => 'form-horizontal', 'method' => 'POST')) }}
+                                <div style="margin-bottom: 25px" class="input-group">
+                                    {{ Form::label('host-label', 'Forced Host') }}
+                                    {{ Form::text('host', '', array('placeholder'=>'build.example.com', 'class'=>'form-control')) }}
+                                </div>
+                                <div style="margin-top:10px" class="form-group">
+                                    <div class="col-md-12">
+                                        {{ Form::submit('Add Forced Host', array('class'=>'btn btn-primary')) }}
+                                    </div>
+                                </div>
+                                {{ Form::close() }}
                             </div>
                             <div class="tab-pane" id="nodes{{ $network->id }}">
                                 @if(Session::has('errorAddNode'.$network->id))

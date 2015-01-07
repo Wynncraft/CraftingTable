@@ -371,7 +371,7 @@ class NetworkController extends BaseController {
             Log::info("Bungee Embeded Addrs2 ".$bungeeType->addresses()->get());
         }
 
-        return Redirect::to('/')->with('open'.$network->id, 'successUpdateServerType')->with('success', 'Updated bungee types for the network '.$network->name);
+        return Redirect::to('/')->with('open'.$network->id, 'successUpdateBungeeType')->with('success', 'Updated bungee types for the network '.$network->name);
     }
 
     public function deleteBungeeType(Network $network = null, $networkBungeeType = null) {
@@ -390,7 +390,67 @@ class NetworkController extends BaseController {
 
         $networkBungeeType->delete();
 
-        return Redirect::to('/')->with('open'.$network->id, 'successServerTypeDelete')->with('success', 'Deleted bungee type '.$networkBungeeType->bungeetype()->name.' from '.$network->name);
+        return Redirect::to('/')->with('open'.$network->id, 'successBungeeTypeDelete')->with('success', 'Deleted bungee type '.$networkBungeeType->bungeetype()->name.' from '.$network->name);
+    }
+
+    public function postForcedHost(Network $network = null) {
+        if ($network == null) {
+            return Redirect::to('/')->with('error', 'Unknown network Id');
+        }
+
+        if (Auth::user()->can('update_network') == false) {
+            return Redirect::to('/')->with('error', 'You do not have permissions to edit networks');
+        }
+
+        $forcedhost = new NetworkForcedHost(array('host'=>Input::get('host')));
+
+        Validator::extend('forcedHostExists', function($attribute, $value, $parameters) use ($network) {
+            if ($network->forcedhosts()->where('host', '=', $value)->count() >= 1) {
+                return false;
+            }
+
+            return true;
+        }, 'Forced host is already added.');
+
+        $validator = Validator::make(
+            array('host'=>Input::get('host')),
+            array('host'=>'required|forcedHostExists')
+        );
+        Validator::getPresenceVerifier()->setConnection("mongodb");
+
+        if ($validator->fails()) {
+            return Redirect::to('/')->with('open'.$network->id, 'errorAddForcedHost')->with('errorAddForcedHost'.$network->id, $validator->messages());
+        }
+
+        $network->forcedhosts()->save($forcedhost);
+
+        return Redirect::to('/')->with('open'.$network->id, 'errorAddNode')->with('success', 'Added the forced host '.$forcedhost->host.' to the network '.$network->name);
+    }
+
+    public function putForcedHost(Network $network = null) {
+        if ($network == null) {
+            return Redirect::to('/')->with('error', 'Unknown network Id');
+        }
+
+        if (Auth::user()->can('update_network') == false) {
+            return Redirect::to('/')->with('error', 'You do not have permissions to edit networks');
+        }
+
+        foreach ($network->forcedhosts()->get() as $forcedhost) {
+            $servertype = Input::get($network->id.'servertype'.$forcedhost->id);
+
+            $forcedhost->server_type_id = $servertype;
+
+            if ($servertype == -1) {
+                $forcedhost->server_type_id = null;
+            } else {
+                $forcedhost->server_type_id = $servertype;
+            }
+
+            $forcedhost->save();
+        }
+
+        return Redirect::to('/')->with('open'.$network->id, 'successUpdateForcedHost')->with('success', 'Updated forced hosts for the network '.$network->name);
     }
 
     public function postNode(Network $network = null) {
