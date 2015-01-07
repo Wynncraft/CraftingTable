@@ -495,7 +495,7 @@ class NetworkController extends BaseController {
                 'port'=>Input::get('port')),
             array('name'=>'required|min:3|max:100|manualServerTypeExists',
                 'address'=>'required',
-                'port'=>'required')
+                'port'=>'required|numeric')
         );
         Validator::getPresenceVerifier()->setConnection("mongodb");
 
