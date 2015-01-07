@@ -453,6 +453,25 @@ class NetworkController extends BaseController {
         return Redirect::to('/')->with('open'.$network->id, 'successUpdateForcedHost')->with('success', 'Updated forced hosts for the network '.$network->name);
     }
 
+    public function deleteForcedHost(Network $network = null, $forcedhost = null) {
+        if ($network == null) {
+            return Redirect::to('/')->with('error', 'Unknown network Id');
+        }
+
+        $forcedhost = $network->forcedhosts()->where("_id", "=", $forcedhost)->first();
+        if ($forcedhost == null) {
+            return Redirect::to('/')->with('error', 'Unknown forced host Id');
+        }
+
+        if (Auth::user()->can('update_network') == false) {
+            Redirect::to('/')->with('error', 'You do not have permission to update networks');
+        }
+
+        $forcedhost->delete();
+
+        return Redirect::to('/')->with('open'.$network->id, 'successServerTypeDelete')->with('success', 'Deleted forced host '.$forcedhost->host.' from '.$network->name);
+    }
+
     public function postNode(Network $network = null) {
         if ($network == null) {
             return Redirect::to('/')->with('error', 'Unknown network Id');
