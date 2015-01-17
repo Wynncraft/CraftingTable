@@ -223,7 +223,7 @@ class UserController extends BaseController {
             }
 
             if ($group != null) {
-                $user->roles()->sync(array(Toddish\Verify\Models\Role::find($group)->first()->id));
+                $user->roles()->sync(array($group));
             }
 
             $user->save();
