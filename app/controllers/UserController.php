@@ -222,11 +222,12 @@ class UserController extends BaseController {
                 $user->password = $npassword;
             }
 
-            $user->save();
-
             if ($group != null) {
                 $user->roles()->sync(array(Toddish\Verify\Models\Role::find($group)->first()->id));
             }
+
+            $user->save();
+
             if ($userEdit == true) {
                 return View::make('user')->with('success', 'Successfully updated your account.')->with('user', $user);
             } else {
