@@ -3,7 +3,7 @@
 class NodeController extends BaseController {
 
     public function getNodes() {
-        if (Auth::user()->can('read_nodes') == false) {
+        if (Auth::user()->can('read_node') == false) {
             Redirect::to('/')->with('error', 'You do not have permission to view the nodes page');
         }
 
