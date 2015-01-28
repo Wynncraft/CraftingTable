@@ -190,6 +190,7 @@ class Network extends Moloquent {
                 }
             }
         }
+        Log::info('Total Bungees '.$totalBungees.' Set Bungees '.$setBungees);
 
         $servertypes = $this->servertypes()->get()->all();
         $setServers = 0;
@@ -206,6 +207,7 @@ class Network extends Moloquent {
                 }
             }
         }
+        Log::info('Total Servers '.$totalServers.' Set Servers '.$setServers);
 
         if ($setBungees < $totalBungees || $setServers < $totalServers) {
             $overProvisioned = true;
