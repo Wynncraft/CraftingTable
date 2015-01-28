@@ -201,6 +201,7 @@ class Network extends Moloquent {
                     if ($value >= $servertype->servertype()->ram) {
                         $nodes[$key] -= $servertype->servertype()->ram;
                         $setServers += 1;
+                        break;
                     }
                 }
             }
