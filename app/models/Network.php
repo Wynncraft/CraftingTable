@@ -140,7 +140,7 @@ class Network extends Moloquent {
         $players = 0;
         $servers = $this->servers()->get()->all();
         foreach ($servers as $server) {
-            $players += $server->players->length;
+            $players += count($server->players);
         }
         return $players;
     }
