@@ -493,7 +493,7 @@ class NetworkController extends BaseController {
             array('name'=>Input::get('name'),
                 'address'=>Input::get('address'),
                 'port'=>Input::get('port')),
-            array('name'=>'required|min:3|max:100|manualServerTypeExists',
+            array('name'=>'required|min:1|max:100|manualServerTypeExists',
                 'address'=>'required',
                 'port'=>'required|numeric')
         );
